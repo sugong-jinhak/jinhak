@@ -1,0 +1,2041 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2027 수시 대동여지도 · 초등교육 | 운정고 이재규</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1a1614;
+  --ink-soft:#3d3530;
+  --paper:#f5f1ea;
+  --paper-warm:#ede6d8;
+  --line:#2a2520;
+  --rule:rgba(26,22,20,0.12);
+  --accent:#a8341f;
+  --accent-deep:#7a2615;
+  --gold:#b8924a;
+  --jong:#e8dcc4;
+  --shadow:0 1px 0 rgba(26,22,20,0.08);
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --serif:'Nanum Myeongjo',serif;
+  --sans:'IBM Plex Sans KR',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;font-feature-settings:"tnum"}
+body{
+  background-image:
+    radial-gradient(circle at 10% 0%, rgba(184,146,74,0.06) 0%, transparent 40%),
+    radial-gradient(circle at 90% 100%, rgba(168,52,31,0.04) 0%, transparent 40%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  min-height:100vh;
+  padding:0 0 80px;
+}
+
+/* ========== HEADER ========== */
+.header{
+  border-bottom:2px solid var(--line);
+  padding:48px 32px 32px;
+  position:relative;
+  overflow:hidden;
+}
+.header::before{
+  content:"";
+  position:absolute;
+  top:16px;left:50%;
+  transform:translateX(-50%);
+  width:60px;height:1px;
+  background:var(--line);
+}
+.header-inner{
+  max-width:1400px;margin:0 auto;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:32px;
+  align-items:end;
+}
+.eyebrow{
+  font-family:var(--mono);
+  font-size:11px;letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  margin-bottom:12px;
+  display:flex;align-items:center;gap:10px;
+}
+.eyebrow::after{
+  content:"";flex:1;height:1px;background:var(--rule);max-width:120px;
+}
+.title{
+  font-family:var(--serif);
+  font-weight:800;
+  font-size:clamp(36px,5vw,64px);
+  line-height:1.05;
+  letter-spacing:-0.02em;
+  color:var(--ink);
+}
+.title em{
+  font-style:normal;
+  color:var(--accent);
+  position:relative;
+}
+.title em::after{
+  content:"";
+  position:absolute;
+  bottom:-2px;left:0;right:0;
+  height:8px;
+  background:var(--gold);
+  opacity:0.3;
+  z-index:-1;
+}
+.subtitle{
+  font-family:var(--serif);
+  font-size:18px;
+  margin-top:12px;
+  color:var(--ink-soft);
+  font-weight:400;
+}
+.meta-card{
+  background:var(--paper-warm);
+  border:1px solid var(--line);
+  padding:18px 22px;
+  font-family:var(--mono);
+  font-size:11px;
+  line-height:1.7;
+  letter-spacing:0.05em;
+  position:relative;
+  max-width:340px;
+}
+.meta-card::before{
+  content:"";position:absolute;
+  top:-1px;left:-1px;right:-1px;
+  height:3px;
+  background:var(--accent);
+}
+.meta-attribution{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.meta-label{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.18em;
+  color:var(--ink-soft);
+  text-transform:uppercase;
+}
+.meta-author{
+  font-family:var(--serif);
+  font-size:15px;
+  font-weight:700;
+  color:var(--ink);
+  letter-spacing:0;
+}
+.meta-quip{
+  font-family:var(--serif);
+  font-size:11px;
+  color:var(--ink-soft);
+  font-style:italic;
+  letter-spacing:0;
+  line-height:1.5;
+}
+.meta-row{display:flex;justify-content:space-between;gap:24px;text-transform:uppercase}
+.meta-row span:first-child{color:var(--ink-soft);}
+.meta-row span:last-child{color:var(--ink);font-weight:500}
+
+/* ========== STATS ========== */
+.stats{
+  max-width:1400px;
+  margin:32px auto 0;
+  padding:0 32px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:0;
+  border:1px solid var(--line);
+  background:var(--paper-warm);
+}
+.stat{
+  padding:24px 28px;
+  border-right:1px solid var(--rule);
+  position:relative;
+}
+.stat:last-child{border-right:none}
+.stat-label{
+  font-family:var(--mono);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:0.15em;
+  color:var(--ink-soft);
+  margin-bottom:8px;
+}
+.stat-value{
+  font-family:var(--serif);
+  font-size:36px;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:-0.02em;
+}
+.stat-unit{
+  font-size:14px;
+  color:var(--ink-soft);
+  font-family:var(--sans);
+  font-weight:400;
+  margin-left:4px;
+}
+
+/* ========== CONTROLS ========== */
+.controls{
+  max-width:1400px;
+  margin:40px auto 16px;
+  padding:0 32px;
+}
+.section-label{
+  font-family:var(--mono);
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.18em;
+  color:var(--ink-soft);
+  margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+}
+.section-label::before{
+  content:"";width:6px;height:6px;background:var(--accent);border-radius:50%;
+}
+.filter-group{
+  display:flex;flex-wrap:wrap;gap:6px;
+  margin-bottom:20px;
+}
+.chip{
+  font-family:var(--sans);
+  font-size:13px;font-weight:500;
+  padding:8px 14px;
+  border:1px solid var(--line);
+  background:transparent;
+  color:var(--ink);
+  cursor:pointer;
+  transition:all 0.15s ease;
+  letter-spacing:-0.01em;
+}
+.chip:hover{background:var(--paper-warm)}
+.chip.active{
+  background:var(--ink);
+  color:var(--paper);
+  border-color:var(--ink);
+}
+.chip-count{
+  font-family:var(--mono);
+  font-size:10px;
+  opacity:0.6;
+  margin-left:6px;
+}
+.search-row{
+  display:flex;gap:12px;align-items:center;
+  margin-top:8px;
+}
+.search-box{
+  flex:1;
+  position:relative;
+}
+.search-input{
+  width:100%;
+  padding:12px 16px 12px 40px;
+  border:1px solid var(--line);
+  background:var(--paper);
+  font-family:var(--sans);
+  font-size:14px;
+  color:var(--ink);
+  outline:none;
+}
+.search-input:focus{
+  background:var(--paper-warm);
+  border-color:var(--accent);
+}
+.search-icon{
+  position:absolute;
+  left:14px;top:50%;
+  transform:translateY(-50%);
+  color:var(--ink-soft);
+  font-family:var(--mono);
+  font-size:14px;
+}
+.reset-btn{
+  padding:12px 18px;
+  border:1px solid var(--line);
+  background:transparent;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  cursor:pointer;
+  color:var(--ink);
+}
+.reset-btn:hover{background:var(--ink);color:var(--paper)}
+
+/* ========== TABLE ========== */
+.results-bar{
+  max-width:1400px;
+  margin:0 auto 12px;
+  padding:0 32px;
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.1em;
+  color:var(--ink-soft);
+}
+.results-count strong{
+  font-family:var(--serif);
+  font-size:24px;
+  color:var(--ink);
+  font-weight:800;
+  margin-right:4px;
+  vertical-align:-2px;
+}
+.table-wrap{
+  max-width:1400px;
+  margin:0 auto;
+  padding:0 32px;
+  overflow-x:auto;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:var(--paper);
+  border:1px solid var(--line);
+  font-size:13px;
+}
+thead{
+  background:var(--ink);
+  color:var(--paper);
+  position:sticky;top:0;z-index:10;
+}
+th{
+  padding:14px 12px;
+  text-align:left;
+  font-family:var(--sans);
+  font-weight:500;
+  font-size:11px;
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+  border-right:1px solid rgba(245,241,234,0.1);
+  cursor:pointer;
+  user-select:none;
+  white-space:nowrap;
+  vertical-align:middle;
+}
+th:hover{background:#0a0805}
+th .sort{font-family:var(--mono);font-size:9px;opacity:0.5;margin-left:4px}
+th.sorted .sort{opacity:1;color:var(--gold)}
+tbody tr{
+  border-bottom:1px solid var(--rule);
+  transition:background 0.1s ease;
+}
+tbody tr:hover{background:var(--jong)}
+td{
+  padding:12px;
+  vertical-align:top;
+  border-right:1px solid var(--rule);
+  line-height:1.5;
+}
+td:last-child{border-right:none}
+
+.col-region{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.1em;
+  color:var(--accent);
+  font-weight:500;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.col-uni{
+  font-family:var(--serif);
+  font-weight:700;
+  font-size:14px;
+  white-space:nowrap;
+}
+.col-type{
+  font-size:11px;
+  font-family:var(--mono);
+  background:var(--paper-warm);
+  padding:3px 7px;
+  display:inline-block;
+  letter-spacing:0.02em;
+}
+.col-name{
+  font-weight:500;
+  min-width:140px;
+}
+.col-method{
+  font-size:11px;
+  color:var(--ink-soft);
+  white-space:pre-line;
+  min-width:200px;
+  max-width:260px;
+}
+.col-num{
+  font-family:var(--mono);
+  text-align:right;
+  font-variant-numeric:tabular-nums;
+  font-size:13px;
+  white-space:nowrap;
+}
+.col-num strong{
+  font-family:var(--serif);
+  font-size:16px;
+  font-weight:800;
+}
+.col-grade{
+  font-family:var(--mono);
+  text-align:center;
+  font-variant-numeric:tabular-nums;
+  font-weight:500;
+}
+.grade-pill{
+  display:inline-block;
+  padding:3px 8px;
+  background:var(--ink);
+  color:var(--paper);
+  font-size:12px;
+  font-family:var(--mono);
+  font-weight:500;
+}
+.grade-pill.low{background:var(--accent)}
+.grade-pill.mid{background:var(--ink-soft)}
+.col-min{
+  font-size:11px;
+  color:var(--ink-soft);
+  min-width:180px;
+  max-width:220px;
+  line-height:1.5;
+}
+.col-notes{
+  font-size:11px;
+  color:var(--ink-soft);
+  white-space:pre-line;
+  min-width:140px;
+  max-width:200px;
+}
+.col-curriculum{
+  font-size:11px;
+  white-space:pre-line;
+  min-width:140px;
+  max-width:200px;
+}
+.muted{color:#aaa;font-style:italic}
+
+/* CSAT highlight */
+.csat-required{
+  color:var(--accent-deep);
+  font-weight:500;
+}
+.csat-none{color:var(--ink-soft);font-style:italic}
+
+/* New track */
+.tag-new{
+  display:inline-block;
+  background:var(--accent);
+  color:var(--paper);
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:0.1em;
+  padding:2px 5px;
+  margin-left:4px;
+  vertical-align:1px;
+}
+
+/* ========== HERO GRID (Map + Detail) ========== */
+.hero{
+  max-width:1400px;
+  margin:24px auto 0;
+  padding:0 32px;
+  display:grid;
+  grid-template-columns:minmax(0, 1.05fr) minmax(0, 1fr);
+  gap:28px;
+  align-items:start;
+}
+@media (max-width:980px){
+  .hero{grid-template-columns:1fr;gap:20px}
+  .hero .map-section{margin-top:0}
+}
+
+/* ========== DETAIL PANEL (조선 방 style) ========== */
+.detail-panel{
+  position:relative;
+  min-height:560px;
+}
+@media (min-width:981px){
+  .hero .map-section{position:sticky;top:20px}
+}
+
+/* Mount: wooden rod + scroll wrap */
+.bang-mount{
+  position:relative;
+  perspective:1200px;
+}
+.bang-rod{
+  position:relative;
+  height:16px;
+  margin:0 4px 0;
+  background:
+    linear-gradient(180deg,
+      #1f1109 0%,
+      #4a2c14 12%,
+      #7a4a22 28%,
+      #a26a32 48%,
+      #7a4a22 68%,
+      #3a2010 88%,
+      #1a0c06 100%);
+  border-radius:8px;
+  box-shadow:
+    0 5px 10px -2px rgba(0,0,0,0.5),
+    0 2px 4px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,210,150,0.25),
+    inset 0 -2px 4px rgba(0,0,0,0.5);
+  z-index:8;
+}
+.bang-rod::before,.bang-rod::after{
+  content:"";
+  position:absolute;
+  top:-3px;
+  width:22px;height:22px;
+  background:
+    radial-gradient(ellipse at 35% 30%, #b8804a 0%, #6a3a18 50%, #2a1408 100%);
+  border:1.5px solid #1a0c06;
+  border-radius:50%;
+  box-shadow:
+    1px 2px 4px rgba(0,0,0,0.5),
+    inset 0 1px 1px rgba(255,210,150,0.2);
+}
+.bang-rod::before{left:-12px}
+.bang-rod::after{right:-12px}
+
+/* Thin shadow strip below rod simulating overhang */
+.bang-rod-shadow{
+  height:4px;
+  margin:0 14px;
+  background:linear-gradient(180deg, rgba(0,0,0,0.18) 0%, transparent 100%);
+  position:relative;
+  z-index:7;
+}
+
+/* Scroll wrap (animates height) */
+.bang-scroll-wrap{
+  overflow:hidden;
+  max-height:0;
+  transition:max-height 0.95s cubic-bezier(0.2,0.85,0.35,1);
+  position:relative;
+}
+.bang-mount.open .bang-scroll-wrap{
+  /* set by JS to exact height; this is fallback */
+  max-height:4000px;
+}
+/* Sliding shadow at unrolling edge */
+.bang-scroll-wrap::after{
+  content:"";
+  position:absolute;
+  left:8px;right:8px;
+  bottom:0;
+  height:18px;
+  pointer-events:none;
+  background:linear-gradient(180deg,
+    transparent 0%,
+    rgba(80,55,20,0.18) 60%,
+    rgba(80,55,20,0.32) 100%);
+  opacity:0;
+  transition:opacity 0.2s;
+}
+.bang-mount.unrolling .bang-scroll-wrap::after{opacity:1}
+
+.bang{
+  position:relative;
+  background:
+    radial-gradient(ellipse at 30% 10%, rgba(255,245,210,0.6) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 90%, rgba(150,100,50,0.18) 0%, transparent 60%),
+    linear-gradient(170deg, #f4e6c3 0%, #ecd9ac 50%, #e3cb95 100%);
+  background-color:#f0e0b8;
+  padding:30px 28px 70px;
+  font-family:var(--serif);
+  color:var(--ink);
+  box-shadow:
+    0 2px 0 rgba(0,0,0,0.05),
+    0 14px 32px -8px rgba(80,55,20,0.35),
+    0 4px 12px -2px rgba(80,55,20,0.2),
+    inset 0 0 90px rgba(140,95,40,0.12);
+  transform:rotate(-0.35deg);
+  /* slightly torn / irregular edges */
+  clip-path:polygon(
+    0.5% 0.8%, 4% 0.2%, 9% 1%, 16% 0.4%, 24% 1.2%, 33% 0.3%, 43% 0.8%, 54% 0.2%,
+    64% 1%, 74% 0.4%, 83% 1%, 91% 0.3%, 96% 0.8%, 99.5% 1.2%,
+    99.2% 6%, 99.8% 14%, 99.3% 25%, 99.8% 38%, 99.2% 50%, 99.7% 62%,
+    99.3% 74%, 99.8% 84%, 99.4% 92%, 99.8% 98%,
+    96% 99.3%, 88% 99.7%, 78% 99.2%, 68% 99.8%, 56% 99.3%, 44% 99.8%, 33% 99.2%,
+    22% 99.8%, 12% 99.3%, 5% 99.8%, 1% 99.2%,
+    0.4% 94%, 0.8% 84%, 0.2% 72%, 0.8% 60%, 0.3% 48%, 0.8% 35%, 0.2% 22%, 0.6% 12%, 0.3% 5%
+  );
+}
+.bang::before{
+  /* paper grain */
+  content:"";
+  position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n3'%3E%3CfeTurbulence baseFrequency='0.8' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.4 0 0 0 0 0.25 0 0 0 0 0.1 0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n3)'/%3E%3C/svg%3E");
+  mix-blend-mode:multiply;
+  opacity:0.5;
+  pointer-events:none;
+}
+.bang::after{
+  /* subtle horizontal fiber lines */
+  content:"";
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent 0,
+    transparent 28px,
+    rgba(140,100,50,0.04) 28px,
+    rgba(140,100,50,0.04) 29px
+  );
+  pointer-events:none;
+}
+/* Pinhole shadows in corners */
+.bang-pin{
+  position:absolute;
+  width:8px;height:8px;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, #6a4a25 0%, #3d2c15 70%);
+  box-shadow:0 1px 1px rgba(0,0,0,0.4);
+  z-index:5;
+}
+.bang-pin.tl{top:10px;left:10px}
+.bang-pin.tr{top:10px;right:10px}
+
+/* Inner border frame */
+.bang-frame{
+  position:relative;
+  z-index:2;
+  border:1px solid rgba(60,40,15,0.5);
+  border-width:2px 1px;
+  padding:22px 18px 26px;
+}
+.bang-frame::before{
+  /* double-line top */
+  content:"";
+  position:absolute;
+  top:-7px;left:6%;right:6%;
+  height:2px;
+  background:var(--ink);
+  opacity:0.85;
+}
+.bang-frame::after{
+  content:"";
+  position:absolute;
+  bottom:-7px;left:10%;right:10%;
+  height:1.5px;
+  background:var(--ink);
+  opacity:0.65;
+}
+
+.bang-header{
+  text-align:center;
+  margin-bottom:18px;
+  position:relative;
+}
+.bang-eyebrow{
+  font-family:var(--serif);
+  font-size:11px;
+  letter-spacing:0.5em;
+  text-indent:0.5em;
+  color:var(--ink-soft);
+  margin-bottom:4px;
+  font-weight:700;
+}
+.bang-title{
+  font-family:var(--serif);
+  font-size:38px;
+  font-weight:800;
+  letter-spacing:0.06em;
+  line-height:1.1;
+  color:var(--ink);
+  margin:2px 0 4px;
+  text-shadow:0 1px 0 rgba(245,235,200,0.6);
+}
+.bang-subtitle{
+  font-family:var(--serif);
+  font-size:14px;
+  color:var(--ink-soft);
+  letter-spacing:0.04em;
+  margin-top:2px;
+}
+.bang-region-badge{
+  display:inline-block;
+  background:var(--ink);
+  color:var(--paper);
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.15em;
+  padding:3px 9px;
+  margin-top:8px;
+}
+
+/* Photo area */
+.bang-photo{
+  margin:14px 0 18px;
+  border:1.5px solid var(--ink);
+  padding:6px;
+  background:#fff8e8;
+  box-shadow:inset 0 0 12px rgba(120,80,30,0.15);
+}
+.bang-photo-inner{
+  width:100%;
+  aspect-ratio:16/10;
+  overflow:hidden;
+  position:relative;
+  background:#d9c89f;
+}
+.bang-photo-inner img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  filter:sepia(0.18) contrast(1.05);
+}
+.bang-photo-fallback{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg, var(--bg1, #4a3a26) 0%, var(--bg2, #6b5236) 100%);
+  position:relative;
+  overflow:hidden;
+}
+.bang-photo-fallback::before{
+  content:"";
+  position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,220,170,0.18) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(0,0,0,0.18) 0%, transparent 50%);
+}
+.bang-photo-fallback-char{
+  font-family:var(--serif);
+  font-weight:800;
+  font-size:64px;
+  color:#f5e8c8;
+  letter-spacing:0.05em;
+  text-shadow:0 2px 8px rgba(0,0,0,0.4);
+  position:relative;z-index:2;
+  line-height:1;
+}
+.bang-photo-caption{
+  font-family:var(--mono);
+  font-size:9px;
+  text-align:center;
+  letter-spacing:0.2em;
+  color:var(--ink-soft);
+  margin-top:6px;
+  text-transform:uppercase;
+}
+
+/* Section blocks */
+.bang-section{
+  margin:18px 0;
+}
+.bang-section-title{
+  font-family:var(--serif);
+  font-size:15px;
+  font-weight:800;
+  color:var(--ink);
+  letter-spacing:0.1em;
+  padding-bottom:6px;
+  border-bottom:double 3px var(--ink);
+  margin-bottom:10px;
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+}
+.bang-section-title::before{
+  content:"◉";
+  color:var(--accent);
+  font-size:9px;
+}
+.bang-section-title .hanja{
+  font-size:10px;
+  color:var(--ink-soft);
+  font-weight:400;
+  letter-spacing:0.1em;
+  margin-left:auto;
+}
+
+/* Summary stats */
+.bang-stats{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:0;
+  border:1px solid var(--ink);
+  background:rgba(255,250,230,0.5);
+  margin-bottom:12px;
+}
+.bang-stat{
+  padding:10px 8px;
+  text-align:center;
+  border-right:1px solid rgba(60,40,15,0.4);
+}
+.bang-stat:last-child{border-right:none}
+.bang-stat-label{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:0.1em;
+  color:var(--ink-soft);
+  text-transform:uppercase;
+  margin-bottom:4px;
+}
+.bang-stat-value{
+  font-family:var(--serif);
+  font-size:22px;
+  font-weight:800;
+  line-height:1;
+  color:var(--ink);
+}
+.bang-stat-value .unit{
+  font-size:11px;
+  font-weight:400;
+  color:var(--ink-soft);
+  margin-left:1px;
+}
+
+.bang-body{
+  font-family:var(--serif);
+  font-size:13.5px;
+  line-height:1.85;
+  color:var(--ink);
+  text-align:justify;
+}
+.bang-body strong{
+  font-weight:800;
+  color:var(--accent-deep);
+}
+
+.bang-bullets{
+  margin:10px 0 0;
+  padding:0;
+  list-style:none;
+}
+.bang-bullets li{
+  font-family:var(--serif);
+  font-size:13px;
+  line-height:1.7;
+  padding-left:18px;
+  position:relative;
+  color:var(--ink);
+}
+.bang-bullets li::before{
+  content:"一";
+  position:absolute;
+  left:0;top:0;
+  font-weight:700;
+  color:var(--accent);
+  font-family:var(--serif);
+}
+
+/* Results table */
+.bang-table-wrap{
+  border:1px solid var(--ink);
+  background:rgba(255,250,230,0.4);
+  overflow-x:auto;
+  font-feature-settings:"tnum";
+}
+.bang-table{
+  width:100%;
+  border-collapse:collapse;
+  font-family:var(--sans);
+  font-size:11.5px;
+}
+.bang-table thead{
+  background:var(--ink);
+  color:var(--paper);
+}
+.bang-table th{
+  padding:7px 8px;
+  text-align:left;
+  font-weight:500;
+  font-size:10px;
+  letter-spacing:0.05em;
+  white-space:nowrap;
+  border-right:1px solid rgba(245,241,234,0.15);
+}
+.bang-table th:last-child{border-right:none}
+.bang-table td{
+  padding:8px 8px;
+  border-bottom:1px solid rgba(60,40,15,0.18);
+  border-right:1px solid rgba(60,40,15,0.12);
+  vertical-align:top;
+}
+.bang-table td:last-child{border-right:none}
+.bang-table tr:last-child td{border-bottom:none}
+.bang-table tr:nth-child(even) td{background:rgba(140,100,50,0.04)}
+.bang-table .num{
+  text-align:right;
+  font-family:var(--mono);
+  font-variant-numeric:tabular-nums;
+}
+.bang-table .type{
+  font-size:9px;
+  font-family:var(--mono);
+  background:rgba(168,52,31,0.12);
+  padding:2px 4px;
+  white-space:nowrap;
+}
+.bang-table .name{font-weight:500;line-height:1.35}
+.bang-table-empty{
+  padding:18px;
+  text-align:center;
+  font-family:var(--serif);
+  color:var(--ink-soft);
+  font-style:italic;
+}
+
+/* Footer with seal */
+.bang-footer{
+  position:absolute;
+  bottom:18px;
+  left:32px;right:32px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  z-index:3;
+}
+.bang-date{
+  font-family:var(--serif);
+  font-size:11px;
+  letter-spacing:0.1em;
+  color:var(--ink-soft);
+  font-style:italic;
+}
+.bang-seal{
+  width:58px;height:58px;
+  background:
+    repeating-radial-gradient(circle at 30% 30%, rgba(255,255,255,0.05) 0 2px, transparent 2px 5px),
+    linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+  color:#f5e8c8;
+  font-family:var(--serif);
+  font-weight:800;
+  font-size:13px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  place-items:center;
+  border:2px solid #5a1e10;
+  letter-spacing:-1px;
+  transform:rotate(-7deg);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.15),
+    inset 0 0 6px rgba(0,0,0,0.4),
+    2px 3px 6px rgba(0,0,0,0.3);
+  position:relative;
+}
+.bang-seal::before{
+  content:"";
+  position:absolute;inset:3px;
+  border:1px solid rgba(245,232,200,0.4);
+  pointer-events:none;
+}
+
+/* Close button */
+.bang-close{
+  position:absolute;
+  top:14px;right:14px;
+  width:28px;height:28px;
+  background:transparent;
+  border:1px solid var(--ink-soft);
+  font-family:var(--serif);
+  font-size:14px;
+  cursor:pointer;
+  color:var(--ink);
+  z-index:6;
+  transition:all 0.15s;
+  display:grid;place-items:center;
+  line-height:1;
+}
+.bang-close:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* Empty state */
+.bang.empty{
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;
+  min-height:560px;
+}
+.bang.empty .bang-frame{
+  border:none;
+  padding:40px 20px;
+}
+.bang-empty-icon{
+  font-family:var(--serif);
+  font-size:52px;
+  font-weight:800;
+  color:var(--ink);
+  opacity:0.18;
+  margin-bottom:16px;
+  letter-spacing:0.1em;
+}
+.bang-empty-title{
+  font-family:var(--serif);
+  font-size:20px;
+  font-weight:700;
+  color:var(--ink);
+  margin-bottom:8px;
+  letter-spacing:0.05em;
+}
+.bang-empty-text{
+  font-family:var(--serif);
+  font-size:13px;
+  line-height:1.8;
+  color:var(--ink-soft);
+  max-width:280px;
+}
+.bang-empty-arrow{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-top:18px;
+  display:flex;align-items:center;gap:6px;
+}
+@media (max-width:980px){
+  .bang-empty-arrow .desktop-only{display:none}
+}
+
+/* ========== MAP ========== */
+.map-section{
+  margin:0;
+  padding:0;
+  max-width:none;
+}
+.map-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;
+  gap:16px;flex-wrap:wrap;
+}
+.map-head .section-label{margin-bottom:0}
+.map-hint{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  display:flex;align-items:center;gap:8px;
+}
+.map-hint .dot{
+  width:6px;height:6px;border-radius:50%;background:var(--accent);
+  animation:hintPulse 2s ease-in-out infinite;
+}
+@keyframes hintPulse{
+  0%,100%{opacity:0.4;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.4)}
+}
+.map-wrap{
+  border:1px solid var(--line);
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(184,146,74,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(168,52,31,0.06) 0%, transparent 50%),
+    linear-gradient(180deg, #f8f4ec 0%, #ebe2cf 100%);
+  position:relative;
+  overflow:hidden;
+  aspect-ratio:494/524;
+  max-height:640px;
+}
+.map-wrap::before{
+  content:"";
+  position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n2'%3E%3CfeTurbulence baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.15 0 0 0 0 0.1 0 0 0 0 0.07 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n2)'/%3E%3C/svg%3E");
+  pointer-events:none;opacity:0.7;
+  mix-blend-mode:multiply;
+}
+.korea-map{
+  width:100%;height:100%;display:block;
+  position:relative;z-index:1;
+}
+.map-grid line{
+  stroke:var(--ink);
+  stroke-width:0.3;
+  stroke-dasharray:2 4;
+  opacity:0.15;
+}
+.korea-outline{
+  fill:rgba(245,235,210,0.55);
+  stroke:var(--ink);
+  stroke-width:1.4;
+  stroke-linejoin:round;
+  filter:drop-shadow(2px 3px 0 rgba(26,22,20,0.08));
+  pointer-events:none;
+}
+.region-divider{
+  fill:none;
+  stroke:var(--ink);
+  stroke-width:0.5;
+  stroke-dasharray:3 3;
+  opacity:0.35;
+  pointer-events:none;
+}
+.region-labels text{
+  font-family:var(--serif);
+  font-size:13px;
+  font-weight:700;
+  fill:var(--ink);
+  opacity:0.22;
+  text-anchor:middle;
+  pointer-events:none;
+  letter-spacing:0.08em;
+}
+.map-seal{cursor:default}
+.map-seal rect{
+  fill:var(--accent);
+  stroke:var(--accent-deep);
+  stroke-width:1;
+  filter:drop-shadow(1px 2px 0 rgba(26,22,20,0.15));
+}
+.map-seal text{
+  font-family:var(--serif);
+  font-size:14px;
+  font-weight:800;
+  fill:var(--paper);
+  text-anchor:middle;
+  letter-spacing:0.05em;
+}
+.compass{pointer-events:none}
+.compass-ring{
+  fill:rgba(245,241,234,0.7);
+  stroke:var(--ink);
+  stroke-width:0.7;
+}
+.compass-needle{fill:var(--accent)}
+.compass-needle-s{fill:var(--ink-soft)}
+.compass text{
+  font-family:var(--serif);
+  font-size:9px;
+  font-weight:700;
+  fill:var(--ink);
+  text-anchor:middle;
+}
+
+/* Markers */
+.marker{cursor:pointer}
+.marker-hit{fill:transparent;pointer-events:all}
+.marker-pulse{
+  fill:var(--accent);
+  opacity:0;
+  pointer-events:none;
+}
+.marker-dot{
+  fill:#fff;
+  stroke:var(--ink);
+  stroke-width:1.6;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,0.35));
+  transition:fill 0.3s,stroke 0.3s,r 0.3s;
+}
+.marker-inner{
+  fill:var(--ink);
+  transition:fill 0.3s,r 0.3s;
+}
+.marker-label{
+  font-family:var(--mono);
+  font-size:10px;
+  font-weight:600;
+  fill:var(--ink);
+  pointer-events:none;
+  paint-order:stroke;
+  stroke:rgba(245,241,234,0.95);
+  stroke-width:3;
+  stroke-linejoin:round;
+  transition:opacity 0.3s,font-size 0.3s,font-weight 0.3s;
+}
+.marker:hover .marker-dot{fill:var(--gold);stroke:var(--accent-deep)}
+.marker:hover .marker-inner{fill:var(--accent-deep)}
+.marker:hover .marker-label{font-weight:700}
+
+.marker.active .marker-dot{
+  fill:var(--accent);
+  stroke:var(--accent-deep);
+  stroke-width:1.8;
+}
+.marker.active .marker-inner{fill:#fff}
+.marker.active .marker-label{
+  font-weight:700;
+  fill:var(--accent-deep);
+}
+.marker.active .marker-pulse{
+  animation:markerRing 1.8s cubic-bezier(0.4,0,0.6,1) infinite;
+}
+@keyframes markerRing{
+  0%{r:5;opacity:0.6}
+  100%{r:24;opacity:0}
+}
+.marker.dimmed{opacity:0.35}
+.marker.dimmed .marker-label{opacity:0}
+
+/* Map message overlay */
+.map-msg{
+  position:absolute;
+  bottom:14px;left:18px;
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  background:rgba(245,241,234,0.85);
+  padding:5px 10px;
+  border:1px solid var(--rule);
+  z-index:2;
+  display:flex;align-items:center;gap:8px;
+  transition:opacity 0.3s;
+}
+.map-msg .focus-label{
+  font-family:var(--serif);
+  font-size:13px;
+  font-weight:700;
+  color:var(--accent);
+  letter-spacing:0;
+}
+
+@media (max-width:720px){
+  .map-section{padding:0 20px}
+  .map-wrap{aspect-ratio:4/5;max-height:none}
+  .marker-label{font-size:10px}
+}
+
+/* ========== FOOTER ========== */
+.footer{
+  max-width:1400px;
+  margin:60px auto 0;
+  padding:32px;
+  border-top:1px solid var(--line);
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--ink-soft);
+  letter-spacing:0.05em;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;
+}
+.footer .seal{
+  font-family:var(--serif);
+  font-weight:800;
+  font-size:14px;
+  color:var(--accent);
+  letter-spacing:0;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width:900px){
+  .header-inner{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(2){border-right:none}
+  .stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--rule)}
+  .header,.controls,.results-bar,.table-wrap,.footer{padding-left:20px;padding-right:20px}
+}
+@media (max-width:600px){
+  .stats{grid-template-columns:1fr}
+  .stat{border-right:none;border-bottom:1px solid var(--rule)}
+  .stat:last-child{border-bottom:none}
+}
+
+/* Empty state */
+.empty{
+  text-align:center;
+  padding:80px 32px;
+  font-family:var(--serif);
+  font-size:18px;
+  color:var(--ink-soft);
+}
+.empty::before{
+  content:"○";
+  display:block;
+  font-size:48px;
+  margin-bottom:16px;
+  color:var(--rule);
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div>
+      <div class="eyebrow">2027학년도 · 수시모집 · 초등교육과</div>
+      <h1 class="title">수시 <em>大東輿地圖</em></h1>
+      <p class="subtitle">전국 11개 교대 및 한국교원대 초등교육과 전형 78종 총람</p>
+    </div>
+    <div class="meta-card">
+      <div class="meta-attribution">
+        <span class="meta-label">제작</span>
+        <span class="meta-author">운정고등학교 교사 이재규</span>
+        <span class="meta-quip">(등산 및 도보 기피자 ─ 3보 이상 승차)</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<section class="hero">
+  <section class="map-section">
+  <div class="map-head">
+    <div class="section-label">전국 위치도 <span style="font-family:var(--serif);font-weight:400;color:var(--ink-soft);text-transform:none;letter-spacing:0;margin-left:6px;font-size:12px">輿地</span></div>
+    <div class="map-hint"><span class="dot"></span>지역 선택 시 자동 확대</div>
+  </div>
+  <div class="map-wrap">
+    <svg id="koreaMap" class="korea-map" viewBox="0 0 494 524" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <filter id="mapWarmth" x="0" y="0" width="100%" height="100%">
+          <feColorMatrix type="matrix" values="
+            1.05 0.02 0    0 0
+            0.02 1.02 0.02 0 0
+            0    0.02 0.92 0 0
+            0    0    0    1 0"/>
+        </filter>
+        <radialGradient id="vignette" cx="50%" cy="50%" r="60%">
+          <stop offset="60%" stop-color="#000" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#3d2c1a" stop-opacity="0.35"/>
+        </radialGradient>
+        <pattern id="paperGrain" patternUnits="userSpaceOnUse" width="200" height="200">
+          <image href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.7' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.15 0 0 0 0 0.1 0 0 0 0 0.07 0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E" width="200" height="200"/>
+        </pattern>
+      </defs>
+
+      <!-- paper backdrop in case the image doesn't fully cover -->
+      <rect width="494" height="524" fill="#ede6d8"/>
+
+      <!-- The historical 大東輿地圖 (Daedongyeojido, 1861, public domain) -->
+      <image href="data:image/jpeg;base64,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" x="0" y="0" width="494" height="524" preserveAspectRatio="xMidYMid meet" filter="url(#mapWarmth)" image-rendering="auto"/>
+
+      <!-- paper grain overlay (softens pixelation) -->
+      <rect width="494" height="524" fill="url(#paperGrain)" style="mix-blend-mode:multiply;opacity:0.6;pointer-events:none"/>
+
+      <!-- subtle vignette so edges feel like aged paper -->
+      <rect width="494" height="524" fill="url(#vignette)" style="pointer-events:none"/>
+
+      <!-- Decorative compass -->
+      <g class="compass" transform="translate(450, 470)">
+        <circle class="compass-ring" r="20"/>
+        <path class="compass-needle" d="M 0 -14 L 4 0 L 0 -3 L -4 0 Z"/>
+        <path class="compass-needle-s" d="M 0 14 L 4 0 L 0 3 L -4 0 Z"/>
+        <text y="-22" style="font-size:8px">北</text>
+      </g>
+
+      <!-- Decorative seal -->
+      <g class="map-seal" transform="translate(40, 55)">
+        <rect x="-22" y="-22" width="44" height="44" rx="1"/>
+        <text y="-3">大東</text>
+        <text y="14">輿地</text>
+      </g>
+
+      <!-- University markers (built by JS) -->
+      <g id="markersGroup"></g>
+    </svg>
+    <div class="map-msg" id="mapMsg">
+      <span>현재 보기:</span>
+      <span class="focus-label" id="mapFocus">전국</span>
+    </div>
+  </div>
+</section>
+  <aside class="detail-panel">
+    <div class="bang-mount" id="bangMount">
+      <div class="bang-rod"></div>
+      <div class="bang-rod-shadow"></div>
+      <div class="bang-scroll-wrap" id="bangScrollWrap">
+        <div class="bang empty" id="detailPanel">
+          <span class="bang-pin tl"></span>
+          <span class="bang-pin tr"></span>
+          <div class="bang-frame">
+            <div class="bang-empty-icon">榜</div>
+            <div class="bang-empty-title">大學 募集要綱</div>
+            <p class="bang-empty-text">지도에서 대학을 선택하시면, 이곳에 2027학년도 수시 전형 요약과 전년도 입결 자료가 게시됩니다.</p>
+            <div class="bang-empty-arrow"><span class="desktop-only">←</span> 좌측 지도의 마커를 클릭</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</section>
+
+<section class="stats">
+  <div class="stat">
+    <div class="stat-label">대학 수</div>
+    <div class="stat-value" id="stat-univ">11<span class="stat-unit">개교</span></div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">전형 수</div>
+    <div class="stat-value" id="stat-tracks">78<span class="stat-unit">개</span></div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">2027 모집인원 합계</div>
+    <div class="stat-value" id="stat-quota">—<span class="stat-unit">명</span></div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">평균 경쟁률 (전년)</div>
+    <div class="stat-value" id="stat-comp">—<span class="stat-unit">:1</span></div>
+  </div>
+</section>
+
+<section class="controls">
+  <div class="section-label">대학</div>
+  <div class="filter-group" id="uni-filters"></div>
+
+  <div class="section-label">전형유형</div>
+  <div class="filter-group" id="type-filters"></div>
+
+  <div class="search-row">
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" class="search-input" id="search" placeholder="전형명·비고·수능최저 등에서 검색…">
+    </div>
+    <button class="reset-btn" id="reset">초기화</button>
+  </div>
+</section>
+
+<div class="results-bar">
+  <div class="results-count"><strong id="count">0</strong>개 전형</div>
+  <div id="sort-info">정렬: 기본순</div>
+</div>
+
+<div class="table-wrap">
+  <table id="tbl">
+    <thead>
+      <tr>
+        <th data-key="지역">지역 <span class="sort">↕</span></th>
+        <th data-key="대학명">대학 <span class="sort">↕</span></th>
+        <th data-key="전형유형">유형 <span class="sort">↕</span></th>
+        <th data-key="전형명">전형명 <span class="sort">↕</span></th>
+        <th data-key="전형방법">전형방법 <span class="sort">↕</span></th>
+        <th data-key="2027모집인원" class="num">2027<br>모집 <span class="sort">↕</span></th>
+        <th data-key="전년도모집인원" class="num">전년<br>모집 <span class="sort">↕</span></th>
+        <th data-key="전년도 경쟁률" class="num">전년<br>경쟁률 <span class="sort">↕</span></th>
+        <th data-key="충원인원" class="num">충원 <span class="sort">↕</span></th>
+        <th data-key="평균등급" class="num">평균<br>등급 <span class="sort">↕</span></th>
+        <th data-key="50%컷" class="num">50%컷 <span class="sort">↕</span></th>
+        <th data-key="70%컷" class="num">70%컷 <span class="sort">↕</span></th>
+        <th data-key="80%컷" class="num">80%컷 <span class="sort">↕</span></th>
+        <th data-key="최저" class="num">최저 <span class="sort">↕</span></th>
+        <th data-key="교과반영방법">교과반영 <span class="sort">↕</span></th>
+        <th data-key="비고">비고 <span class="sort">↕</span></th>
+        <th data-key="수능최저학력기준">수능최저 <span class="sort">↕</span></th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<footer class="footer">
+  <div><span class="seal">大東輿地圖</span> · 2027학년도 수시모집 초등교육과 정보 총람</div>
+  <div>출처: 각 대학 모집요강 · 제작 운정고등학교 이재규</div>
+</footer>
+
+<script>
+const DATA = [{"지역": "서울", "대학명": "서울교대", "전형유형": "학생부종합", "전형명": "교직인성우수자전형", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(2배수)\n[2단계] 1단계50+면접50", "2027모집인원": 150, "전년도모집인원": 100, "전년도 경쟁률": 6.49, "충원인원": "-", "평균등급": 1.97, "50%컷": "", "70%컷": 2.07, "80%컷": 2.19, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "국수영탐(2) 중 2개 합 6이내, 한국사 4이내"}, {"지역": "서울", "대학명": "서울교대", "전형유형": "학생부종합", "전형명": "국가보훈대상자전형", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(2배수)\n[2단계] 1단계50+면접51", "2027모집인원": 5, "전년도모집인원": 5, "전년도 경쟁률": 4.8, "충원인원": "-", "평균등급": 2.62, "50%컷": "", "70%컷": 2.62, "80%컷": 2.62, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "국수영탐(2) 중 2개 합 8이내, 한국사 4이내"}, {"지역": "서울", "대학명": "서울교대", "전형유형": "학생부종합", "전형명": "농어촌학생전형", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(2배수)\n[2단계] 1단계50+면접52", "2027모집인원": 10, "전년도모집인원": 10, "전년도 경쟁률": 4.6, "충원인원": "-", "평균등급": 1.64, "50%컷": "", "70%컷": 1.76, "80%컷": 1.77, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "국수영탐(2) 중 2개 합 8이내, 한국사 4이내"}, {"지역": "서울", "대학명": "서울교대", "전형유형": "학생부종합", "전형명": "기초생활수급자등전형", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(2배수)\n[2단계] 1단계50+면접53", "2027모집인원": 19, "전년도모집인원": 19, "전년도 경쟁률": 4.16, "충원인원": "-", "평균등급": 2.61, "50%컷": "", "70%컷": 3.09, "80%컷": 3.09, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "국수영탐(2) 중 2개 합 8이내, 한국사 4이내"}, {"지역": "서울", "대학명": "서울교대", "전형유형": "학생부종합", "전형명": "장애인등대상자전형", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(2배수)\n[2단계] 1단계50+면접54", "2027모집인원": 11, "전년도모집인원": 11, "전년도 경쟁률": 2.27, "충원인원": "-", "평균등급": 3.06, "50%컷": "", "70%컷": 3.06, "80%컷": 3.06, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "국수영탐(2) 중 2개 합 8이내, 한국사 4이내"}, {"지역": "서울", "대학명": "서울교대", "전형유형": "학생부종합", "전형명": "재외국민특별전형", "학과명": "초등교육", "전형방법": "면접평가100(학생부서류P/F)", "2027모집인원": 7, "전년도모집인원": 7, "전년도 경쟁률": 1.57, "충원인원": 1, "평균등급": "-", "50%컷": "", "70%컷": "-", "80%컷": "-", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "서울", "대학명": "서울교대", "전형유형": "학생부종합", "전형명": "북한이탈학생전형", "학과명": "초등교육", "전형방법": "면접평가100", "2027모집인원": 3, "전년도모집인원": 3, "전년도 경쟁률": 0, "충원인원": "-", "평균등급": "-", "50%컷": "", "70%컷": "-", "80%컷": "-", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "국수영탐(2) 중 2개 합 8이내, 한국사 4이내"}, {"지역": "서울", "대학명": "서울교대", "전형유형": "학생부교과", "전형명": "학교장추천", "학과명": "초등교육", "전형방법": "[1단계] 학생부교과100(2배수)\n[2단계]교과80+면접20", "2027모집인원": 40, "전년도모집인원": 40, "전년도 경쟁률": 3.7, "충원인원": "-", "평균등급": 1.59, "50%컷": "", "70%컷": 1.64, "80%컷": 1.67, "최저": "", "충원률(%)": "", "교과반영방법": "전학년 공통100/교과100\n석차등급 또는 성취도 반영 전과목\n공통/일반70%, 진로선택10%", "비고": "", "수능최저학력기준": "국수영탐(2) 중 2개 합 6이내, 한국사 4이내"}, {"지역": "충북", "대학명": "청주교대", "전형유형": "학생부종합", "전형명": "배움나눔인재전형", "학과명": "초등교육", "전형방법": "서류평가100", "2027모집인원": 42, "전년도모집인원": 42, "전년도 경쟁률": 19.9, "충원인원": 93, "평균등급": 2.64, "50%컷": "", "70%컷": "", "80%컷": 2.91, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "충북", "대학명": "청주교대", "전형유형": "학생부종합", "전형명": "지역인재전형", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(2배수)\n[2단계]1단계60+면접40", "2027모집인원": 132, "전년도모집인원": 112, "전년도 경쟁률": 4.44, "충원인원": 79, "평균등급": 3.19, "50%컷": "", "70%컷": "", "80%컷": 3.62, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "충북", "대학명": "청주교대", "전형유형": "학생부종합", "전형명": "국가보훈대상자전형", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(3배수)\n[2단계]1단계60+면접40", "2027모집인원": 5, "전년도모집인원": 5, "전년도 경쟁률": 7, "충원인원": 5, "평균등급": 3.65, "50%컷": "", "70%컷": "", "80%컷": 3.7, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "충북", "대학명": "청주교대", "전형유형": "학생부종합", "전형명": "다문화가족자녀", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(3배수)\n[2단계]1단계60+면접41", "2027모집인원": 5, "전년도모집인원": 5, "전년도 경쟁률": 6, "충원인원": 7, "평균등급": 3.95, "50%컷": "", "70%컷": "", "80%컷": 4.03, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "충북", "대학명": "청주교대", "전형유형": "학생부종합", "전형명": "농어촌학생전형", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(3배수)\n[2단계]1단계60+면접42", "2027모집인원": 7, "전년도모집인원": 7, "전년도 경쟁률": 11, "충원인원": 12, "평균등급": 2.2, "50%컷": "", "70%컷": "", "80%컷": 2.49, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "충북", "대학명": "청주교대", "전형유형": "학생부종합", "전형명": "장애인학생전형", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(3배수)\n[2단계]1단계60+면접43", "2027모집인원": 10, "전년도모집인원": 10, "전년도 경쟁률": 2, "충원인원": 7, "평균등급": 5.89, "50%컷": "", "70%컷": "", "80%컷": 6.61, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "충북", "대학명": "청주교대", "전형유형": "학생부종합", "전형명": "기회균형선발제전형", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(3배수)\n[2단계]1단계60+면접44", "2027모집인원": 8, "전년도모집인원": 8, "전년도 경쟁률": 8.88, "충원인원": 15, "평균등급": 3.5, "50%컷": "", "70%컷": "", "80%컷": 3.79, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "광주", "대학명": "광주교대", "전형유형": "학생부교과", "전형명": "지역인재", "학과명": "초등교육", "전형방법": "학생부교과80+서류평가20", "2027모집인원": 50, "전년도모집인원": 45, "전년도 경쟁률": 3.6, "충원인원": 40, "평균등급": 2.43, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 3.04, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "광주", "대학명": "광주교대", "전형유형": "학생부종합", "전형명": "교직적성우수자", "학과명": "초등교육", "전형방법": "서류평가70+면접30", "2027모집인원": 53, "전년도모집인원": 30, "전년도 경쟁률": 13.87, "충원인원": 141, "평균등급": 3.09, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 3.96, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "광주", "대학명": "광주교대", "전형유형": "학생부종합", "전형명": "전남교육감추천인재", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(2.5배수)\n[2단계]1단계70+면접30", "2027모집인원": 60, "전년도모집인원": 60, "전년도 경쟁률": 2.87, "충원인원": 15, "평균등급": 3.09, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 3.93, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "광주", "대학명": "광주교대", "전형유형": "학생부종합", "전형명": "전남교육감다문화", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(2.5배수)\n[2단계]1단계70+면접30", "2027모집인원": 10, "전년도모집인원": 10, "전년도 경쟁률": 1.7, "충원인원": 4, "평균등급": 3.86, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 5.5, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "광주", "대학명": "광주교대", "전형유형": "학생부종합", "전형명": "지역인재", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(2.5배수)\n[2단계]1단계70+면접30", "2027모집인원": 50, "전년도모집인원": 50, "전년도 경쟁률": 3.86, "충원인원": 7, "평균등급": 3, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 3.98, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "광주", "대학명": "광주교대", "전형유형": "학생부종합", "전형명": "사회통합", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(4배수)\n[2단계]1단계70+면접30", "2027모집인원": 7, "전년도모집인원": 8, "전년도 경쟁률": 11.13, "충원인원": 2, "평균등급": 4.51, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 4.98, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "광주", "대학명": "광주교대", "전형유형": "학생부교과", "전형명": "다문화전형", "학과명": "초등교육", "전형방법": "학생부교과80+서류평가20", "2027모집인원": 5, "전년도모집인원": 3, "전년도 경쟁률": 7.76, "충원인원": 5, "평균등급": 3.62, "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "석차등급 및 성취도가 표시된 전과목", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "광주", "대학명": "광주교대", "전형유형": "학생부종합", "전형명": "장애인대상자전형", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(4배수)\n[2단계]1단계70+면접30", "2027모집인원": 10, "전년도모집인원": 10, "전년도 경쟁률": 1.1, "충원인원": "1명등록", "평균등급": "미공개", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "광주", "대학명": "광주교대", "전형유형": "학생부종합", "전형명": "농어촌학생전형", "학과명": "초등교육", "전형방법": "서류평가70+면접30", "2027모집인원": 7, "전년도모집인원": 10, "전년도 경쟁률": 9.9, "충원인원": 30, "평균등급": 3.66, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 4.16, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "광주", "대학명": "광주교대", "전형유형": "학생부종합", "전형명": "기초차상위한부모", "학과명": "초등교육", "전형방법": "서류평가70+면접30", "2027모집인원": 10, "전년도모집인원": 7, "전년도 경쟁률": 8, "충원인원": 21, "평균등급": 3.77, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 4.94, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "광주", "대학명": "광주교대", "전형유형": "학생부종합", "전형명": "만학도전형\n(전형신설)", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(4배수)\n[2단계]1단계70+면접30", "2027모집인원": 10, "전년도모집인원": "", "전년도 경쟁률": "", "충원인원": "", "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "강원", "대학명": "춘천교대", "전형유형": "학생부종합", "전형명": "교직적인성인재", "학과명": "초등교육", "전형방법": "서류평가100", "2027모집인원": 96, "전년도모집인원": 96, "전년도 경쟁률": 17.04, "충원인원": 130, "평균등급": 2.86, "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": 4.72, "교과반영방법": "정성평가", "비고": "학업역량38/공동체역량34/진로역량28", "수능최저학력기준": "국수영탐(1) 중 상위 3개 합 9이내, 한국사 4이내"}, {"지역": "강원", "대학명": "춘천교대", "전형유형": "학생부종합", "전형명": "강원교육인재", "학과명": "초등교육", "전형방법": "서류평가100", "2027모집인원": 60, "전년도모집인원": 60, "전년도 경쟁률": 4.22, "충원인원": 29, "평균등급": 2.71, "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": 3.85, "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "국수영탐(1) 중 상위 3개 합 10이내, 한국사 4이내"}, {"지역": "강원", "대학명": "춘천교대", "전형유형": "학생부종합", "전형명": "국가보훈대상자전형", "학과명": "초등교육", "전형방법": "서류평가100", "2027모집인원": 4, "전년도모집인원": 4, "전년도 경쟁률": 9.5, "충원인원": 7, "평균등급": 5.18, "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": 6.9, "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "국수영탐(1) 중 상위 3개 합 12이내, 한국사 4이내"}, {"지역": "강원", "대학명": "춘천교대", "전형유형": "학생부종합", "전형명": "다문화가정의 자녀", "학과명": "초등교육", "전형방법": "서류평가100", "2027모집인원": 2, "전년도모집인원": 2, "전년도 경쟁률": 10.5, "충원인원": 1, "평균등급": 3.05, "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": 3.38, "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "국수영탐(1) 중 상위 3개 합 12이내, 한국사 4이내"}, {"지역": "강원", "대학명": "춘천교대", "전형유형": "학생부종합", "전형명": "농어촌학생전형", "학과명": "초등교육", "전형방법": "서류평가100", "2027모집인원": 12, "전년도모집인원": 12, "전년도 경쟁률": 13.83, "충원인원": 19, "평균등급": 2.91, "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": 3.29, "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "국수영탐(1) 중 상위 3개 합 12이내, 한국사 4이내"}, {"지역": "강원", "대학명": "춘천교대", "전형유형": "학생부종합", "전형명": "기초/차상위", "학과명": "초등교육", "전형방법": "서류평가100", "2027모집인원": 5, "전년도모집인원": 5, "전년도 경쟁률": 12.6, "충원인원": 10, "평균등급": 3.57, "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": 3.99, "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "국수영탐(1) 중 상위 3개 합 12이내, 한국사 4이내"}, {"지역": "강원", "대학명": "춘천교대", "전형유형": "학생부종합", "전형명": "특수교육대상자", "학과명": "초등교육", "전형방법": "서류평가100", "2027모집인원": 5, "전년도모집인원": 5, "전년도 경쟁률": 2.6, "충원인원": 3, "평균등급": "미공개", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "미공개", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "국수영탐(1) 중 상위 3개 합 14이내, 한국사 4이내"}, {"지역": "충북", "대학명": "한국교원대", "전형유형": "학생부종합", "전형명": "학생부종합우수자", "학과명": "초등교육", "전형방법": "[1단계]서류평가100(3배수)\n[2단계]1단계80+면접20", "2027모집인원": 62, "전년도모집인원": 63, "전년도 경쟁률": 6.3, "충원인원": 57, "평균등급": 1.89, "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": 2.26, "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "충남", "대학명": "공주교대", "전형유형": "학생부종합", "전형명": "교직적성인재", "학과명": "초등교육", "전형방법": "서류평가100", "2027모집인원": 25, "전년도모집인원": 53, "전년도 경쟁률": 14.72, "충원인원": 157, "평균등급": 907.04, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 897.86, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "환산점수(1000점 만점)", "수능최저학력기준": "미반영"}, {"지역": "충남", "대학명": "공주교대", "전형유형": "학생부종합", "전형명": "지역인재선발", "학과명": "초등교육", "전형방법": "서류평가100", "2027모집인원": 123, "전년도모집인원": 123, "전년도 경쟁률": 3.5, "충원인원": 78, "평균등급": 901.33, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 868.28, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "환산점수(1000점 만점)", "수능최저학력기준": "미반영"}, {"지역": "충남", "대학명": "공주교대", "전형유형": "학생부종합", "전형명": "국가보훈대상자", "학과명": "초등교육", "전형방법": "서류평가100", "2027모집인원": 5, "전년도모집인원": 5, "전년도 경쟁률": 5.4, "충원인원": 9, "평균등급": 858.79, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 838.87, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "환산점수(1000점 만점)", "수능최저학력기준": "미반영"}, {"지역": "충남", "대학명": "공주교대", "전형유형": "학생부종합", "전형명": "농어촌학생", "학과명": "초등교육", "전형방법": "서류평가100", "2027모집인원": 14, "전년도모집인원": 14, "전년도 경쟁률": 6.14, "충원인원": 28, "평균등급": 878.14, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 867.14, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "환산점수(1000점 만점)", "수능최저학력기준": "미반영"}, {"지역": "충남", "대학명": "공주교대", "전형유형": "학생부종합", "전형명": "기회균형선발", "학과명": "초등교육", "전형방법": "서류평가100", "2027모집인원": 5, "전년도모집인원": 5, "전년도 경쟁률": 9.8, "충원인원": 10, "평균등급": 925.58, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 920.14, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "환산점수(1000점 만점)", "수능최저학력기준": "미반영"}, {"지역": "충남", "대학명": "공주교대", "전형유형": "학생부종합", "전형명": "장애인등 대상자", "학과명": "초등교육", "전형방법": "서류평가100", "2027모집인원": 5, "전년도모집인원": 10, "전년도 경쟁률": 2.3, "충원인원": 10, "평균등급": 827.13, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 801.47, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "환산점수(1000점 만점)", "수능최저학력기준": "미반영"}, {"지역": "부산", "대학명": "부산교대", "전형유형": "학생부종합", "전형명": "초등교직적성자전형", "학과명": "초등교육", "전형방법": "[1단계] 학생부(교과·비교과)100(3배수)\n[2단계] 1단계60+면접40", "2027모집인원": 65, "전년도모집인원": 65, "전년도 경쟁률": 8.52, "충원인원": 87, "평균등급": 2.83, "50%컷": "", "70%컷": 2.97, "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "부산", "대학명": "부산교대", "전형유형": "학생부종합", "전형명": "지역인재전형", "학과명": "초등교육", "전형방법": "[1단계] 학생부(교과·비교과)100(3배수)\n[2단계] 1단계60+면접40", "2027모집인원": 125, "전년도모집인원": 125, "전년도 경쟁률": 5.06, "충원인원": 48, "평균등급": 2.63, "50%컷": "", "70%컷": 2.82, "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "부산", "대학명": "부산교대", "전형유형": "학생부종합", "전형명": "국가보훈대상자전형", "학과명": "초등교육", "전형방법": "[1단계] 학생부(교과·비교과)100(3배수)\n[2단계] 1단계60+면접40", "2027모집인원": 3, "전년도모집인원": 3, "전년도 경쟁률": 6, "충원인원": 2, "평균등급": "미공개", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "최종등록 3명 이하로 성적 미공개", "수능최저학력기준": "미반영"}, {"지역": "부산", "대학명": "부산교대", "전형유형": "학생부종합", "전형명": "농어촌학생전형", "학과명": "초등교육", "전형방법": "[1단계] 학생부(교과·비교과)100(3배수)\n[2단계] 1단계60+면접40", "2027모집인원": 12, "전년도모집인원": 12, "전년도 경쟁률": 5, "충원인원": 11, "평균등급": 2.84, "50%컷": "", "70%컷": 2.84, "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "부산", "대학명": "부산교대", "전형유형": "학생부종합", "전형명": "장애인등대상자전형", "학과명": "초등교육", "전형방법": "[1단계] 학생부(교과·비교과)100(3배수)\n[2단계] 1단계60+면접40", "2027모집인원": 12, "전년도모집인원": 12, "전년도 경쟁률": 1.75, "충원인원": 1, "평균등급": 5.36, "50%컷": "", "70%컷": 4.91, "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "부산", "대학명": "부산교대", "전형유형": "학생부종합", "전형명": "저소득층학생전형", "학과명": "초등교육", "전형방법": "[1단계] 학생부(교과·비교과)100(3배수)\n[2단계] 1단계60+면접40", "2027모집인원": 5, "전년도모집인원": 5, "전년도 경쟁률": 7.8, "충원인원": 4, "평균등급": 3.69, "50%컷": "", "70%컷": 3.54, "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "경남", "대학명": "진주교대", "전형유형": "학생부종합", "전형명": "21세기형 교직 적성자", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2.5배수)\n[2단계] 서류평가70+심층면접30", "2027모집인원": 50, "전년도모집인원": 50, "전년도 경쟁률": 19.62, "충원인원": 61, "평균등급": 2.77, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 4.04, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "경남", "대학명": "진주교대", "전형유형": "학생부종합", "전형명": "지역인재", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2.5배수)\n[2단계] 서류평가70+심층면접30", "2027모집인원": 123, "전년도모집인원": 123, "전년도 경쟁률": 5.99, "충원인원": 57, "평균등급": 2.9, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 3.91, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "경남", "대학명": "진주교대", "전형유형": "학생부종합", "전형명": "국가보훈대상자", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2.5배수)\n[2단계] 서류평가70+심층면접30", "2027모집인원": 3, "전년도모집인원": 3, "전년도 경쟁률": 6.33, "충원인원": 4, "평균등급": 4.16, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 4.79, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "합격자 기준(등록 3명 이하)", "수능최저학력기준": "미반영"}, {"지역": "경남", "대학명": "진주교대", "전형유형": "학생부종합", "전형명": "다문화·탈북학생", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2.5배수)\n[2단계] 서류평가70+심층면접30", "2027모집인원": 3, "전년도모집인원": 3, "전년도 경쟁률": 7, "충원인원": 5, "평균등급": 3.43, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 3.93, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "합격자 기준(등록 3명 이하)", "수능최저학력기준": "미반영"}, {"지역": "경남", "대학명": "진주교대", "전형유형": "학생부종합", "전형명": "농어촌학생", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2.5배수)\n[2단계] 서류평가70+심층면접30", "2027모집인원": 12, "전년도모집인원": 12, "전년도 경쟁률": 7.42, "충원인원": 13, "평균등급": 3.42, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 4.4, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "경남", "대학명": "진주교대", "전형유형": "학생부종합", "전형명": "기회균형", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2.5배수)\n[2단계] 서류평가70+심층면접30", "2027모집인원": 5, "전년도모집인원": 5, "전년도 경쟁률": 11.6, "충원인원": 7, "평균등급": 3.03, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 3.88, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "합격자 기준(등록 3명 이하)", "수능최저학력기준": "미반영"}, {"지역": "경남", "대학명": "진주교대", "전형유형": "학생부종합", "전형명": "장애인 등 대상자", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2.5배수)\n[2단계] 서류평가70+심층면접30", "2027모집인원": 12, "전년도모집인원": 12, "전년도 경쟁률": 0.92, "충원인원": 0, "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "성적 미공개(등록 3명 이하)", "수능최저학력기준": "미반영"}, {"지역": "경남", "대학명": "진주교대", "전형유형": "학생부종합", "전형명": "만학도(전형신설)", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2.5배수)\n[2단계] 서류평가70+심층면접30", "2027모집인원": 20, "전년도모집인원": "", "전년도 경쟁률": "", "충원인원": "", "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "2027 신설", "수능최저학력기준": "미반영"}, {"지역": "대구", "대학명": "대구교대", "전형유형": "학생부종합", "전형명": "참스승전형", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(5배수)\n[2단계] 1단계70+면접30", "2027모집인원": 50, "전년도모집인원": 50, "전년도 경쟁률": 18.9, "충원인원": "남54/여118", "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "등급 비공개", "수능최저학력기준": "미반영"}, {"지역": "대구", "대학명": "대구교대", "전형유형": "학생부종합", "전형명": "대구지역인재 특별전형", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2배수)\n[2단계] 1단계70+면접30", "2027모집인원": 90, "전년도모집인원": 100, "전년도 경쟁률": 3.47, "충원인원": "남6/여12", "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "등급 비공개, 2027 모집 10명 감소", "수능최저학력기준": "미반영"}, {"지역": "대구", "대학명": "대구교대", "전형유형": "학생부종합", "전형명": "경북지역인재 특별전형", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2배수)\n[2단계] 1단계70+면접30", "2027모집인원": 127, "전년도모집인원": 120, "전년도 경쟁률": 2.69, "충원인원": "남8/여33", "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "등급 비공개, 2027 모집 7명 증가", "수능최저학력기준": "미반영"}, {"지역": "대구", "대학명": "대구교대", "전형유형": "학생부종합", "전형명": "다문화가족 특별전형", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2배수)\n[2단계] 1단계70+면접30", "2027모집인원": 3, "전년도모집인원": "", "전년도 경쟁률": "", "충원인원": "", "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "등급 비공개, 2027 신설", "수능최저학력기준": "미반영"}, {"지역": "대구", "대학명": "대구교대", "전형유형": "학생부종합", "전형명": "국가보훈대상자 특별전형", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2배수)\n[2단계] 1단계70+면접30", "2027모집인원": 6, "전년도모집인원": 6, "전년도 경쟁률": 5.5, "충원인원": 5, "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "등급 비공개", "수능최저학력기준": "미반영"}, {"지역": "대구", "대학명": "대구교대", "전형유형": "학생부종합", "전형명": "사회배려자 특별전형", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2배수)\n[2단계] 1단계70+면접30", "2027모집인원": 6, "전년도모집인원": 6, "전년도 경쟁률": 9.67, "충원인원": "면접참가자 전원합격", "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "등급 비공개, 등록 1명", "수능최저학력기준": "미반영"}, {"지역": "대구", "대학명": "대구교대", "전형유형": "학생부종합", "전형명": "농어촌학생 특별전형", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(3배수)\n[2단계] 1단계70+면접30", "2027모집인원": 15, "전년도모집인원": 15, "전년도 경쟁률": 5.2, "충원인원": 28, "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "등급 비공개", "수능최저학력기준": "미반영"}, {"지역": "대구", "대학명": "대구교대", "전형유형": "학생부종합", "전형명": "장애인 등 대상자 특별전형", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2배수)\n[2단계] 1단계70+면접30", "2027모집인원": 10, "전년도모집인원": 10, "전년도 경쟁률": 2.2, "충원인원": "면접참가자 전원합격", "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "등급 비공개, 등록 6명", "수능최저학력기준": "미반영"}, {"지역": "대구", "대학명": "대구교대", "전형유형": "학생부종합", "전형명": "서해 5도 특별전형", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2배수)\n[2단계] 1단계70+면접30", "2027모집인원": 3, "전년도모집인원": 3, "전년도 경쟁률": 1.33, "충원인원": "면접참가자 전원합격", "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "등급 비공개, 등록 0명", "수능최저학력기준": "미반영"}, {"지역": "대구", "대학명": "대구교대", "전형유형": "학생부종합", "전형명": "만학도 특별전형", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2배수)\n[2단계] 1단계70+면접30", "2027모집인원": 15, "전년도모집인원": "", "전년도 경쟁률": "", "충원인원": "", "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "등급 비공개, 2027 수시 신설(정시→수시 이동)", "수능최저학력기준": "미반영"}, {"지역": "인천", "대학명": "경인교대", "전형유형": "학생부종합", "전형명": "교직적성전형", "학과명": "초등교육", "전형방법": "일괄합산: 서류평가70+면접평가30(P/F)", "2027모집인원": 226, "전년도모집인원": 225, "전년도 경쟁률": 6.67, "충원인원": 194, "평균등급": 2.62, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 4.79, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "인천", "대학명": "경인교대", "전형유형": "학생부교과", "전형명": "학교장추천전형", "학과명": "초등교육", "전형방법": "일괄합산: 학생부교과70+면접평가30", "2027모집인원": 110, "전년도모집인원": 110, "전년도 경쟁률": 10.69, "충원인원": 135, "평균등급": 2.07, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 2.52, "충원률(%)": "", "교과반영방법": "석차등급/성취도 전과목\n학년·교과별 가중치 없음\n5(졸업예정)/6학기(졸업)", "비고": "", "수능최저학력기준": "국수영탐(1) 4영역 합 14등급 이내, 한국사 응시 필수"}, {"지역": "인천", "대학명": "경인교대", "전형유형": "학생부종합", "전형명": "국가보훈대상자전형", "학과명": "초등교육", "전형방법": "일괄합산: 서류평가70+면접평가30(P/F)", "2027모집인원": 4, "전년도모집인원": 4, "전년도 경쟁률": 7.5, "충원인원": 4, "평균등급": 2.76, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 3.38, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "인천", "대학명": "경인교대", "전형유형": "학생부종합", "전형명": "저소득층학생전형", "학과명": "초등교육", "전형방법": "일괄합산: 서류평가70+면접평가30(P/F)", "2027모집인원": 18, "전년도모집인원": 18, "전년도 경쟁률": 6.17, "충원인원": 19, "평균등급": 3.33, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 4.39, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "인천", "대학명": "경인교대", "전형유형": "학생부종합", "전형명": "농어촌학생전형", "학과명": "초등교육", "전형방법": "일괄합산: 서류평가70+면접평가30(P/F)", "2027모집인원": 21, "전년도모집인원": 21, "전년도 경쟁률": 3.76, "충원인원": 20, "평균등급": 2.62, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 3.39, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "인천", "대학명": "경인교대", "전형유형": "학생부종합", "전형명": "장애인학생전형", "학과명": "초등교육", "전형방법": "일괄합산: 서류평가70+면접평가30(P/F)", "2027모집인원": 20, "전년도모집인원": 20, "전년도 경쟁률": 3.05, "충원인원": 18, "평균등급": 4.74, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 8.28, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "인천", "대학명": "경인교대", "전형유형": "학생부종합", "전형명": "서해5도학생전형", "학과명": "초등교육", "전형방법": "일괄합산: 서류평가70+면접평가30(P/F)", "2027모집인원": 3, "전년도모집인원": 3, "전년도 경쟁률": 1.67, "충원인원": 1, "평균등급": 3.13, "50%컷": "", "70%컷": "", "80%컷": "", "최저": 3.96, "충원률(%)": "", "교과반영방법": "정성평가", "비고": "", "수능최저학력기준": "미반영"}, {"지역": "전북", "대학명": "전주교대", "전형유형": "학생부종합", "전형명": "교직적성우수자", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(3배수)\n[2단계] 1단계70+면접30", "2027모집인원": 48, "전년도모집인원": 48, "전년도 경쟁률": 13.71, "충원인원": 38, "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": 3.21, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "80%컷(최종입학자 기준)", "수능최저학력기준": "미반영"}, {"지역": "전북", "대학명": "전주교대", "전형유형": "학생부종합", "전형명": "지역인재선발", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(3배수)\n[2단계] 1단계70+면접30", "2027모집인원": 114, "전년도모집인원": 114, "전년도 경쟁률": 3.75, "충원인원": 21, "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": 3.46, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "80%컷(최종입학자 기준)", "수능최저학력기준": "미반영"}, {"지역": "전북", "대학명": "전주교대", "전형유형": "학생부종합", "전형명": "국가보훈대상자", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2배수)\n[2단계] 1단계70+면접30", "2027모집인원": 5, "전년도모집인원": 5, "전년도 경쟁률": 4.4, "충원인원": 1, "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": 4.62, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "80%컷(최종입학자 기준)", "수능최저학력기준": "미반영"}, {"지역": "전북", "대학명": "전주교대", "전형유형": "학생부종합", "전형명": "다문화가정자녀", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2배수)\n[2단계] 1단계70+면접30", "2027모집인원": 5, "전년도모집인원": 5, "전년도 경쟁률": 4, "충원인원": 2, "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": 3.89, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "80%컷(최종입학자 기준)", "수능최저학력기준": "미반영"}, {"지역": "전북", "대학명": "전주교대", "전형유형": "학생부종합", "전형명": "농어촌학생", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2배수)\n[2단계] 1단계70+면접30", "2027모집인원": 11, "전년도모집인원": 11, "전년도 경쟁률": 4.64, "충원인원": 4, "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": 3.74, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "80%컷(최종입학자 기준)", "수능최저학력기준": "미반영"}, {"지역": "전북", "대학명": "전주교대", "전형유형": "학생부종합", "전형명": "기회균형선발", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2배수)\n[2단계] 1단계70+면접30", "2027모집인원": 4, "전년도모집인원": 4, "전년도 경쟁률": 8.75, "충원인원": 3, "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": 3.6, "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "80%컷(최종입학자 기준)", "수능최저학력기준": "미반영"}, {"지역": "전북", "대학명": "전주교대", "전형유형": "학생부종합", "전형명": "장애인등 대상자", "학과명": "초등교육", "전형방법": "[1단계] 서류평가100(2배수)\n[2단계] 1단계70+면접30", "2027모집인원": 8, "전년도모집인원": 8, "전년도 경쟁률": 1.25, "충원인원": 0, "평균등급": "", "50%컷": "", "70%컷": "", "80%컷": "", "최저": "", "충원률(%)": "", "교과반영방법": "정성평가", "비고": "80%컷 비공개(최종입학 1명)", "수능최저학력기준": "미반영"}];
+
+// ========== MAP ==========
+// Coordinates calibrated to the 大東輿地圖 (1861) image at viewBox 494x524.
+// labelPos: 'top' (default), 'bottom', 'left', 'right'
+const UNI_MAP = [
+  {name:'서울교대',   region:'서울', x:228, y:72,  labelPos:'right'},
+  {name:'경인교대',   region:'인천', x:180, y:90,  labelPos:'left'},
+  {name:'춘천교대',   region:'강원', x:280, y:60,  labelPos:'top'},
+  {name:'한국교원대', region:'충북', x:248, y:178, labelPos:'right'},
+  {name:'청주교대',   region:'충북', x:260, y:158, labelPos:'right'},
+  {name:'공주교대',   region:'충남', x:202, y:184, labelPos:'left'},
+  {name:'전주교대',   region:'전북', x:198, y:266, labelPos:'left'},
+  {name:'광주교대',   region:'광주', x:188, y:326, labelPos:'left'},
+  {name:'대구교대',   region:'대구', x:320, y:240, labelPos:'right'},
+  {name:'진주교대',   region:'경남', x:270, y:336, labelPos:'bottom'},
+  {name:'부산교대',   region:'부산', x:358, y:342, labelPos:'right'},
+];
+
+const VIEWBOX_FULL = [0, 0, 494, 524];
+let currentVB = [...VIEWBOX_FULL];
+let animFrame = null;
+
+// Extra metadata per university (full Hangul name, theme color for photo placeholder)
+const UNI_INFO = {
+  '서울교대':   {fullName:'서울교육대학교',   est:1946, bg1:'#3d4a6b', bg2:'#5a6e8f', char:'서울', photoUrl:''},
+  '경인교대':   {fullName:'경인교육대학교',   est:1946, bg1:'#2f5249', bg2:'#4a766b', char:'경인', photoUrl:''},
+  '춘천교대':   {fullName:'춘천교육대학교',   est:1939, bg1:'#3a5b7d', bg2:'#5d7fa5', char:'춘천', photoUrl:''},
+  '한국교원대': {fullName:'한국교원대학교',   est:1984, bg1:'#5b2e2e', bg2:'#7a4444', char:'교원', photoUrl:''},
+  '청주교대':   {fullName:'청주교육대학교',   est:1941, bg1:'#4a4628', bg2:'#6a6240', char:'청주', photoUrl:''},
+  '공주교대':   {fullName:'공주교육대학교',   est:1948, bg1:'#5e3a2a', bg2:'#7e5642', char:'공주', photoUrl:''},
+  '전주교대':   {fullName:'전주교육대학교',   est:1923, bg1:'#3d5236', bg2:'#5a7050', char:'전주', photoUrl:''},
+  '광주교대':   {fullName:'광주교육대학교',   est:1938, bg1:'#4a3052', bg2:'#664a72', char:'광주', photoUrl:''},
+  '대구교대':   {fullName:'대구교육대학교',   est:1950, bg1:'#5c2e26', bg2:'#7e4a3e', char:'대구', photoUrl:''},
+  '진주교대':   {fullName:'진주교육대학교',   est:1923, bg1:'#2e4a5c', bg2:'#4a6a7e', char:'진주', photoUrl:''},
+  '부산교대':   {fullName:'부산교육대학교',   est:1946, bg1:'#1f4a5e', bg2:'#356a82', char:'부산', photoUrl:''},
+};
+
+// Map region → 道 (traditional province name)
+const REGION_TO_DO = {
+  '서울':'漢城', '인천':'仁川', '경기':'京畿', '강원':'江原',
+  '충북':'忠淸北道', '충남':'忠淸南道', '대전':'忠淸',
+  '전북':'全羅北道', '전남':'全羅南道', '광주':'光州',
+  '경북':'慶尙北道', '경남':'慶尙南道', '대구':'大邱', '부산':'釜山', '울산':'蔚山', '제주':'濟州'
+};
+
+function buildMarkers(){
+  const g = document.getElementById('markersGroup');
+  g.innerHTML = UNI_MAP.map(u => {
+    let lx = 0, ly = -11, anchor = 'middle';
+    if(u.labelPos === 'bottom'){ ly = 16; }
+    else if(u.labelPos === 'left'){ lx = -9; ly = 3; anchor = 'end'; }
+    else if(u.labelPos === 'right'){ lx = 9; ly = 3; anchor = 'start'; }
+    return `
+    <g class="marker" data-region="${u.region}" data-uni="${u.name}" transform="translate(${u.x},${u.y})">
+      <circle class="marker-pulse" r="5"/>
+      <circle class="marker-dot" r="5"/>
+      <circle class="marker-inner" r="2"/>
+      <text class="marker-label" x="${lx}" y="${ly}" text-anchor="${anchor}">${u.name}</text>
+      <circle class="marker-hit" r="14"/>
+    </g>
+  `;}).join('');
+  g.querySelectorAll('.marker').forEach(el => {
+    el.addEventListener('click', () => {
+      const uni = el.dataset.uni;
+      focusUni(uni);
+    });
+  });
+}
+
+// Marker click → focus on a single university (replace any current uni filter)
+function focusUni(uni){
+  if(state.selectedUni === uni){
+    // Clicking the already-selected marker again: deselect
+    state.unis.clear();
+    state.selectedUni = null;
+  } else {
+    state.unis.clear();
+    state.unis.add(uni);
+    state.selectedUni = uni;
+  }
+  render();
+}
+
+// Chip click on a uni: multi-select toggle (additive)
+function toggleUni(uni){
+  if(state.unis.has(uni)){
+    state.unis.delete(uni);
+    if(state.selectedUni === uni){
+      state.selectedUni = state.unis.size ? [...state.unis][state.unis.size-1] : null;
+    }
+  } else {
+    state.unis.add(uni);
+    state.selectedUni = uni;
+  }
+  render();
+}
+
+function escapeHtml(s){
+  if(s === null || s === undefined) return '';
+  return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
+let _lastDetailKey = '__init__';
+let _unrollTimer = null;
+
+const UNFURL_MS = 1100;
+let _unrollAnim = null;
+
+function unfurl(){
+  const mount = document.getElementById('bangMount');
+  const wrap = document.getElementById('bangScrollWrap');
+  const bang = document.getElementById('detailPanel');
+  if(!mount || !wrap || !bang) return;
+  if(_unrollTimer){ clearTimeout(_unrollTimer); _unrollTimer = null; }
+  if(_unrollAnim){ cancelAnimationFrame(_unrollAnim); _unrollAnim = null; }
+
+  // Snap closed and prep state
+  wrap.style.transition = 'none';
+  wrap.style.overflow = 'hidden';
+  wrap.style.maxHeight = '0px';
+  mount.classList.remove('open');
+  mount.classList.add('unrolling');
+  // Force reflow so the snap commits
+  void wrap.offsetHeight;
+
+  // Measure target height (bang's natural scroll height)
+  const target = bang.scrollHeight + 4;
+  const startTime = performance.now();
+  function step(now){
+    const elapsed = now - startTime;
+    const t = Math.min(1, elapsed / UNFURL_MS);
+    // ease-out cubic for natural unroll deceleration
+    const eased = 1 - Math.pow(1 - t, 3);
+    wrap.style.maxHeight = (target * eased) + 'px';
+    if(t < 1){
+      _unrollAnim = requestAnimationFrame(step);
+    } else {
+      _unrollAnim = null;
+      mount.classList.add('open');
+      mount.classList.remove('unrolling');
+      // Release height/overflow constraints so shadows render & layout flows naturally
+      wrap.style.maxHeight = 'none';
+      wrap.style.overflow = 'visible';
+    }
+  }
+  _unrollAnim = requestAnimationFrame(step);
+}
+
+function renderDetail(){
+  const panel = document.getElementById('detailPanel');
+  const uni = state.selectedUni;
+  const detailKey = uni || '__empty__';
+  const shouldAnimate = detailKey !== _lastDetailKey;
+  _lastDetailKey = detailKey;
+
+  if(!uni){
+    panel.className = 'bang empty';
+    panel.innerHTML = `
+      <span class="bang-pin tl"></span>
+      <span class="bang-pin tr"></span>
+      <div class="bang-frame">
+        <div class="bang-empty-icon">榜</div>
+        <div class="bang-empty-title">大學 募集要綱</div>
+        <p class="bang-empty-text">지도에서 대학을 선택하시면, 이곳에 2027학년도 수시 전형 요약과 전년도 입결 자료가 게시됩니다.</p>
+        <div class="bang-empty-arrow"><span class="desktop-only">←</span> 좌측 지도의 마커를 클릭</div>
+      </div>`;
+    if(shouldAnimate) unfurl();
+    return;
+  }
+
+  const info = UNI_INFO[uni] || {};
+  const rows = DATA.filter(d => d['대학명'] === uni);
+  if(rows.length === 0){
+    panel.innerHTML = `<div class="bang-frame">데이터가 없습니다.</div>`;
+    return;
+  }
+  const region = rows[0]['지역'];
+  const doName = REGION_TO_DO[region] || region;
+
+  // Aggregate 2027 summary
+  let total27 = 0;
+  rows.forEach(r => { const n = parseNum(r['2027모집인원']); if(n) total27 += n; });
+  const trackCount = rows.length;
+  const typeSet = new Set(rows.map(r => r['전형유형']));
+  const csatRows = rows.filter(r => {
+    const c = r['수능최저학력기준'];
+    return c && c !== '미반영' && c !== '미적용';
+  });
+  const csatApplied = csatRows.length;
+  const newRows = rows.filter(r => (r['전형명']||'').includes('신설') || (r['비고']||'').includes('신설'));
+  const noCsatCount = trackCount - csatApplied;
+
+  // Build summary bullets
+  const bullets = [];
+  bullets.push(`총 모집인원 <strong>${total27.toLocaleString()}명</strong>을 <strong>${trackCount}개 전형</strong>으로 모집한다.`);
+  bullets.push(`전형 유형은 <strong>${[...typeSet].join('·')}</strong> ${typeSet.size}종으로 구성한다.`);
+  if(csatApplied > 0 && noCsatCount > 0){
+    bullets.push(`수능최저학력기준을 ${csatApplied}개 전형에 적용하고, ${noCsatCount}개 전형은 미반영한다.`);
+  } else if(csatApplied > 0){
+    bullets.push(`<strong>모든 전형</strong>에 수능최저학력기준을 적용한다.`);
+  } else {
+    bullets.push(`<strong>수능최저학력기준을 두지 아니한다</strong>.`);
+  }
+  if(newRows.length > 0){
+    bullets.push(`<strong>${newRows.length}개 전형이 새로 신설</strong>되니 응시 시 유의하라. (${newRows.map(r => r['전형명'].replace(/\n.*/,'')).join(', ')})`);
+  }
+
+  // Build the row table (전년도 입결)
+  const tbody = rows.map(r => {
+    const trackName = (r['전형명']||'').replace(/\n/g,'<br>');
+    const isNew = (r['전형명']||'').includes('신설') || (r['비고']||'').includes('신설');
+    const grade = r['평균등급'];
+    const gradeDisplay = (grade === '' || grade === null || grade === '-' || grade === '미공개')
+      ? '<span style="color:#999">—</span>'
+      : String(grade);
+    const cut = [r['50%컷'], r['70%컷'], r['80%컷'], r['최저']].filter(v => v !== '' && v !== null && v !== undefined);
+    const cutDisplay = cut.length ? cut.join(' / ') : '<span style="color:#999">—</span>';
+    const comp = r['전년도 경쟁률'];
+    const compDisplay = (comp === '' || comp === null || comp === undefined || comp === 0)
+      ? '<span style="color:#999">—</span>'
+      : `${comp} : 1`;
+    return `<tr>
+      <td class="name">${trackName}${isNew?' <span class="type" style="background:rgba(168,52,31,0.2);color:var(--accent-deep)">신설</span>':''}</td>
+      <td><span class="type">${escapeHtml(r['전형유형'])}</span></td>
+      <td class="num">${r['2027모집인원']||'—'}</td>
+      <td class="num">${r['전년도모집인원']||'—'}</td>
+      <td class="num">${compDisplay}</td>
+      <td class="num">${gradeDisplay}</td>
+      <td class="num">${cutDisplay}</td>
+      <td class="num">${r['충원인원']||'—'}</td>
+    </tr>`;
+  }).join('');
+
+  // Photo: real photoUrl or stylized fallback
+  const photoHtml = info.photoUrl
+    ? `<div class="bang-photo-inner"><img src="${escapeHtml(info.photoUrl)}" alt="${escapeHtml(uni)}" onerror="this.style.display='none';this.parentNode.innerHTML+='<div class=&quot;bang-photo-fallback&quot; style=&quot;--bg1:${info.bg1};--bg2:${info.bg2}&quot;><div class=&quot;bang-photo-fallback-char&quot;>${escapeHtml(info.char||uni.slice(0,2))}</div></div>'"/></div>`
+    : `<div class="bang-photo-inner"><div class="bang-photo-fallback" style="--bg1:${info.bg1||'#5a4732'};--bg2:${info.bg2||'#7a644a'}"><div class="bang-photo-fallback-char">${escapeHtml(info.char || uni.slice(0,2))}</div></div></div>`;
+
+  panel.className = 'bang';
+  panel.innerHTML = `
+    <span class="bang-pin tl"></span>
+    <span class="bang-pin tr"></span>
+    <button class="bang-close" id="bangClose" aria-label="닫기">×</button>
+    <div class="bang-frame">
+      <div class="bang-header">
+        <div class="bang-eyebrow">二〇二七年 募集要綱</div>
+        <h2 class="bang-title">${escapeHtml(uni)}</h2>
+        <div class="bang-subtitle">${escapeHtml(info.fullName || '')}</div>
+      </div>
+
+      <div class="bang-photo">
+        ${photoHtml}
+        <div class="bang-photo-caption">校 庭 全 景</div>
+      </div>
+
+      <div class="bang-section">
+        <div class="bang-section-title">告 示 <span class="hanja">전형 요약</span></div>
+        <div class="bang-stats">
+          <div class="bang-stat">
+            <div class="bang-stat-label">총 모집</div>
+            <div class="bang-stat-value">${total27}<span class="unit">명</span></div>
+          </div>
+          <div class="bang-stat">
+            <div class="bang-stat-label">전형 수</div>
+            <div class="bang-stat-value">${trackCount}<span class="unit">개</span></div>
+          </div>
+          <div class="bang-stat">
+            <div class="bang-stat-label">수능최저</div>
+            <div class="bang-stat-value" style="font-size:16px">${csatApplied===0?'없음':(noCsatCount===0?'전면':csatApplied+'/'+trackCount)}</div>
+          </div>
+        </div>
+        <ul class="bang-bullets">
+          ${bullets.map(b => `<li>${b}</li>`).join('')}
+        </ul>
+      </div>
+
+      <div class="bang-section">
+        <div class="bang-section-title">入 結 <span class="hanja">전년도 입학 결과</span></div>
+        <div class="bang-table-wrap">
+          <table class="bang-table">
+            <thead>
+              <tr>
+                <th>전형명</th>
+                <th>유형</th>
+                <th class="num">'27<br>모집</th>
+                <th class="num">전년<br>모집</th>
+                <th class="num">경쟁률</th>
+                <th class="num">평균<br>등급</th>
+                <th class="num">컷 (50/70/80/최저)</th>
+                <th class="num">충원</th>
+              </tr>
+            </thead>
+            <tbody>${tbody}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="bang-footer">
+      <div class="bang-date">운정고등학교 · 이재규 編</div>
+      <div class="bang-seal">大<br>學<br>榜</div>
+    </div>
+  `;
+
+  const closeBtn = document.getElementById('bangClose');
+  if(closeBtn) closeBtn.onclick = () => {
+    if(state.selectedUni && state.unis.has(state.selectedUni)){
+      state.unis.delete(state.selectedUni);
+    }
+    state.selectedUni = null;
+    render();
+  };
+
+  if(shouldAnimate) unfurl();
+}
+
+function easeInOutCubic(t){
+  return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+}
+
+function animateViewBox(target, duration){
+  duration = duration || 1100;
+  if(animFrame) cancelAnimationFrame(animFrame);
+  const svg = document.getElementById('koreaMap');
+  const start = [...currentVB];
+  const t0 = performance.now();
+  function step(now){
+    const t = Math.min(1, (now - t0) / duration);
+    const e = easeInOutCubic(t);
+    const vb = start.map((s,i) => s + (target[i] - s) * e);
+    svg.setAttribute('viewBox', vb.map(v => v.toFixed(2)).join(' '));
+    currentVB = vb;
+    if(t < 1) animFrame = requestAnimationFrame(step);
+    else animFrame = null;
+  }
+  animFrame = requestAnimationFrame(step);
+}
+
+function updateMap(){
+  const hasRegion = state.regions.size > 0;
+  const hasUni = state.unis.size > 0;
+  const hasFilter = hasRegion || hasUni;
+
+  // Update marker styles
+  const markers = document.querySelectorAll('#markersGroup .marker');
+  const visible = [];
+  markers.forEach(m => {
+    const r = m.dataset.region;
+    const u = m.dataset.uni;
+    const matchR = !hasRegion || state.regions.has(r);
+    const matchU = !hasUni || state.unis.has(u);
+    const isActive = matchR && matchU;
+    m.classList.toggle('active', hasFilter && isActive);
+    m.classList.toggle('dimmed', hasFilter && !isActive);
+    if(isActive) visible.push(UNI_MAP.find(x => x.name === u));
+  });
+
+  // Update focus label
+  const focusEl = document.getElementById('mapFocus');
+  if(!hasFilter){
+    focusEl.textContent = '전국';
+  } else if(hasRegion && !hasUni){
+    focusEl.textContent = [...state.regions].join(' · ');
+  } else if(hasUni && !hasRegion){
+    focusEl.textContent = [...state.unis].join(' · ');
+  } else {
+    focusEl.textContent = [...state.regions].join(' · ') + ' / ' + [...state.unis].join(' · ');
+  }
+
+  // Compute target viewBox
+  let target;
+  if(!hasFilter || visible.length === 0){
+    target = [...VIEWBOX_FULL];
+  } else {
+    const xs = visible.map(p => p.x);
+    const ys = visible.map(p => p.y);
+    let minX = Math.min(...xs), maxX = Math.max(...xs);
+    let minY = Math.min(...ys), maxY = Math.max(...ys);
+    const pad = visible.length === 1 ? 95 : 70;
+    minX -= pad; maxX += pad;
+    minY -= pad; maxY += pad;
+    const targetRatio = VIEWBOX_FULL[2] / VIEWBOX_FULL[3];
+    let w = maxX - minX, h = maxY - minY;
+    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+    if(w / h > targetRatio) h = w / targetRatio;
+    else w = h * targetRatio;
+    // Min/max zoom
+    const minW = 220, maxW = VIEWBOX_FULL[2];
+    if(w < minW){ w = minW; h = w / targetRatio; }
+    if(w > maxW){ w = maxW; h = w / targetRatio; }
+    // Clamp inside the map image so we never reveal empty paper
+    let vbX = cx - w/2, vbY = cy - h/2;
+    if(vbX < 0) vbX = 0;
+    if(vbY < 0) vbY = 0;
+    if(vbX + w > VIEWBOX_FULL[2]) vbX = VIEWBOX_FULL[2] - w;
+    if(vbY + h > VIEWBOX_FULL[3]) vbY = VIEWBOX_FULL[3] - h;
+    target = [vbX, vbY, w, h];
+  }
+  animateViewBox(target);
+}
+
+buildMarkers();
+
+const REGIONS = [...new Set(DATA.map(d=>d['지역']))].sort();
+
+const UNIS = [...new Set(DATA.map(d=>d['대학명']))].sort();
+const TYPES = [...new Set(DATA.map(d=>d['전형유형']))].sort();
+
+const state = {
+  regions: new Set(),
+  unis: new Set(),
+  types: new Set(),
+  search: '',
+  sortKey: null,
+  sortDir: 1,
+  selectedUni: null,
+};
+
+// Build filter chips
+function buildChips(containerId, items, stateKey){
+  const c = document.getElementById(containerId);
+  const allChip = document.createElement('button');
+  allChip.className = 'chip active';
+  allChip.dataset.value = '__all__';
+  allChip.textContent = '전체';
+  allChip.onclick = () => {
+    state[stateKey].clear();
+    if(stateKey === 'unis') state.selectedUni = null;
+    render();
+  };
+  c.appendChild(allChip);
+  items.forEach(item => {
+    const count = DATA.filter(d => d[stateKey === 'regions' ? '지역' : stateKey === 'unis' ? '대학명' : '전형유형'] === item).length;
+    const chip = document.createElement('button');
+    chip.className = 'chip';
+    chip.dataset.value = item;
+    chip.innerHTML = `${item}<span class="chip-count">${count}</span>`;
+    chip.onclick = () => {
+      if(stateKey === 'unis'){
+        toggleUni(item);
+      } else {
+        if(state[stateKey].has(item)) state[stateKey].delete(item);
+        else state[stateKey].add(item);
+        render();
+      }
+    };
+    c.appendChild(chip);
+  });
+}
+
+buildChips('uni-filters', UNIS, 'unis');
+buildChips('type-filters', TYPES, 'types');
+
+// Sort headers
+document.querySelectorAll('th[data-key]').forEach(th => {
+  th.onclick = () => {
+    const key = th.dataset.key;
+    if(state.sortKey === key) state.sortDir *= -1;
+    else { state.sortKey = key; state.sortDir = 1; }
+    render();
+  };
+});
+
+document.getElementById('search').oninput = e => {
+  state.search = e.target.value.trim().toLowerCase();
+  render();
+};
+
+document.getElementById('reset').onclick = () => {
+  state.regions.clear();
+  state.unis.clear();
+  state.types.clear();
+  state.search = '';
+  state.sortKey = null;
+  state.sortDir = 1;
+  state.selectedUni = null;
+  document.getElementById('search').value = '';
+  render();
+};
+
+function parseNum(v){
+  if(v === '' || v === null || v === undefined || v === '-') return null;
+  const n = parseFloat(String(v).replace(/[^0-9.\-]/g,''));
+  return isNaN(n) ? null : n;
+}
+
+function fmtVal(v){
+  if(v === '' || v === null || v === undefined) return '<span class="muted">—</span>';
+  return String(v);
+}
+
+function gradeClass(v){
+  const n = parseNum(v);
+  if(n === null) return '';
+  if(n < 100){ // it's a 등급 (lower is better, scale 1-9)
+    if(n <= 2.5) return 'low';
+    if(n <= 3.5) return 'mid';
+    return '';
+  }
+  return ''; // scores like 901.33 (공주교대) - leave neutral
+}
+
+function render(){
+  let rows = DATA.filter(d => {
+    if(state.regions.size && !state.regions.has(d['지역'])) return false;
+    if(state.unis.size && !state.unis.has(d['대학명'])) return false;
+    if(state.types.size && !state.types.has(d['전형유형'])) return false;
+    if(state.search){
+      const blob = Object.values(d).join(' ').toLowerCase();
+      if(!blob.includes(state.search)) return false;
+    }
+    return true;
+  });
+
+  // Update chip states
+  document.querySelectorAll('#region-filters .chip').forEach(c => {
+    if(c.dataset.value === '__all__') c.classList.toggle('active', state.regions.size === 0);
+    else c.classList.toggle('active', state.regions.has(c.dataset.value));
+  });
+  document.querySelectorAll('#uni-filters .chip').forEach(c => {
+    if(c.dataset.value === '__all__') c.classList.toggle('active', state.unis.size === 0);
+    else c.classList.toggle('active', state.unis.has(c.dataset.value));
+  });
+  document.querySelectorAll('#type-filters .chip').forEach(c => {
+    if(c.dataset.value === '__all__') c.classList.toggle('active', state.types.size === 0);
+    else c.classList.toggle('active', state.types.has(c.dataset.value));
+  });
+
+  if(state.sortKey){
+    const k = state.sortKey;
+    rows.sort((a,b) => {
+      const av = a[k], bv = b[k];
+      const an = parseNum(av), bn = parseNum(bv);
+      let cmp;
+      if(an !== null && bn !== null) cmp = an - bn;
+      else if(an !== null) cmp = -1;
+      else if(bn !== null) cmp = 1;
+      else cmp = String(av).localeCompare(String(bv), 'ko');
+      return cmp * state.sortDir;
+    });
+  }
+
+  // Sort indicator
+  document.querySelectorAll('th[data-key]').forEach(th => {
+    if(th.dataset.key === state.sortKey){
+      th.classList.add('sorted');
+      th.querySelector('.sort').textContent = state.sortDir > 0 ? '▲' : '▼';
+    } else {
+      th.classList.remove('sorted');
+      th.querySelector('.sort').textContent = '↕';
+    }
+  });
+  document.getElementById('sort-info').textContent = state.sortKey ? `정렬: ${state.sortKey} ${state.sortDir>0?'오름':'내림'}` : '정렬: 기본순';
+
+  // Stats
+  const uniqUni = new Set(rows.map(r => r['대학명']));
+  document.getElementById('stat-univ').innerHTML = `${uniqUni.size}<span class="stat-unit">개교</span>`;
+  document.getElementById('stat-tracks').innerHTML = `${rows.length}<span class="stat-unit">개</span>`;
+  let totalQuota = 0;
+  rows.forEach(r => { const n = parseNum(r['2027모집인원']); if(n) totalQuota += n; });
+  document.getElementById('stat-quota').innerHTML = `${totalQuota.toLocaleString()}<span class="stat-unit">명</span>`;
+  const comps = rows.map(r => parseNum(r['전년도 경쟁률'])).filter(v => v !== null && v > 0);
+  const avgComp = comps.length ? (comps.reduce((a,b)=>a+b,0)/comps.length).toFixed(2) : '—';
+  document.getElementById('stat-comp').innerHTML = `${avgComp}<span class="stat-unit">:1</span>`;
+
+  document.getElementById('count').textContent = rows.length;
+
+  // Update map (zoom & marker highlight)
+  updateMap();
+
+  // Update detail panel
+  renderDetail();
+
+  // Render
+  const tbody = document.getElementById('tbody');
+  if(rows.length === 0){
+    tbody.innerHTML = '<tr><td colspan="17" class="empty">해당하는 전형이 없습니다</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = rows.map(d => {
+    const isNew = (d['전형명'] && d['전형명'].includes('신설')) || (d['비고'] && d['비고'].includes('신설'));
+    const csat = d['수능최저학력기준'];
+    const csatClass = (csat === '미반영' || csat === '미적용' || !csat) ? 'csat-none' : 'csat-required';
+    const gc = gradeClass(d['평균등급']);
+    const gradeHtml = (d['평균등급'] === '' || d['평균등급'] === null || d['평균등급'] === '-' || d['평균등급'] === '미공개')
+      ? `<span class="muted">${fmtVal(d['평균등급'])}</span>`
+      : `<span class="grade-pill ${gc}">${d['평균등급']}</span>`;
+
+    return `<tr>
+      <td class="col-region">${d['지역']}</td>
+      <td class="col-uni">${d['대학명']}</td>
+      <td><span class="col-type">${d['전형유형']}</span></td>
+      <td class="col-name">${d['전형명'].replace(/\n/g,'<br>')}${isNew?'<span class="tag-new">NEW</span>':''}</td>
+      <td class="col-method">${fmtVal(d['전형방법'])}</td>
+      <td class="col-num"><strong>${fmtVal(d['2027모집인원'])}</strong></td>
+      <td class="col-num">${fmtVal(d['전년도모집인원'])}</td>
+      <td class="col-num">${fmtVal(d['전년도 경쟁률'])}</td>
+      <td class="col-num">${fmtVal(d['충원인원'])}</td>
+      <td class="col-grade">${gradeHtml}</td>
+      <td class="col-num">${fmtVal(d['50%컷'])}</td>
+      <td class="col-num">${fmtVal(d['70%컷'])}</td>
+      <td class="col-num">${fmtVal(d['80%컷'])}</td>
+      <td class="col-num">${fmtVal(d['최저'])}</td>
+      <td class="col-curriculum">${fmtVal(d['교과반영방법'])}</td>
+      <td class="col-notes">${fmtVal(d['비고'])}</td>
+      <td class="col-min ${csatClass}">${fmtVal(csat)}</td>
+    </tr>`;
+  }).join('');
+}
+
+render();
+</script>
+</body>
+</html>

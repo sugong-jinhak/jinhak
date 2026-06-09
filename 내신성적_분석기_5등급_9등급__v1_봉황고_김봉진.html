@@ -1,0 +1,2845 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>내신성적 분석기(5등급→9등급) (5등급→9등급)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Noto Sans KR",sans-serif;background:#f0f4f9;color:#1a2744;font-size:14px;min-height:100vh;}
+.wrap{max-width:1600px;margin:0 auto;padding:24px 20px;}
+.page-hd{background:#1a2744;color:#fff;border-radius:12px;padding:20px 28px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+.page-hd h1{font-size:18px;font-weight:700;margin-bottom:4px;}
+.page-hd .sub{font-size:12px;opacity:.65;line-height:1.7;}
+.btn-p{background:#1a2744;color:#fff;border:none;border-radius:8px;padding:11px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+.btn-p:hover{opacity:.85;}
+.btn-g{background:#fff;color:#475569;border:.5px solid #d0d8e8;border-radius:8px;padding:10px 18px;font-size:13px;cursor:pointer;font-family:inherit;}
+.btn-g:hover{background:#f8fafc;}
+.btn-d{background:none;border:.5px solid #fca5a5;color:#dc2626;border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;font-family:inherit;}
+.btn-d:hover{background:#fef2f2;}
+
+/* ── 업로드 ── */
+#screen-upload{min-height:100vh;padding:28px 20px;display:flex;flex-direction:column;align-items:center;}
+.upload-title{text-align:center;margin-bottom:22px;}
+.upload-title h1{font-size:22px;font-weight:700;color:#1a2744;margin-bottom:8px;}
+.upload-title p{font-size:14px;color:#64748b;line-height:1.9;}
+.upload-main{width:100%;max-width:880px;display:flex;flex-direction:column;gap:14px;}
+.drop-zone{border:2px dashed #c8d4e8;border-radius:12px;padding:36px 24px;cursor:pointer;transition:all .2s;position:relative;background:#fafcff;text-align:center;}
+.drop-zone:hover,.drop-zone.over{border-color:#1565C0;background:#eff6ff;}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.drop-icon{font-size:40px;margin-bottom:10px;}
+.drop-txt{font-size:15px;font-weight:600;color:#334155;margin-bottom:4px;}
+.drop-sub{font-size:13px;color:#94a3b8;}
+.file-list{display:flex;flex-direction:column;gap:8px;}
+.file-card{background:#fff;border:.5px solid #e0e6ef;border-radius:10px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;}
+.type-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.ti-neis{background:#eff6ff;} .ti-exam{background:#f0fdf4;}
+.fc-name{font-size:13px;font-weight:600;color:#1a2744;margin-bottom:2px;}
+.fc-meta{font-size:12px;color:#94a3b8;margin-bottom:5px;}
+.tb{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;margin-bottom:5px;}
+.tb-neis{background:#eff6ff;color:#1565C0;} .tb-exam{background:#f0fdf4;color:#16a34a;}
+.fc-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.fc-row label{font-size:11px;color:#64748b;white-space:nowrap;}
+.fc-input{border:.5px solid #d0d8e8;border-radius:6px;padding:5px 8px;font-size:13px;font-family:inherit;color:#1a2744;outline:none;width:180px;}
+.fc-input:focus{border-color:#1565C0;}
+.err-box{background:#fef2f2;border:.5px solid #fca5a5;border-radius:8px;padding:12px 16px;font-size:13px;color:#dc2626;line-height:1.6;display:none;}
+.action-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.total-badge{font-size:13px;color:#64748b;margin-left:auto;}
+.fmt-card{background:#fff;border-radius:10px;border:.5px solid #e0e6ef;padding:16px 20px;}
+.fmt-title{font-size:13px;font-weight:700;color:#1a2744;margin-bottom:12px;}
+.fmt-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fmt-box{background:#f8fafc;border-radius:8px;padding:12px 14px;}
+.fmt-box-title{font-size:12px;font-weight:700;margin-bottom:6px;}
+.fmt-box li{font-size:12px;color:#64748b;margin-left:14px;margin-bottom:3px;line-height:1.6;}
+.ex{display:inline-block;background:#eff6ff;border:.5px solid #bfdbfe;border-radius:3px;padding:0 5px;font-size:11px;color:#1565C0;font-weight:500;}
+
+/* ── 리포트 ── */
+.ctrl-bar{background:#fff;border-radius:10px;border:.5px solid #e0e6ef;padding:12px 18px;margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.srch-wrap{position:relative;}
+.ctrl-bar input{border:.5px solid #d0d8e8;border-radius:7px;padding:8px 14px 8px 34px;font-size:13px;font-family:inherit;color:#1a2744;outline:none;width:190px;}
+.ctrl-bar input:focus{border-color:#1565C0;}
+.srch-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;color:#94a3b8;pointer-events:none;}
+.ban-btns{display:flex;gap:5px;flex-wrap:wrap;}
+.ban-btn{border:.5px solid #d0d8e8;border-radius:7px;padding:7px 13px;font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:#475569;font-family:inherit;transition:all .15s;}
+.ban-btn:hover{background:#f0f4f9;}
+.ban-btn.on{background:#1a2744;color:#fff;border-color:#1a2744;}
+.cnt{font-size:12px;color:#94a3b8;}
+.new-file-btn{background:none;border:.5px solid #d0d8e8;border-radius:7px;padding:7px 13px;font-size:12px;color:#475569;cursor:pointer;font-family:inherit;}
+.new-file-btn:hover{background:#f0f4f9;}
+.tab-bar{display:flex;margin-bottom:14px;background:#fff;border-radius:10px;border:.5px solid #e0e6ef;overflow:hidden;flex-wrap:wrap;}
+.tab-btn{padding:11px 16px;font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:#475569;border:none;border-right:.5px solid #e0e6ef;font-family:inherit;transition:all .15s;white-space:nowrap;}
+.tab-btn.on{background:#1a2744;color:#fff;}
+.tbl-card{background:#fff;border-radius:12px;border:.5px solid #e0e6ef;overflow:hidden;}
+.scroll{overflow-x:auto;}
+table.rt{width:100%;border-collapse:collapse;white-space:nowrap;}
+table.rt thead th{background:#1a2744;color:#fff;padding:10px 8px;text-align:center;font-size:12px;font-weight:600;border-right:.5px solid rgba(255,255,255,.12);}
+table.rt thead th.th-avg{background:#243458;}
+table.rt thead th.th-cum{background:#1a3a1a;min-width:74px;}
+table.rt thead th.th-prt{background:#1a2744;width:40px;}
+table.rt tbody tr.dr td{vertical-align:middle;border-bottom:.5px solid #eef0f5;padding:5px 7px;}
+table.rt tbody tr.dr:hover td{background:#f5f8ff;}
+table.rt tbody tr.ban-hd td{padding:0!important;}
+.legend{background:#fff;border-radius:10px;border:.5px solid #e0e6ef;padding:14px 20px;margin-top:14px;}
+.leg-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.leg-key{font-size:11px;color:#64748b;min-width:90px;font-weight:600;}
+.leg-note{font-size:11px;color:#94a3b8;line-height:1.8;border-top:.5px solid #eef0f5;padding-top:10px;margin-top:6px;}
+
+@media print{
+  body{background:#fff;}
+  #screen-upload{display:none!important;}
+  .ctrl-bar,.legend,.tab-bar,.new-file-btn{display:none!important;}
+  .wrap{padding:6px;max-width:100%;}
+  .page-hd{border-radius:0;padding:8px 14px;print-color-adjust:exact;-webkit-print-color-adjust:exact;}
+  .tbl-card{border-radius:0;}
+  table.rt{font-size:7.5pt;}
+  table.rt thead th{font-size:7.5pt;padding:4px;print-color-adjust:exact;-webkit-print-color-adjust:exact;}
+  table.rt tbody tr.dr td{padding:2px 4px;}
+  .th-prt,table.rt tbody tr.dr td:last-child{display:none;}
+  @page{size:A3 landscape;margin:7mm;}
+}
+
+.th-sort{cursor:pointer;user-select:none;}
+.th-sort:hover{background:#243458!important;}
+.th-sort::after{content:'';margin-left:4px;opacity:.5;}
+.th-sort.asc::after{content:'↑';opacity:1;}
+.th-sort.desc::after{content:'↓';opacity:1;}
+
+/* ── 상담 모달 ── */
+.counsel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.counsel-modal{background:#fff;border-radius:14px;width:100%;max-width:580px;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.counsel-hd{background:#1a2744;color:#fff;padding:18px 22px;border-radius:14px 14px 0 0;display:flex;justify-content:space-between;align-items:center;}
+.counsel-hd h3{font-size:16px;font-weight:700;}
+.counsel-hd .close-btn{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:4px 8px;border-radius:6px;line-height:1;}
+.counsel-hd .close-btn:hover{background:rgba(255,255,255,.15);}
+.counsel-body{flex:1;overflow-y:auto;padding:18px 20px;}
+.counsel-new{background:#f8fafc;border-radius:10px;padding:14px 16px;margin-bottom:16px;border:.5px solid #e0e6ef;}
+.counsel-new textarea{width:100%;border:.5px solid #d0d8e8;border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;color:#1a2744;outline:none;resize:vertical;min-height:80px;margin-top:8px;}
+.counsel-new textarea:focus{border-color:#1565C0;}
+.counsel-new-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
+.counsel-date{font-size:12px;color:#64748b;}
+.save-btn{background:#1a2744;color:#fff;border:none;border-radius:7px;padding:7px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.save-btn:hover{opacity:.85;}
+.counsel-list{display:flex;flex-direction:column;gap:10px;}
+.counsel-entry{background:#f8fafc;border:.5px solid #e0e6ef;border-radius:10px;padding:12px 14px;}
+.counsel-entry-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.counsel-entry-date{font-size:12px;font-weight:600;color:#1565C0;}
+.counsel-entry-del{background:none;border:none;color:#94a3b8;cursor:pointer;font-size:13px;padding:2px 6px;border-radius:4px;}
+.counsel-entry-del:hover{color:#dc2626;background:#fef2f2;}
+.counsel-entry-text{font-size:13px;color:#334155;line-height:1.7;white-space:pre-wrap;}
+.counsel-empty{text-align:center;color:#94a3b8;font-size:13px;padding:24px 0;}
+.nav-btn{display:inline-block;background:#e8f0fe;border:.5px solid #bfdbfe;border-radius:5px;padding:1px 7px;font-size:11px;color:#1e40af;font-weight:500;margin:1px 1px;}
+.nav-arrow{color:#94a3b8;font-size:11px;margin:0 1px;}
+</style>
+</head>
+<body>
+
+<!-- ══ 업로드 ══ -->
+<div id="screen-upload">
+  <div class="upload-title">
+    <h1>내신성적 분석기(5등급→9등급)<br><span style="font-size:15px;font-weight:500;opacity:.85;">(5등급 → 9등급)</span></h1>
+    <p>교과학습발달상황(NEIS) 파일과 지필고사 원점수 파일을<br>함께 올리면 자동으로 감지해 등급을 계산합니다.</p>
+  </div>
+  <div class="upload-main">
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="fileInput" accept=".xlsx,.xls" multiple onchange="handleFiles(this.files)">
+      <div class="drop-icon">📂</div>
+      <div class="drop-txt">파일을 끌어다 놓거나 클릭해서 선택</div>
+      <div class="drop-sub">두 형식 모두 지원 · 여러 파일 동시 선택 · .xlsx</div>
+    </div>
+    <div class="file-list" id="fileList" style="display:none;"></div>
+    <div class="err-box" id="errBox"></div>
+    <div class="action-row" id="actionRow" style="display:none;">
+      <button class="btn-p" onclick="buildReport()">✅ 등급 계산 시작</button>
+      <button class="btn-g" onclick="clearAll()">🗑 전체 초기화</button>
+      <span class="total-badge" id="totalBadge"></span>
+    </div>
+    <div style="text-align:center;margin-top:4px;">
+      <span style="font-size:12px;color:#94a3b8;">파일 없이도 바로 사용 가능 →</span>
+      <button onclick="startManualMode()" style="background:none;border:.5px solid #7c3aed;color:#7c3aed;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-left:8px;">✏️ 수동 입력으로 시작</button>
+    </div>
+    <div class="fmt-card">
+      <div class="fmt-title">📋 파일 다운로드 방법</div>
+      <div class="fmt-2col">
+        <div class="fmt-box">
+          <div class="fmt-box-title" style="color:#1565C0;">📘 교과학습발달상황</div>
+          <div style="margin-top:8px;line-height:2;font-size:12px;color:#475569;">
+            나이스
+            <span class="nav-arrow">▸</span><span class="nav-btn">학교생활기록부</span>
+            <span class="nav-arrow">▸</span><span class="nav-btn">학생부 항목별 조회</span>
+            <span class="nav-arrow">▸</span><span class="nav-btn">교과학습발달상황</span>
+            <span class="nav-arrow">▸</span><span class="nav-btn">교과학습발달상황</span>
+            <br>
+            <span class="nav-arrow">▸</span><span class="nav-btn">💾 저장(디스켓)</span>
+            <span class="nav-arrow">▸</span><span class="nav-btn">XLS data</span>
+            <span style="color:#1565C0;font-weight:600;">로 다운로드 후 업로드</span>
+          </div>
+          <div style="margin-top:10px;font-size:11px;color:#94a3b8;">※ 반별로 각각 다운받아 한꺼번에 업로드</div>
+        </div>
+        <div class="fmt-box">
+          <div class="fmt-box-title" style="color:#16a34a;">📗 지필고사 원점수</div>
+          <div style="margin-top:8px;line-height:2;font-size:12px;color:#475569;">
+            나이스
+            <span class="nav-arrow">▸</span><span class="nav-btn">학급담임 또는 부서장</span>
+            <span class="nav-arrow">▸</span><span class="nav-btn">지필평가 조회/통계</span>
+            <span class="nav-arrow">▸</span><span class="nav-btn">지필평가 조회</span>
+            <br>
+            <span class="nav-arrow">▸</span><span class="nav-btn">학급별일람표조회-전체교과목</span>
+            <span class="nav-arrow">▸</span><span class="nav-btn">해당고사 선택 후 조회</span>
+            <br>
+            <span class="nav-arrow">▸</span><span class="nav-btn">💾 저장(디스켓)</span>
+            <span class="nav-arrow">▸</span><span class="nav-btn">XLS data</span>
+            <span style="color:#16a34a;font-weight:600;">로 다운로드 후 업로드</span>
+          </div>
+          <div style="margin-top:10px;font-size:11px;color:#94a3b8;">※ 반별로 각각 다운받아 한꺼번에 업로드</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 리포트 ══ -->
+<div id="screen-report" style="display:none;">
+  <div class="wrap">
+    <div class="page-hd" id="rpt-hd"></div>
+    <div class="ctrl-bar">
+      <div class="srch-wrap"><span class="srch-ico">🔍</span>
+        <input type="text" id="si" placeholder="학생 이름 검색..." oninput="filt()">
+      </div>
+      <div class="ban-btns" id="banBtns"></div>
+      <span class="cnt" id="cnt"></span>
+      <button class="new-file-btn" onclick="document.getElementById('fileInput').click();setTimeout(()=>showFileMgr(),100)">➕ 파일 추가</button>
+      <button class="new-file-btn" onclick="showFileMgr()">📂 파일 관리</button>
+      <button class="new-file-btn" onclick="clearReport()" style="color:#dc2626;border-color:#fca5a5;">🗑 데이터 초기화</button>
+      <button class="new-file-btn" onclick="showHelp()" style="color:#7c3aed;border-color:#c4b5fd;">📖 사용 설명서</button>
+      <button class="new-file-btn" onclick="printAllCounsel()" style="color:#1565C0;border-color:#93c5fd;">📋 전체 상담 기록 인쇄</button>
+      <span id="saveIndicator" style="font-size:11px;color:#16a34a;margin-left:4px;">💾 자동 저장됨</span>
+    </div>
+    <div class="tab-bar" id="tabBar"></div>
+    <div id="tab-content"></div>
+    <div id="manual-panel" style="display:none;">
+      <!-- 수동 입력 폼 -->
+    </div>
+    <div class="legend" id="rpt-legend"></div>
+  </div>
+</div>
+
+<script>
+const C22=['#1565C0','#0097A7','#2E7D32','#D84315','#B71C1C'];
+const C15=['#1565C0','#1E88E5','#0097A7','#00838F','#2E7D32','#827717','#D84315','#B71C1C','#6A1B4D'];
+const TCOLS=['#1565C0','#7B1FA2','#00695C','#E65100','#4527A0','#558B2F','#AD1457','#00838F'];
+// 9등급 → 5등급 변환 (구간 중앙값 기준)
+const G9_G5={1:1,2:1,3:2,4:2,5:3,6:4,7:4,8:5,9:5};
+
+let FILE_ITEMS=[], TABS=[], CUR_BAN='all', CUR_TAB=0, fIdSeq=0;
+
+// ── 드래그 앤 드롭 ────────────────────────────────────────
+const dz=document.getElementById('dropZone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');handleFiles(e.dataTransfer.files);});
+
+function handleFiles(files){
+  if(typeof XLSX==='undefined'){showErr('XLSX 라이브러리 로드 실패. 인터넷 연결 확인 후 새로고침하세요.');return;}
+  Array.from(files).forEach(file=>{
+    if(!file.name.match(/\.xlsx?$/i)){showErr(`"${file.name}" — xlsx 형식만 지원합니다.`);return;}
+    const reader=new FileReader();
+    reader.onload=e=>{
+      try{
+        const result=parseFile(new Uint8Array(e.target.result),file.name);
+        FILE_ITEMS.push({id:++fIdSeq,...result,fileName:file.name,
+          label:guessLabel(file.name,result.type,FILE_ITEMS.length+1)});
+        saveToStorage();hideErr();
+        // 파일 관리 모달 열기/갱신 (확인 버튼 누를 때 buildReport 실행)
+        showFileMgr();
+      }catch(err){showErr(`"${file.name}" — ${err.message}`);}
+    };
+    reader.onerror=()=>showErr(`"${file.name}" — 파일을 읽을 수 없습니다.`);
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+// ── 파일 형식 감지 ────────────────────────────────────────
+function parseFile(buf,fileName){
+  const wb=XLSX.read(buf,{type:'array',cellText:false,raw:true});
+  for(const sn of wb.SheetNames){
+    const ws=wb.Sheets[sn];
+    const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});
+    const flat=rows.slice(0,20).flat().filter(v=>v).map(v=>String(v)).join(' ');
+    if(flat.includes('원점수/과목평균')||flat.includes('석차등급'))
+      return{type:'neis',...parseNEIS(rows,fileName)};
+    // 지필 학급별 일람표: NEIS보다 먼저 체크
+    if(flat.includes('지필평가')||flat.includes('학급별 일람표')||flat.includes('학과응시생수'))
+      return{type:'jipal',...parseJipal(rows,fileName)};
+    let maxM=0,hIdx=-1;
+    rows.forEach((row,ri)=>{
+      const cnt=(row||[]).filter(v=>v&&/\(\d+\)/.test(String(v))).length;
+      if(cnt>maxM){maxM=cnt;hIdx=ri;}
+    });
+    if(maxM>=1) return{type:'exam',...parseExam(rows,hIdx)};
+  }
+  throw new Error('파일 형식을 인식할 수 없습니다.\n• 교과학습발달상황: 원점수/과목평균 열이 있어야 합니다.\n• 지필고사: 과목명(단위수) 형식의 헤더가 있어야 합니다.');
+}
+
+// ══ NEIS 파서 (두 형식 모두 지원) ════════════════════════
+
+function detectBan(rows,fileName){
+  // 파일 내용에서 "N학년 M반" 패턴 탐색
+  for(let i=0;i<Math.min(rows.length,6);i++){
+    const row=rows[i];if(!row)continue;
+    for(const v of row){
+      if(!v)continue;
+      const m=String(v).match(/(\d+)\s*학년\s*(\d+)\s*반/);
+      if(m)return{yr:parseInt(m[1]),ban:parseInt(m[2])};
+    }
+  }
+  // 파일명에서 추출: "2-4_성적" → yr=2, ban=4
+  const fn=(fileName||'').replace(/\.xlsx?$/i,'');
+  const m2=fn.match(/(\d+)[-_](\d+)/);
+  if(m2)return{yr:parseInt(m2[1]),ban:parseInt(m2[2])};
+  return{yr:null,ban:null};
+}
+function parseNEIS(rows,fileName){
+  const detected=detectBan(rows,fileName);
+  // 1. 헤더 행에서 열 위치 동적 탐색
+  let hRow=null,hIdx=-1,col={};
+  for(let i=0;i<Math.min(rows.length,15);i++){
+    const row=rows[i];if(!Array.isArray(row))continue;
+    const s=row.map(v=>v?String(v):'').join(' ');
+    if(s.includes('원점수')&&s.includes('과목')){hRow=row;hIdx=i;break;}
+  }
+  if(hRow){
+    hRow.forEach((v,ci)=>{
+      if(!v)return;const s=String(v).trim();
+      if(/번.*호/.test(s))col.num=ci;
+      else if(/성.*명/.test(s))col.name=ci;
+      else if(/학.*년/.test(s)&&!/점/.test(s))col.yr=ci;
+      else if(/학.*기/.test(s)&&!s.includes('합'))col.sem=ci;
+      else if(s.includes('과 목')||s==='과목')col.subj=ci;
+      else if(/학.*점/.test(s)&&!s.includes('합'))col.units=ci;
+      else if(s.includes('원점수'))col.score=ci;
+      else if(s.includes('성취도')&&!s.includes('분포'))col.achv=ci;
+      else if(s.includes('분포'))col.dist=ci;
+      else if(s.includes('석차등급'))col.g9=ci;
+      else if(s.includes('수강자수'))col.n=ci;
+    });
+  }
+  // 기본값 (감지 실패 시 일반적 위치)
+  col.num=col.num??0; col.name=col.name??1;
+  col.yr=col.yr??2;   col.sem=col.sem??3;
+  col.subj=col.subj??5; col.units=col.units??6;
+  col.score=col.score??7; col.achv=col.achv??8;
+  // 석차등급: 수강자수 열이 있으면 col 10, 없으면 col 9
+  if(col.g9===undefined) col.g9=col.n!==undefined?10:9;
+  // 수강자수: 없으면 성취도 필드에서 추출(구형)
+  // col.n may remain undefined
+
+  // 2. 학생 데이터 파싱 (상태 머신)
+  // after_합계: true이면 다음 이름이 새 학생, false이면 같은 학생 계속
+  const studentMap={},studentOrder=[];
+  let curName=null,curYr=null,curSem=null,afterHapgye=true;
+
+  for(let ri=hIdx+1;ri<rows.length;ri++){
+    const row=rows[ri];if(!Array.isArray(row))continue;
+    const v0=row[0]!=null?String(row[0]).trim():'';
+    const v1=row[1]!=null?String(row[1]).trim():'';
+
+    // 이수학점 합계 → 학생 종료, 다음 이름은 새 학생
+    if(v0.includes('이수')&&v0.includes('합계')){afterHapgye=true;continue;}
+    // 반복 헤더 스킵
+    if(/번.*호/.test(v0)||(/성.*명/.test(v1)&&v1.length<=6))continue;
+    // 페이지 메타 행 스킵 (과목 없고 점수 없는 행)
+    const subjV=row[col.subj];
+    if(!subjV&&!v1)continue;
+
+    // 이름 감지
+    const rawName=row[col.name];
+    const nameStr=rawName!=null?String(rawName).trim():'';
+    const isValidName=nameStr.length>=2&&!/^\d/.test(nameStr)&&
+      !nameStr.includes('합계')&&!['nan','NaN','성  명','성 명'].includes(nameStr);
+
+    if(isValidName){
+      if(afterHapgye){
+        // 새 학생
+        curName=nameStr;
+        if(!studentMap[curName]){
+          const numV=row[col.num];
+          const num=numV!=null&&/^\d/.test(String(numV))?parseInt(numV):0;
+          studentMap[curName]={num,name:curName,ban:detected.ban||1,sems:{}};
+          studentOrder.push(curName);
+        }
+        afterHapgye=false;
+        // 학년/학기 초기화
+        const yrV=row[col.yr],semV=row[col.sem];
+        if(yrV!=null&&/^\d/.test(String(yrV)))curYr=parseInt(yrV);
+        if(semV!=null&&/^\d/.test(String(semV)))curSem=parseInt(semV);
+      } else {
+        // 같은 학생 계속 (페이지 분리) — 이름/번호는 무시하고 학년/학기만 업데이트
+        const yrV=row[col.yr],semV=row[col.sem];
+        if(yrV!=null&&/^\d/.test(String(yrV)))curYr=parseInt(yrV);
+        if(semV!=null&&/^\d/.test(String(semV)))curSem=parseInt(semV);
+      }
+    } else {
+      // 이름 없는 행: 학년/학기 업데이트만
+      const yrV=row[col.yr],semV=row[col.sem];
+      if(yrV!=null&&/^\d/.test(String(yrV)))curYr=parseInt(yrV);
+      if(semV!=null&&/^\d/.test(String(semV)))curSem=parseInt(semV);
+    }
+
+    if(!curName)continue;
+
+    // 과목 파싱
+    const subjRaw=row[col.subj];
+    if(!subjRaw||String(subjRaw).trim()===''||String(subjRaw).trim()==='nan')continue;
+    const subjName=String(subjRaw).trim();
+    if(['과 목','과목'].includes(subjName))continue;
+
+    const unitsRaw=row[col.units];
+    const units=unitsRaw!=null&&/^\d/.test(String(unitsRaw))?parseInt(unitsRaw):null;
+    if(!units)continue;
+
+    // 원점수 파싱 "77/78.0" 또는 "37/70.5(15.7)"
+    const scoreStr=row[col.score]!=null?String(row[col.score]).trim():'';
+    const scoreM=scoreStr.match(/^(\d+(?:\.\d+)?)\//);
+    const score=scoreM?parseFloat(scoreM[1]):null;
+
+    // 성취도
+    const achvStr=row[col.achv]!=null?String(row[col.achv]).trim():'';
+    const achv=achvStr&&/^[A-EP]/.test(achvStr)?achvStr[0]:null;
+
+    // 수강자수 (신형: 별도 열, 구형: 성취도 필드 "E(171)")
+    let nStu=null;
+    if(col.n!==undefined){
+      const nV=row[col.n];
+      if(nV!=null&&/^\d/.test(String(nV)))nStu=parseInt(nV);
+    } else {
+      const m=achvStr.match(/\((\d+)\)/);
+      if(m)nStu=parseInt(m[1]);
+    }
+
+    // 석차등급 (1~9)
+    const g9Raw=row[col.g9];
+    let g9=null;
+    if(g9Raw!=null){
+      const gs=String(g9Raw).trim();
+      if(/^\d$/.test(gs)&&parseInt(gs)>=1&&parseInt(gs)<=9)g9=parseInt(gs);
+    }
+    const g5=g9!=null?G9_G5[g9]:null;
+
+    const semKey=`${curYr||0}-${curSem||0}`;
+    const st=studentMap[curName];
+    if(!st.sems[semKey])st.sems[semKey]={yr:curYr,sem:curSem,subs:[]};
+    // 중복 과목 방지 (페이지 분리로 같은 과목이 두 번 파싱될 수 있음)
+    if(!st.sems[semKey].subs.find(s=>s.subj===subjName))
+      st.sems[semKey].subs.push({subj:subjName,units,score,achv,n:nStu,g9,g5});
+  }
+
+  // 가중평균 계산
+  const students=studentOrder.map(name=>{
+    const st=studentMap[name];
+    const semList=Object.values(st.sems).sort((a,b)=>(a.yr-b.yr)||a.sem-b.sem);
+    semList.forEach(sem=>{
+      let tu5=0,tg5=0,tu9=0,tg9=0;
+      sem.subs.forEach(s=>{
+        if(s.g5!=null&&s.units){tg5+=s.g5*s.units;tu5+=s.units;}
+        if(s.g9!=null&&s.units){tg9+=s.g9*s.units;tu9+=s.units;}
+      });
+      sem.avg5=tu5>0?Math.round(tg5/tu5*100)/100:null;
+      sem.avg9=tu9>0?Math.round(tg9/tu9*100)/100:null;
+      sem.totalUnits=tu5;
+    });
+    let tu5=0,tg5=0,tu9=0,tg9=0;
+    semList.forEach(sem=>sem.subs.forEach(s=>{
+      if(s.g5!=null&&s.units){tg5+=s.g5*s.units;tu5+=s.units;}
+      if(s.g9!=null&&s.units){tg9+=s.g9*s.units;tu9+=s.units;}
+    }));
+    st.cum5=tu5>0?Math.round(tg5/tu5*100)/100:null;
+    st.cum9=tu9>0?Math.round(tg9/tu9*100)/100:null;
+    st.totalUnits=tu5;
+    st.semList=semList;
+    return st;
+  });
+
+  const semKeys=[...new Set(students.flatMap(st=>st.semList.map(s=>`${s.yr}-${s.sem}`)))].sort();
+  return{students,semKeys};
+}
+
+
+// ══ 지필고사 학급별 일람표 파서 ══════════════════════════════
+function parseJipal(rows,fileName){
+  // 메타데이터: 학년/반/고사명
+  let ban=null,yr=null,examName='';
+  for(let i=0;i<6;i++){
+    const row=rows[i];if(!row)continue;
+    for(const v of row){
+      if(!v)continue;
+      const s=String(v);
+      const m=s.match(/(\d+)\s*학년[^\d]*(\d+)\s*반/);
+      if(m){yr=parseInt(m[1]);ban=parseInt(m[2]);}
+      const m2=s.match(/(\d학기\s*\d+차)/);
+      if(m2)examName=m2[1].replace(/\s/g,'');
+    }
+  }
+  // 파일명 fallback
+  if(!ban){const m=fileName.replace(/\.xlsx?$/i,'').match(/(\d+)[-_](\d+)/);if(m){yr=parseInt(m[1]);ban=parseInt(m[2]);}}
+
+  // 헤더 행: 번호+성명+(N)패턴 동시 존재
+  let hRow=null,hIdx=-1;
+  for(let i=0;i<rows.length;i++){
+    const row=rows[i];if(!row)continue;
+    const strs=row.map(v=>v?String(v):'');
+    if(strs.some(s=>s.includes('번호'))&&strs.some(s=>s.includes('성명'))&&strs.some(s=>/\(\d+\)/.test(s))){
+      hRow=row;hIdx=i;break;
+    }
+  }
+  if(!hRow)throw new Error('헤더행을 찾을 수 없습니다.');
+
+  // 과목 파싱: "교과:과목명(N)" → name=과목명, units=N
+  const subjects=[];
+  hRow.forEach((v,ci)=>{
+    if(!v)return;
+    const m=String(v).match(/^(?:[^:]+:)?(.+?)\((\d+)\)\s*$/);
+    if(m&&parseInt(m[2])>0)
+      subjects.push({ci,fullName:String(v).trim(),name:m[1].trim(),units:parseInt(m[2]),nTotal:null,nValid:0});
+  });
+  if(!subjects.length)throw new Error('과목열 없음');
+
+  // 학과응시생수 → nTotal 순서대로 추출
+  for(const row of rows){
+    if(!row)continue;
+    if(row.some(v=>v&&String(v).includes('학과응시생수'))){
+      const nums=[];
+      for(const v of row){
+        if(v&&String(v).includes('명')){
+          const m=String(v).match(/(\d+)/);
+          if(m)nums.push(parseInt(m[1]));
+        }
+      }
+      subjects.forEach((s,i)=>{if(nums[i])s.nTotal=nums[i];});
+      break;
+    }
+  }
+
+  // 학생 파싱
+  const skipWords=['응시생수','총','평균','학과','합계'];
+  const students=[];
+  for(let ri=hIdx+1;ri<rows.length;ri++){
+    const row=rows[ri];if(!row)continue;
+    const v0=row[0];
+    if(!v0||!String(v0).replace('.0','').trim().match(/^\d+$/))continue;
+    const name=row[1]?String(row[1]).trim():'';
+    if(!name||skipWords.some(w=>name.includes(w)))continue;
+    const scores=subjects.map(s=>{
+      const v=row[s.ci];
+      if(v===null||v===undefined||String(v).trim()==='')return null;
+      const sv=String(v).trim();
+      if(sv.includes('전출')||sv.includes('미응시')||sv.includes('결시'))return null;
+      const n=parseFloat(sv);return isNaN(n)?null:Math.round(n*10)/10;
+    });
+    students.push({ban:ban||1,num:parseInt(v0),name,scores});
+  }
+  if(!students.length)throw new Error('학생 데이터 없음');
+  return{students,subjects,ban:ban||1,yr:yr||2,examName:examName||'지필'};
+}
+
+// 여러 반 jipal 파일 합산 등급 계산
+function calcJipalGrades(jipalFiles){
+  // 파일 내 subject index 매핑 (과목명 기준)
+  const subjMap={}; // name → {units,nTotal,entries:[{fi,st,si,score}]}
+  jipalFiles.forEach(fi=>{
+    fi.subjects.forEach((s,si)=>{
+      if(!subjMap[s.name])subjMap[s.name]={units:s.units,nTotal:s.nTotal,entries:[]};
+      else if(s.nTotal&&!subjMap[s.name].nTotal)subjMap[s.name].nTotal=s.nTotal;
+      fi.students.forEach(st=>{
+        const sc=st.scores[si];
+        if(typeof sc==='number')subjMap[s.name].entries.push({fi,st,si,score:sc});
+      });
+    });
+  });
+
+  // 과목별 순위 계산 (최하위 공동석차)
+  Object.entries(subjMap).forEach(([name,subj])=>{
+    const{entries,nTotal}=subj;
+    const nValid=entries.length;
+    const sorted=[...entries].sort((a,b)=>b.score-a.score);
+    const rm=new Map();let i=0;
+    while(i<sorted.length){
+      let j=i;while(j<sorted.length&&sorted[j].score===sorted[i].score)j++;
+      for(let k=i;k<j;k++)rm.set(sorted[k],j);
+      i=j;
+    }
+    entries.forEach(e=>{
+      const rk=rm.get(e);
+      const p=(rk/nValid)*100;
+      const si=e.si;
+      e.st[`rk${si}`]=rk;e.st[`pt${si}`]=p;
+      e.st[`g5_${si}`]=p<=10?1:p<=34?2:p<=66?3:p<=90?4:5;
+      e.st[`g9_${si}`]=p<=4?1:p<=11?2:p<=23?3:p<=40?4:p<=60?5:p<=77?6:p<=89?7:p<=96?8:9;
+      e.fi.subjects[si].nValid=nValid;
+      if(!e.fi.subjects[si].nTotal)e.fi.subjects[si].nTotal=nTotal||nValid;
+    });
+  });
+
+  // 가중평균
+  jipalFiles.forEach(fi=>{
+    fi.students.forEach(st=>{
+      let tu=0,tg5=0,tg9=0;
+      fi.subjects.forEach((s,si)=>{
+        if(st[`g5_${si}`]!=null){tg5+=st[`g5_${si}`]*s.units;tg9+=st[`g9_${si}`]*s.units;tu+=s.units;}
+      });
+      st.avg5=tu>0?Math.round(tg5/tu*100)/100:null;
+      st.avg9=tu>0?Math.round(tg9/tu*100)/100:null;
+      st.totalUnits=tu;
+    });
+  });
+}
+
+// ══ 지필고사 파서 ══════════════════════════════════════════
+
+function parseExam(rows,hIdx){
+  const hRow=rows[hIdx]||[];
+  const subjects=[];
+  hRow.forEach((v,ci)=>{
+    if(!v)return;
+    const m=String(v).match(/^(.+?)\((\d+)\)\s*$/);
+    if(m)subjects.push({ci,name:m[1].trim(),units:parseInt(m[2])});
+  });
+  if(!subjects.length)throw new Error('과목열 없음');
+  const firstCI=subjects[0].ci;
+  const hLabels=hRow.map(v=>v?String(v):'');
+  let nameCI=hLabels.findIndex(v=>v.includes('성명')||v.includes('이름'));
+  let numCI=hLabels.findIndex(v=>v.includes('번호'));
+  let banCI=hLabels.findIndex(v=>['학년','반','학반'].some(k=>v.includes(k)));
+  if(nameCI<0)nameCI=firstCI-1;
+  if(numCI<0)numCI=firstCI-2;
+  if(banCI<0)banCI=Math.max(0,firstCI-3);
+
+  const students=[];
+  for(let ri=hIdx+1;ri<rows.length;ri++){
+    const row=rows[ri];if(!row)continue;
+    const bv=row[banCI];if(bv==null)continue;
+    let ban;
+    if(typeof bv==='number')ban=Math.round(bv);
+    else if(typeof bv==='string'){const t=bv.replace(/[반학년班]/g,'').trim();if(!/^\d+$/.test(t))continue;ban=parseInt(t);}
+    else continue;
+    if(ban<1||ban>99)continue;
+    const nv=row[nameCI];if(!nv||typeof nv!=='string'||!nv.trim())continue;
+    const uv=row[numCI];let num=0;
+    if(typeof uv==='number')num=Math.round(uv);
+    const scores=subjects.map(s=>{
+      const v=row[s.ci];
+      if(v==null||v==='')return null;
+      if(String(v).includes('미인정')||v==='-')return '미인정결';
+      if(typeof v==='number')return Math.round(v*10)/10;
+      const n=parseFloat(v);return isNaN(n)?null:Math.round(n*10)/10;
+    });
+    students.push({ban,num,name:nv.trim(),scores});
+  }
+  if(!students.length)throw new Error('유효한 학생 행 없음');
+
+  // 등급 계산
+  subjects.forEach((s,si)=>{
+    const valid=students.map((st,idx)=>({idx,score:st.scores[si]})).filter(x=>typeof x.score==='number');
+    s.nValid=valid.length;
+    const sorted=[...valid].sort((a,b)=>b.score-a.score);
+    const rm={};let i=0;
+    while(i<sorted.length){let j=i;while(j<sorted.length&&sorted[j].score===sorted[i].score)j++;for(let k=i;k<j;k++)rm[sorted[k].idx]=j;i=j;}
+    students.forEach((st,idx)=>{
+      const sc=st.scores[si];
+      if(typeof sc!=='number'){st[`rk${si}`]=null;st[`pt${si}`]=null;st[`g5_${si}`]=null;st[`g9_${si}`]=null;}
+      else{const rk=rm[idx];const p=(rk/s.nValid)*100;
+        st[`rk${si}`]=rk;st[`pt${si}`]=p;
+        st[`g5_${si}`]=p<=10?1:p<=34?2:p<=66?3:p<=90?4:5;
+        st[`g9_${si}`]=p<=4?1:p<=11?2:p<=23?3:p<=40?4:p<=60?5:p<=77?6:p<=89?7:p<=96?8:9;}
+    });
+  });
+  students.forEach(st=>{
+    let tu=0,tg5=0,tg9=0;
+    subjects.forEach((s,si)=>{if(st[`g5_${si}`]!=null){tg5+=st[`g5_${si}`]*s.units;tg9+=st[`g9_${si}`]*s.units;tu+=s.units;}});
+    st.avg5=tu>0?Math.round(tg5/tu*100)/100:null;
+    st.avg9=tu>0?Math.round(tg9/tu*100)/100:null;
+    st.totalUnits=tu;
+  });
+  return{students,subjects};
+}
+
+// ── 파일 목록 UI ──────────────────────────────────────────
+function guessLabel(name,type,idx){
+  const n=name.replace(/\.xlsx?$/i,'');
+  if(type==='neis'){const m=n.match(/(\d+)[-_반]/);return m?`${m[1]}반 교과학습발달상황`:n;}
+  const m=n.match(/(\d)학년.{0,3}(\d)학기.{0,3}(\d)차/);
+  if(m)return`${m[1]}학년 ${m[2]}학기 ${m[3]}차`;
+  return n||`지필 ${idx}`;
+}
+
+function renderFileList(){
+  const el=document.getElementById('fileList');
+  if(!FILE_ITEMS.length){el.style.display='none';document.getElementById('actionRow').style.display='none';return;}
+  el.style.display='flex';
+  document.getElementById('actionRow').style.display='flex';
+  el.innerHTML=FILE_ITEMS.map(fi=>{
+    const isN=fi.type==='neis';
+    const isJ=fi.type==='jipal';
+    const meta=isN?fi.students.length+'명 · '+fi.semKeys.length+'개 학기 · 반:'+((fi.students[0]&&fi.students[0].ban)||'?')+' · 석차등급(9등급) 기준'
+                  :isJ?fi.students.length+'명 · '+fi.ban+'반 · '+fi.examName+' · '+fi.subjects.map(s=>s.name+'('+s.units+')').join(' ')
+                  :`${fi.students.length}명 · ${fi.subjects.length}개 과목 · 원점수 계산`;
+    return`<div class="file-card">
+      <div class="type-icon ${isN?'ti-neis':'ti-exam'}">${isN?'📘':'📗'}</div>
+      <div>
+        <div class="fc-name">${fi.fileName}</div>
+        <span class="tb ${isN?'tb-neis':isJ?'tb-neis':'tb-exam'}" style="${isJ?'background:#fff7ed;color:#c2410c;':''}}">${isN?'교과학습발달상황 (NEIS)':isJ?'지필 학급별 일람표':'지필고사 원점수'}</span>
+        <div class="fc-meta">${meta}</div>
+        <div class="fc-row">
+          <label>라벨</label>
+          <input class="fc-input" value="${fi.label}" onchange="FILE_ITEMS.find(f=>f.id===${fi.id}).label=this.value;">
+        </div>
+      </div>
+      <button class="btn-d" onclick="removeFile(${fi.id})">삭제</button>
+    </div>`;
+  }).join('');
+  updateBadge();
+}
+function removeFile(id){FILE_ITEMS=FILE_ITEMS.filter(f=>f.id!==id);renderFileList();}
+function clearAll(){FILE_ITEMS=[];renderFileList();}
+function updateBadge(){
+  const n=[...new Set(FILE_ITEMS.flatMap(f=>f.students.map(s=>s.name)))].length;
+  document.getElementById('totalBadge').textContent=`파일 ${FILE_ITEMS.length}개 · 학생 약 ${n}명`;
+}
+function showErr(msg){const el=document.getElementById('errBox');el.innerHTML=msg.replace(/\n/g,'<br>');el.style.display='block';}
+function hideErr(){document.getElementById('errBox').style.display='none';}
+
+// ── 리포트 빌드 ───────────────────────────────────────────
+// ── NEIS 원점수 기반 등급 계산 ──────────────────────────────
+// 여러 반 파일이 있으면 합산 후 전체 기준으로 석차백분율 계산
+function calcNeisGradesForSemKey(semKey, fileItems){
+  // 과목별로 모든 학생의 원점수 수집
+  const subjMap = {}; // 과목명 → {entries:[{st,sub}], nTotal}
+  fileItems.forEach(fi=>{
+    fi.students.forEach(st=>{
+      const sem = st.sems?.[semKey];
+      if(!sem) return;
+      sem.subs.forEach(sub=>{
+        if(sub.score==null) return; // 원점수 없으면 건너뜀
+        if(sub.g9==null) return;   // 공동교육과정 등 석차등급 없는 과목 → 등급 계산 제외
+        if(!subjMap[sub.subj]) subjMap[sub.subj]={entries:[],nTotal:sub.n||null};
+        // nTotal은 파일에서 읽은 수강자수 (전체 학년 기준)
+        if(sub.n && !subjMap[sub.subj].nTotal) subjMap[sub.subj].nTotal=sub.n;
+        subjMap[sub.subj].entries.push({st,sub});
+      });
+    });
+  });
+
+  // 과목별 석차 계산 (최하위 공동석차)
+  Object.entries(subjMap).forEach(([subjName,{entries,nTotal}])=>{
+    const nValid = entries.length;
+    if(nValid===0) return;
+
+    // 내림차순 정렬 (동점자 처리)
+    const sorted = [...entries].sort((a,b)=>b.sub.score - a.sub.score);
+    const rankMap = new Map();
+    let i=0;
+    while(i<sorted.length){
+      let j=i;
+      while(j<sorted.length && sorted[j].sub.score===sorted[i].sub.score) j++;
+      // 최하위 공동석차: j (이 점수의 마지막 석차)
+      for(let k=i;k<j;k++) rankMap.set(sorted[k],j);
+      i=j;
+    }
+
+    entries.forEach(e=>{
+      const rk = rankMap.get(e);
+      // 백분율 분모: 업로드된 학생 수 (nValid) 사용
+      // 수강자수(nTotal)가 있고 더 크면 예상 표시
+      const pct = (rk / nValid) * 100;
+      e.sub.rk = rk;
+      e.sub.nValid = nValid;
+      e.sub.nTotal = nTotal;
+      e.sub.pct = Math.round(pct*10)/10;
+      e.sub.g5 = pct<=10?1:pct<=34?2:pct<=66?3:pct<=90?4:5;
+      e.sub.g9 = pct<=4?1:pct<=11?2:pct<=23?3:pct<=40?4:pct<=60?5:pct<=77?6:pct<=89?7:pct<=96?8:9;
+      e.sub.fromScore = true; // 원점수 기반 계산 표시
+    });
+  });
+
+  // 원점수 없는 과목 (체육, 예술 등 P등급)은 기존 9등급→5등급 변환 유지
+  fileItems.forEach(fi=>{
+    fi.students.forEach(st=>{
+      const sem = st.sems?.[semKey]; if(!sem) return;
+      sem.subs.forEach(sub=>{
+        if(sub.fromScore) return; // 이미 계산됨
+        // 원점수 없고 기존 9등급 있으면 변환
+        if(sub.g9!=null) sub.g5 = G9_G5[sub.g9];
+      });
+    });
+  });
+
+  // 학기별 가중평균 재계산
+  fileItems.forEach(fi=>{
+    fi.students.forEach(st=>{
+      const sem = st.sems?.[semKey]; if(!sem) return;
+      let tu5=0,tg5=0,tu9=0,tg9=0;
+      sem.subs.forEach(s=>{
+        if(s.g5!=null&&s.units){tg5+=s.g5*s.units;tu5+=s.units;}
+        if(s.g9!=null&&s.units){tg9+=s.g9*s.units;tu9+=s.units;}
+      });
+      sem.avg5 = tu5>0?Math.round(tg5/tu5*100)/100:null;
+      sem.avg9 = tu9>0?Math.round(tg9/tu9*100)/100:null;
+      sem.totalUnits = tu5;
+    });
+  });
+}
+
+function startManualMode(){
+  // 파일 없이 수동 입력 모드로 바로 진입
+  TABS=[{type:'manual',label:'✏️ 수동 입력'}];
+
+  document.getElementById('rpt-hd').innerHTML=`
+    <div><h1 style="font-size:28px;">내신성적 분석기(5등급→9등급)</h1>
+    <div class="sub">수동 입력 모드 · 파일 없이 직접 성적 입력</div></div>
+    <div style="font-size:11px;opacity:.5;text-align:right;line-height:1.6;">제작 : 봉황고등학교 교사 김봉진</div>`;
+
+  // 반 버튼: 수동 입력만
+  document.getElementById('banBtns').innerHTML=
+    '<button class="ban-btn on" data-ban="manual" style="border-color:#7c3aed;color:#7c3aed;" onclick="setBan(this)">✏️ 수동 입력</button>';
+  document.getElementById('cnt').textContent='';
+
+  // 탭 바: 단일 탭
+  document.getElementById('tabBar').innerHTML=
+    '<button class="tab-btn on" style="background:#7c3aed;color:#fff;" onclick="">✏️ 수동 입력</button>';
+
+  // 파일 추가/관리 버튼 유지
+  document.getElementById('screen-upload').style.display='none';
+  document.getElementById('screen-report').style.display='block';
+
+  // 탭 콘텐츠 숨기고 수동 패널 표시
+  document.getElementById('tab-content').style.display='none';
+  document.getElementById('rpt-legend').style.display='none';
+  document.getElementById('manual-panel').style.display='block';
+  renderManualPanel();
+
+  // 파일 업로드 후 이 함수 다시 실행 시 복구를 위해 저장
+  saveToStorage();
+}
+
+function buildReport(){
+  if(!FILE_ITEMS.length){showErr('파일을 먼저 업로드해주세요.');return;}
+  TABS=[];
+  // Jipal: 여러 반 합산 등급 계산
+  const jipalFiles=FILE_ITEMS.filter(f=>f.type==='jipal');
+  if(jipalFiles.length) calcJipalGrades(jipalFiles);
+  // NEIS: 같은 semKey끼리 합치기
+  const neisSemMap={};
+  FILE_ITEMS.filter(fi=>fi.type==='neis').forEach(fi=>{
+    fi.semKeys.forEach(sk=>{
+      if(!neisSemMap[sk])neisSemMap[sk]=[];
+      neisSemMap[sk].push(fi);
+    });
+  });
+  // NEIS 원점수 기반 등급 재계산 (여러 반 합산 후 전체 기준 석차백분율)
+  Object.entries(neisSemMap).forEach(([sk,fis])=>calcNeisGradesForSemKey(sk,fis));
+  // 누적 가중평균 재계산
+  FILE_ITEMS.filter(fi=>fi.type==='neis').forEach(fi=>{
+    fi.students.forEach(st=>{
+      let tu5=0,tg5=0,tu9=0,tg9=0;
+      Object.values(st.sems||{}).forEach(sem=>{
+        sem.subs.forEach(s=>{
+          if(s.g5!=null&&s.units){tg5+=s.g5*s.units;tu5+=s.units;}
+          if(s.g9!=null&&s.units){tg9+=s.g9*s.units;tu9+=s.units;}
+        });
+      });
+      st.cum5=tu5>0?Math.round(tg5/tu5*100)/100:null;
+      st.cum9=tu9>0?Math.round(tg9/tu9*100)/100:null;
+      st.totalUnits=tu5;
+    });
+  });
+  const sortedSemKeys=Object.keys(neisSemMap).sort((a,b)=>{const[ay,as]=a.split('-').map(Number);const[by,bs]=b.split('-').map(Number);return ay!==by?ay-by:as-bs;});
+  sortedSemKeys.forEach(sk=>{
+    const[yr,sem]=sk.split('-').map(Number);
+    TABS.push({type:'neis',label:`${yr}학년 ${sem}학기`,fileItems:neisSemMap[sk],semKey:sk});
+  });
+  // 지필 (기존 형식)
+  FILE_ITEMS.filter(fi=>fi.type==='exam').forEach(fi=>{
+    TABS.push({type:'exam',label:fi.label,fileItem:fi});
+  });
+  // 지필 (학급별 일람표) - examName 기준 그룹화
+  const jipalMap={};
+  jipalFiles.forEach(fi=>{
+    const key=fi.examName||fi.label;
+    if(!jipalMap[key])jipalMap[key]=[];
+    jipalMap[key].push(fi);
+  });
+  Object.entries(jipalMap).forEach(([key,fis])=>{
+    const nBans=fis.map(f=>f.ban).sort((a,b)=>a-b);
+    const yrInfo=fis[0]?.yr?fis[0].yr+'학년 ':'';
+    const label=yrInfo+key+(nBans.length>1?' ('+nBans.join('·')+'반)':' ('+nBans[0]+'반)');
+    TABS.push({type:'jipal',label,fileItems:fis,examName:key});
+  });
+  TABS.push({type:'cum',label:'📊 전체 누적'});
+
+  const allNames=[...new Set(FILE_ITEMS.flatMap(f=>f.students.map(s=>s.name)))];
+  const bans=[...new Set(FILE_ITEMS.flatMap(f=>f.students.map(s=>s.ban||1)))].sort((a,b)=>a-b);
+
+  document.getElementById('rpt-hd').innerHTML=`
+    <div><h1 style="font-size:28px;">내신성적 분석기(5등급→9등급)</h1>
+    <div class="sub">교과학습발달상황(NEIS) + 지필고사 원점수 통합 분석 · 파일 ${FILE_ITEMS.length}개 · 학생 ${allNames.length}명</div></div>
+    <div style="font-size:11px;opacity:.5;text-align:right;line-height:1.6;">제작 : 봉황고등학교 교사 김봉진</div>`;
+
+  let btns='<button class="ban-btn on" data-ban="all" onclick="setBan(this)">전체</button>';
+  bans.forEach(b=>{btns+=`<button class="ban-btn" data-ban="${b}" onclick="setBan(this)">${b}반</button>`;});
+  btns+='<button class="ban-btn" data-ban="manual" onclick="setBan(this)" style="margin-left:8px;border-color:#7c3aed;color:#7c3aed;">✏️ 수동 입력</button>';
+  document.getElementById('banBtns').innerHTML=btns;
+  document.getElementById('cnt').textContent=allNames.length+'명';
+
+  document.getElementById('tabBar').innerHTML=TABS.map((t,i)=>
+    `<button class="tab-btn${i===0?' on':''}" onclick="switchTab(${i},this)">${t.label}</button>`
+  ).join('');
+
+  CUR_TAB=0;renderTab(0);renderLegend();
+  document.getElementById('screen-upload').style.display='none';
+  document.getElementById('screen-report').style.display='block';
+  saveToStorage();
+}
+
+function switchTab(idx,btn){
+  CUR_TAB=idx;
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('on',i===idx));
+  // 탭 전환 시 정렬 상태 초기화
+  _sortKeys=[];
+  renderTab(idx);
+}
+
+function renderTab(idx){
+  const tab=TABS[idx];
+  const tc=document.getElementById('tab-content');
+  tc.innerHTML='';
+  try{
+    if(tab.type==='neis') renderNeisTab(tc,tab);
+    else if(tab.type==='exam') renderExamTab(tc,tab);
+    else if(tab.type==='jipal') renderJipalTab(tc,tab);
+    else if(tab.type==='yr_sum') renderYrSumTab(tc,tab);
+    else renderCumTab(tc);
+  }catch(e){
+    tc.innerHTML='<div style="padding:20px;background:#fef2f2;border-radius:10px;color:#dc2626;font-size:13px;"><strong>렌더링 오류: </strong>'+e.message+'</div>';
+    console.error('renderTab error:',e);
+  }
+}
+function renderNeisTab(tc,tab){
+  const{fileItems,semKey}=tab;
+  const allStudents=fileItems.flatMap(fi=>
+    fi.students.filter(st=>st.sems[semKey]).map(st=>({...st,_fileId:fi.id}))
+  ).sort((a,b)=>(a.ban||0)-(b.ban||0)||(a.num||0)-(b.num||0));
+  if(!allStudents.length){tc.innerHTML='<p style="padding:20px;color:#94a3b8;">해당 학기 데이터 없음</p>';return;}
+
+  // ── 전체 학생 과목 합집합 (공동교육과정 포함) ──────────────
+  const subjInfoMap=new Map(); // 과목명 → {subj,units,nValid,nTotal,fromScore,n}
+  allStudents.forEach(st=>{
+    const sem=st.sems[semKey]; if(!sem) return;
+    sem.subs.forEach(s=>{
+      // 점수도 없고 등급도 없으면 제외
+      if(s.score==null && s.g9==null && !s.fromScore) return;
+      if(!subjInfoMap.has(s.subj)){
+        subjInfoMap.set(s.subj,{subj:s.subj,units:s.units,
+          nValid:s.nValid,nTotal:s.nTotal,fromScore:!!s.fromScore,n:s.n,
+          hasGrade:s.g9!=null||!!s.fromScore}); // 등급 산출 여부
+      } else {
+        const ex=subjInfoMap.get(s.subj);
+        if(s.nValid) ex.nValid=s.nValid;
+        if(s.nTotal) ex.nTotal=s.nTotal;
+        if(s.fromScore){ex.fromScore=true;ex.hasGrade=true;}
+        if(s.g9!=null) ex.hasGrade=true;
+        if(s.n) ex.n=s.n;
+      }
+    });
+  });
+  const gradedSubs=[...subjInfoMap.values()];
+
+  // ── 헤더 ────────────────────────────────────────────────────
+  const neisTbodyId='tbody-neis-'+semKey.replace('-','');
+  const neisSubjTh=gradedSubs.map((def,i)=>{
+    const partMark=def.fromScore&&def.nTotal&&def.nValid<def.nTotal?' ⚡':'';
+    const nInfo=def.fromScore
+      ?`${def.nValid}명${def.nTotal&&def.nValid<def.nTotal?' /전체'+def.nTotal:''}`
+      :(def.n?def.n+'명':'');
+    const gradeLabel = def.hasGrade ? `${def.units}단위 · ${nInfo}${partMark}` : `${def.units}단위 · 공동`;
+    return`<th class="th-sort" data-tbody="${neisTbodyId}" onclick="sortCol('${neisTbodyId}',${i+2},this)" style="min-width:80px;cursor:pointer;">
+      <div style="font-size:12px;">${def.subj}</div>
+      <div style="font-size:10px;font-weight:400;opacity:.7;">${gradeLabel}</div>
+    </th>`;
+  }).join('');
+
+  let html=`<div class="tbl-card"><div class="scroll"><table class="rt">
+  <thead><tr>
+    <th class="th-sort" data-tbody="${neisTbodyId}" onclick="sortCol('${neisTbodyId}',0,this)" style="min-width:36px;cursor:pointer;">번호</th>
+    <th class="th-sort" data-tbody="${neisTbodyId}" onclick="sortCol('${neisTbodyId}',1,this)" style="text-align:left;padding-left:12px;min-width:82px;cursor:pointer;">성명</th>
+    ${neisSubjTh}
+    <th class="th-sort th-avg" data-tbody="${neisTbodyId}" onclick="sortCol('${neisTbodyId}',${gradedSubs.length+2},this)" style="cursor:pointer;">5등급</th>
+    <th class="th-sort th-avg" data-tbody="${neisTbodyId}" onclick="sortCol('${neisTbodyId}',${gradedSubs.length+3},this)" style="cursor:pointer;">9등급 변환</th>
+    <th class="th-prt">🖨</th>
+  </tr></thead><tbody id="${neisTbodyId}">`;
+
+  let prevBanN=null;
+  allStudents.forEach(st=>{
+    const sem=st.sems[semKey]; if(!sem) return;
+    if(st.ban!==prevBanN){
+      const nBan=allStudents.filter(s=>s.ban===st.ban&&s.sems[semKey]).length;
+      html+=`<tr class="ban-hd" data-ban="${st.ban}"><td colspan="${gradedSubs.length+5}" style="background:#1a2744;color:#fff;font-size:12px;font-weight:600;padding:7px 14px;">${st.ban}반 <span style="font-weight:400;opacity:.6;font-size:11px;">(${nBan}명)</span>
+        <button data-semkey="${semKey}" data-ban="${st.ban}" class="neis-print-ban-btn" style="margin-left:12px;background:rgba(255,255,255,.15);border:.5px solid rgba(255,255,255,.3);color:#fff;border-radius:5px;padding:2px 9px;font-size:10px;cursor:pointer;font-family:inherit;">🖨 ${st.ban}반 인쇄</button>
+      </td></tr>`;
+      prevBanN=st.ban;
+    }
+
+    let cells=`<td style="text-align:center;color:#94a3b8;font-size:12px;">${st.num}</td>
+      <td class="counsel-cell" data-counsel="${st.name}" style="font-weight:600;font-size:14px;padding-left:12px;cursor:pointer;" title="클릭 → 상담 기록"><span style="border-bottom:1px dashed #94a3b8;">${st.name}</span></td>`;
+
+    // 합집합 과목 목록 기준으로 셀 생성
+    gradedSubs.forEach(def=>{
+      // 이 학생이 이 과목을 수강했는지 확인
+      const s=sem.subs.find(x=>x.subj===def.subj);
+
+      // 미수강 (점수도 등급도 없음) → 완전 빈칸
+      if(!s || (s.score==null && s.g9==null && !s.fromScore)){
+        cells+=`<td></td>`;
+        return;
+      }
+      // 공동교육과정: 점수만 있고 등급 없음 → 점수만 표시
+      if(s.score!=null && s.g9==null && !s.fromScore){
+        cells+=`<td style="text-align:center;padding:5px 6px;">
+          <div style="font-size:13px;font-weight:600;color:#1a2744;">${s.score}</div>
+        </td>`;
+        return;
+      }
+
+      const c5=C22[(s.g5||1)-1], c9=C15[(s.g9||1)-1];
+      const isPct=s.fromScore&&s.pct!=null;
+      const partMark=isPct&&s.nTotal&&s.nValid<s.nTotal?'⚡':'';
+      const titleTxt=isPct
+        ?`원점수:${s.score} | 석차:${s.rk}/${s.nValid}명${s.nTotal&&s.nValid<s.nTotal?' (전체'+s.nTotal+'명)':''} | 백분율:${s.pct}%`
+        :`원점수:${s.score||'?'} | 수강자:${s.n||'?'}명`;
+
+      cells+=`<td style="text-align:center;padding:5px 6px;" title="${titleTxt}">
+        ${s.score!=null?`<div style="font-size:12px;font-weight:600;color:#1a2744;">${s.score}</div>`:''}
+        ${isPct?`<div style="font-size:10px;color:#64748b;margin:1px 0;">${s.pct}%${partMark}</div>`:''}
+        <div style="display:flex;gap:2px;justify-content:center;margin-top:2px;">
+          <span title="${isPct?'원점수 기반 계산':'9등급→변환'}" style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:5px;background:${c5};color:#fff;font-size:13px;font-weight:700;">${s.g5}</span>
+          <span title="${isPct?'원점수 기반 계산':'NEIS 9등급'}" style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:5px;background:${c9};color:#fff;font-size:13px;font-weight:700;">${s.g9}</span>
+        </div></td>`;
+    });
+
+    const c5=sem.avg5!=null?C22[Math.min(4,Math.round(sem.avg5)-1)]:'#ccc';
+    const c9=sem.avg9!=null?C15[Math.min(8,Math.round(sem.avg9)-1)]:'#ccc';
+    const anyFromScore=sem.subs.some(s=>s.fromScore);
+    cells+=`<td style="text-align:center;background:#fafbff;"><div style="font-size:18px;font-weight:700;color:${c5};">${sem.avg5!=null?sem.avg5.toFixed(2):'—'}</div>${anyFromScore?'':'<div style="font-size:9px;color:#94a3b8;">≈</div>'}</td>`;
+    cells+=`<td style="text-align:center;background:#fafbff;"><div style="font-size:18px;font-weight:700;color:${c9};">${sem.avg9!=null?sem.avg9.toFixed(2):'—'}</div></td>`;
+    cells+=`<td style="text-align:center;"><button onclick="showPrintOpt('${st.name}',ic=>doPrintNeis('${st.name}',${st._fileId||0},ic))" style="background:none;border:.5px solid #d0d8e8;border-radius:5px;padding:4px 7px;cursor:pointer;font-size:12px;">🖨</button></td>`;
+    html+=`<tr class="dr" data-ban="${st.ban||1}" data-name="${st.name}">${cells}</tr>`;
+  });
+  html+='</tbody></table></div></div>';
+  tc.innerHTML=html;filt();
+}
+
+// 지필 탭
+function renderExamTab(tc,tab){
+  const{fileItem}=tab;const{subjects,students}=fileItem;
+  const examTbodyId='tbody-exam-'+fileItem.id;
+  const subjTh=subjects.map((s,i)=>
+    `<th class="th-sort" data-tbody="${examTbodyId}" onclick="sortCol('${examTbodyId}',${i+2},this)" style="min-width:92px;cursor:pointer;">
+      <div style="font-size:12px;">${s.name}</div>
+      <div style="font-size:10px;font-weight:400;opacity:.7;">${s.units}단위 · ${s.nValid}명</div>
+    </th>`
+  ).join('');
+  let html=`<div class="tbl-card"><div class="scroll"><table class="rt">
+  <thead><tr>
+    <th class="th-sort" data-tbody="${examTbodyId}" onclick="sortCol('${examTbodyId}',0,this)" style="min-width:36px;cursor:pointer;">번호</th>
+    <th class="th-sort" data-tbody="${examTbodyId}" onclick="sortCol('${examTbodyId}',1,this)" style="text-align:left;padding-left:12px;min-width:82px;cursor:pointer;">성명</th>
+    ${subjTh}
+    <th class="th-sort th-avg" data-tbody="${examTbodyId}" onclick="sortCol('${examTbodyId}',${subjects.length+2},this)" style="cursor:pointer;">2022</th>
+    <th class="th-sort th-avg" data-tbody="${examTbodyId}" onclick="sortCol('${examTbodyId}',${subjects.length+3},this)" style="cursor:pointer;">9등급 변환</th>
+    <th class="th-prt">🖨</th>
+  </tr></thead><tbody id="${examTbodyId}">`;
+  let prevBan=null;
+  students.forEach((st,idx)=>{
+    if(st.ban!==prevBan){
+      const n=students.filter(s=>s.ban===st.ban).length;
+      html+=`<tr class="ban-hd"><td colspan="${subjects.length+5}" style="background:#1a2744;color:#fff;font-size:12px;font-weight:600;padding:7px 14px;">
+        ${st.ban}반 <span style="font-weight:400;opacity:.6;font-size:11px;">(${n}명)</span>
+        <button onclick="printBan('${tab.label}',${fileItem.id},${st.ban})" style="margin-left:12px;background:rgba(255,255,255,.15);border:.5px solid rgba(255,255,255,.3);color:#fff;border-radius:5px;padding:2px 9px;font-size:10px;cursor:pointer;font-family:inherit;">🖨 ${st.ban}반 인쇄</button>
+      </td></tr>`;prevBan=st.ban;
+    }
+    let cells=`<td style="text-align:center;color:#94a3b8;font-size:12px;">${st.num}</td>
+      <td class="counsel-cell" data-counsel="${st.name}" style="font-weight:600;font-size:14px;padding-left:12px;cursor:pointer;" title="클릭 → 상담 기록"><span style="border-bottom:1px dashed #94a3b8;">${st.name}</span></td>`;
+    subjects.forEach((s,si)=>{
+      const sc=st.scores[si],g5=st[`g5_${si}`],g9=st[`g9_${si}`],p=st[`pt${si}`],rk=st[`rk${si}`];
+      if(sc==null)return void(cells+=`<td style="text-align:center;color:#94a3b8;font-size:12px;">—</td>`);
+      if(sc==='미인정결')return void(cells+=`<td style="text-align:center;"><span style="font-size:10px;color:#e53935;">미인정결</span></td>`);
+      cells+=`<td style="text-align:center;padding:5px 6px;" title="석차 ${rk}/${s.nValid}명">
+        <div style="font-size:13px;font-weight:600;color:#1a2744;">${sc.toFixed(1)}</div>
+        <div style="font-size:10px;color:#94a3b8;margin:1px 0;">${p.toFixed(1)}%</div>
+        <div style="display:flex;gap:2px;justify-content:center;margin-top:2px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:5px;background:${C22[g5-1]};color:#fff;font-size:13px;font-weight:700;">${g5}</span>
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:5px;background:${C15[g9-1]};color:#fff;font-size:13px;font-weight:700;">${g9}</span>
+        </div></td>`;
+    });
+    const c5=st.avg5!=null?C22[Math.min(4,Math.round(st.avg5)-1)]:'#ccc';
+    const c9=st.avg9!=null?C15[Math.min(8,Math.round(st.avg9)-1)]:'#ccc';
+    cells+=`<td style="text-align:center;background:#fafbff;"><div style="font-size:18px;font-weight:700;color:${c5};">${st.avg5!=null?st.avg5.toFixed(2):'—'}</div></td>`;
+    cells+=`<td style="text-align:center;background:#fafbff;"><div style="font-size:18px;font-weight:700;color:${c9};">${st.avg9!=null?st.avg9.toFixed(2):'—'}</div></td>`;
+    cells+=`<td style="text-align:center;"><button onclick="showPrintOpt('${st.name}',ic=>doPrintExam('${tab.label}',${fileItem.id},${idx},ic))" style="background:none;border:.5px solid #d0d8e8;border-radius:5px;padding:4px 7px;cursor:pointer;font-size:12px;">🖨</button></td>`;
+    html+=`<tr class="dr" data-ban="${st.ban}" data-name="${st.name}">${cells}</tr>`;
+  });
+  html+='</tbody></table></div></div>';
+  tc.innerHTML=html;filt();
+}
+
+
+// 지필 학급별 일람표 탭 렌더
+function renderJipalTab(tc,tab){
+  const{fileItems,examName}=tab;
+  // 대표 파일의 과목 목록 (첫 파일 기준)
+  const repFi=fileItems[0];
+  const subjects=repFi.subjects;
+  const totalUploaded=[...new Set(fileItems.flatMap(fi=>fi.students.map(s=>s.name)))].length;
+
+  // 예상 여부: 학과응시생수와 업로드 수 비교
+  const isPartial=subjects.some(s=>s.nTotal&&s.nValid<s.nTotal);
+
+  const jipalTbodyId='tbody-jipal-'+examName.replace(/\W/g,'');
+  const subjTh=subjects.map((s,i)=>{
+    const ratio=s.nTotal?`${s.nValid}/${s.nTotal}명`:`${s.nValid}명`;
+    const isSubjPartial=s.nTotal&&s.nValid<s.nTotal;
+    return`<th class="th-sort" data-tbody="${jipalTbodyId}" onclick="sortCol('${jipalTbodyId}',${i+3},this)" style="min-width:92px;cursor:pointer;">
+      <div style="font-size:12px;">${s.name}</div>
+      <div style="font-size:10px;font-weight:400;opacity:.7;margin-top:1px;">${s.units}단위 · ${ratio}${isSubjPartial?' ⚡':'✓'}</div>
+    </th>`;
+  }).join('');
+
+  // 전체 학생: 반별 정렬
+  const allStudents=fileItems.flatMap(fi=>fi.students)
+    .sort((a,b)=>(a.ban-b.ban)||(a.num-b.num));
+
+  let html=`<div style="margin-bottom:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">`;
+  if(isPartial){
+    html+=`<span style="background:#fef9c3;border:.5px solid #fcd34d;border-radius:6px;padding:5px 12px;font-size:12px;color:#92400e;">
+      ⚡ 예상 등급 — 업로드 ${totalUploaded}명 기준 계산 · 학과응시생수(전체)와 차이가 있을 수 있습니다
+    </span>`;
+  }else{
+    html+=`<span style="background:#f0fdf4;border:.5px solid #86efac;border-radius:6px;padding:5px 12px;font-size:12px;color:#166534;">
+      ✅ 정확한 등급 — 전체 응시 학생 데이터 업로드 완료
+    </span>`;
+  }
+  html+=`</div>`;
+
+  html+=`<div class="tbl-card"><div class="scroll"><table class="rt">
+  <thead><tr>
+    <th class="th-sort" data-tbody="${jipalTbodyId}" onclick="sortCol('${jipalTbodyId}',0,this)" style="min-width:36px;cursor:pointer;">번호</th>
+    <th class="th-sort" data-tbody="${jipalTbodyId}" onclick="sortCol('${jipalTbodyId}',1,this)" style="text-align:left;padding-left:12px;min-width:82px;cursor:pointer;">성명</th>
+    <th class="th-sort" data-tbody="${jipalTbodyId}" onclick="sortCol('${jipalTbodyId}',2,this)" style="min-width:36px;cursor:pointer;">반</th>
+    ${subjTh}
+    <th class="th-sort th-avg" data-tbody="${jipalTbodyId}" onclick="sortCol('${jipalTbodyId}',${subjects.length+3},this)" style="cursor:pointer;">2022</th>
+    <th class="th-sort th-avg" data-tbody="${jipalTbodyId}" onclick="sortCol('${jipalTbodyId}',${subjects.length+4},this)" style="cursor:pointer;">9등급 변환</th>
+    <th class="th-prt">🖨</th>
+  </tr></thead><tbody id="${jipalTbodyId}">`;
+
+  let prevBan=null;
+  allStudents.forEach((st,globalIdx)=>{
+    // 이 학생이 속한 파일 찾기
+    const fi=fileItems.find(f=>f.students.includes(st));
+    if(!fi)return;
+    const stIdx=fi.students.indexOf(st);
+
+    if(st.ban!==prevBan){
+      const nBan=allStudents.filter(s=>s.ban===st.ban).length;
+      html+=`<tr class="ban-hd"><td colspan="${subjects.length+6}" style="background:#1a2744;color:#fff;font-size:12px;font-weight:600;padding:7px 14px;">
+        ${st.ban}반 <span style="font-weight:400;opacity:.6;font-size:11px;">(${nBan}명)</span>
+        <button onclick="printJipalBan('${examName}',${st.ban})" style="margin-left:12px;background:rgba(255,255,255,.15);border:.5px solid rgba(255,255,255,.3);color:#fff;border-radius:5px;padding:2px 9px;font-size:10px;cursor:pointer;font-family:inherit;">🖨 ${st.ban}반 인쇄</button>
+      </td></tr>`;
+      prevBan=st.ban;
+    }
+
+    let cells=`<td style="text-align:center;color:#94a3b8;font-size:12px;">${st.num}</td>
+      <td style="font-weight:600;font-size:14px;padding-left:12px;cursor:pointer;" class="counsel-cell" data-counsel="${st.name.replace(/"/g,'&quot;')}"  title="상담 기록"><span style="border-bottom:1px dashed #94a3b8;">${st.name}</span></td>
+      <td style="text-align:center;font-size:12px;color:#64748b;">${st.ban}반</td>`;
+
+    subjects.forEach((s,si)=>{
+      const sc=st.scores[si];
+      const g5=st[`g5_${si}`],g9=st[`g9_${si}`],p=st[`pt${si}`],rk=st[`rk${si}`];
+      if(sc===null||sc===undefined){
+        cells+=`<td style="text-align:center;color:#94a3b8;font-size:11px;">미응시</td>`;return;
+      }
+      if(g5==null){cells+=`<td style="text-align:center;color:#94a3b8;">—</td>`;return;}
+      cells+=`<td style="text-align:center;padding:5px 6px;" title="석차 ${rk}/${s.nValid}명 (전체 ${s.nTotal||'?'}명)">
+        <div style="font-size:13px;font-weight:600;color:#1a2744;">${sc.toFixed(1)}</div>
+        <div style="font-size:10px;color:#94a3b8;margin:1px 0;">${p.toFixed(1)}%</div>
+        <div style="display:flex;gap:2px;justify-content:center;margin-top:2px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:5px;background:${C22[g5-1]};color:#fff;font-size:13px;font-weight:700;">${g5}</span>
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:5px;background:${C15[g9-1]};color:#fff;font-size:13px;font-weight:700;">${g9}</span>
+        </div></td>`;
+    });
+    const c5=st.avg5!=null?C22[Math.min(4,Math.round(st.avg5)-1)]:'#ccc';
+    const c9=st.avg9!=null?C15[Math.min(8,Math.round(st.avg9)-1)]:'#ccc';
+    cells+=`<td style="text-align:center;background:#fafbff;"><div style="font-size:18px;font-weight:700;color:${c5};">${st.avg5!=null?st.avg5.toFixed(2):'—'}</div></td>`;
+    cells+=`<td style="text-align:center;background:#fafbff;"><div style="font-size:18px;font-weight:700;color:${c9};">${st.avg9!=null?st.avg9.toFixed(2):'—'}</div></td>`;
+    cells+=`<td style="text-align:center;"><button onclick="showPrintOpt('${st.name}',ic=>printJipalStudent('${examName}',${fi.id},${stIdx},ic))" style="background:none;border:.5px solid #d0d8e8;border-radius:5px;padding:4px 7px;cursor:pointer;font-size:12px;">🖨</button></td>`;
+    html+=`<tr class="dr" data-ban="${st.ban}" data-name="${st.name}">${cells}</tr>`;
+  });
+  html+='</tbody></table></div></div>';
+  tc.innerHTML=html;filt();
+}
+
+
+// 학년 종합 탭
+function renderYrSumTab(tc,tab){
+  const{yr,semKeys,fileItems}=tab;
+  const tbId='tbody-yr-'+yr;
+  // 이 학년에 포함된 학생 목록 (반→번호 순)
+  const allSts=fileItems.flatMap(fi=>fi.students.filter(st=>semKeys.some(sk=>st.sems[sk]))).filter((v,i,a)=>a.findIndex(x=>x.name===v.name)===i).sort((a,b)=>(a.ban||0)-(b.ban||0)||(a.num||0)-(b.num||0));
+
+  // 각 학기별 컬럼 헤더
+  const semTh=semKeys.map((sk,i)=>{const sem=parseInt(sk.split('-')[1]);return`<th class="th-sort th-avg" data-tbody="${tbId}" onclick="sortCol('${tbId}',${i+2},this)" style="background:${TCOLS[i%TCOLS.length]};min-width:82px;cursor:pointer;">${yr}학년 ${sem}학기</th>`;}).join('');
+
+  let html=`<div class="tbl-card"><div class="scroll"><table class="rt">
+  <thead><tr>
+    <th class="th-sort" data-tbody="${tbId}" onclick="sortCol('${tbId}',0,this)" style="min-width:36px;cursor:pointer;">번호</th>
+    <th class="th-sort" data-tbody="${tbId}" onclick="sortCol('${tbId}',1,this)" style="text-align:left;padding-left:12px;min-width:82px;cursor:pointer;">성명</th>
+    ${semTh}
+    <th class="th-sort th-cum" data-tbody="${tbId}" onclick="sortCol('${tbId}',${semKeys.length+2},this)" style="cursor:pointer;">${yr}학년<br><span style="font-size:10px;font-weight:400;opacity:.8;">5등급 누적</span></th>
+    <th class="th-sort th-cum" data-tbody="${tbId}" onclick="sortCol('${tbId}',${semKeys.length+3},this)" style="cursor:pointer;">${yr}학년<br><span style="font-size:10px;font-weight:400;opacity:.8;">9등급 변환 누적</span></th>
+    <th style="min-width:50px;background:#243458;font-size:11px;">이수<br>단위</th>
+    <th class="th-prt">🖨</th>
+  </tr></thead><tbody id="${tbId}">`;
+
+  let prevBan=null;
+  allSts.forEach(st=>{
+    if(st.ban!==prevBan){
+      const nB=allSts.filter(s=>s.ban===st.ban).length;
+      html+=`<tr class="ban-hd" data-ban="${st.ban}"><td colspan="${semKeys.length+6}" style="background:#1a2744;color:#fff;font-size:12px;font-weight:600;padding:7px 14px;">${st.ban}반 <span style="font-weight:400;opacity:.6;font-size:11px;">(${nB}명)</span><button onclick="printYrBan(${yr},'${semKeys.join(',')}',${st.ban})" style="margin-left:12px;background:rgba(255,255,255,.15);border:.5px solid rgba(255,255,255,.3);color:#fff;border-radius:5px;padding:2px 9px;font-size:10px;cursor:pointer;font-family:inherit;">🖨 ${st.ban}반 인쇄</button></td></tr>`;
+      prevBan=st.ban;
+    }
+    let cells=`<td style="text-align:center;color:#94a3b8;font-size:12px;">${st.num}</td>
+      <td style="font-weight:600;font-size:14px;padding-left:12px;cursor:pointer;" class="counsel-cell" data-counsel="${st.name}" title="클릭하여 상담 기록"><span style="border-bottom:1px dashed #94a3b8;">${st.name}</span></td>`;
+    let tu5=0,tg5=0,tu9=0,tg9=0;
+    semKeys.forEach(sk=>{
+      const sem=st.sems[sk];
+      if(!sem){cells+=`<td style="text-align:center;color:#94a3b8;font-size:11px;">—</td>`;return;}
+      const c5=sem.avg5!=null?C22[Math.min(4,Math.round(sem.avg5)-1)]:'#ccc';
+      const c9=sem.avg9!=null?C15[Math.min(8,Math.round(sem.avg9)-1)]:'#ccc';
+      cells+=`<td style="text-align:center;padding:5px 7px;">
+        <div style="font-size:14px;font-weight:700;color:${c5};">${sem.avg5!=null?sem.avg5.toFixed(2)+'≈':'—'}</div>
+        <div style="font-size:11px;color:${c9};">${sem.avg9!=null?sem.avg9.toFixed(2):'—'}</div>
+      </td>`;
+      if(sem.avg5!=null){tg5+=sem.avg5*sem.totalUnits;tu5+=sem.totalUnits;}
+      if(sem.avg9!=null){tg9+=sem.avg9*sem.totalUnits;tu9+=sem.totalUnits;}
+    });
+    const cum5=tu5>0?Math.round(tg5/tu5*100)/100:null;
+    const cum9=tu9>0?Math.round(tg9/tu9*100)/100:null;
+    const cc5=cum5!=null?C22[Math.min(4,Math.round(cum5)-1)]:'#ccc';
+    const cc9=cum9!=null?C15[Math.min(8,Math.round(cum9)-1)]:'#ccc';
+    cells+=`<td style="text-align:center;background:#f0fdf0;"><div style="font-size:18px;font-weight:700;color:${cc5};">${cum5!=null?cum5.toFixed(2):'—'}</div></td>`;
+    cells+=`<td style="text-align:center;background:#f0fdf0;"><div style="font-size:18px;font-weight:700;color:${cc9};">${cum9!=null?cum9.toFixed(2):'—'}</div></td>`;
+    cells+=`<td style="text-align:center;background:#fafbff;font-size:12px;font-weight:600;color:#64748b;">${tu5}</td>`;
+    cells+=`<td style="text-align:center;"><button data-printcum="${name}" class="print-cum-btn">🖨</button></td>`;
+    html+=`<tr class="dr" data-ban="${st.ban}" data-name="${st.name}">${cells}</tr>`;
+  });
+  html+='</tbody></table></div></div>';
+  tc.innerHTML=html;filt();
+}
+
+function printYrBan(yr,semKeysStr,ban){
+  const semKeys=semKeysStr.split(',');
+  const tab=TABS.find(t=>t.type==='yr_sum'&&t.yr===yr);if(!tab)return;
+  const sts=tab.fileItems.flatMap(fi=>fi.students.filter(st=>st.ban===ban&&semKeys.some(sk=>st.sems[sk]))).filter((v,i,a)=>a.findIndex(x=>x.name===v.name)===i).sort((a,b)=>a.num-b.num);
+  const hCols=semKeys.map(sk=>`<th>${yr}학년 ${sk.split('-')[1]}학기</th>`).join('');
+  const rows=sts.map(st=>{
+    let tu5=0,tg5=0,tu9=0,tg9=0;
+    const cells=semKeys.map(sk=>{
+      const sem=st.sems[sk];if(!sem)return`<td style="color:#94a3b8;">—</td>`;
+      const c5=sem.avg5!=null?C22[Math.min(4,Math.round(sem.avg5)-1)]:'#ccc';
+      const c9=sem.avg9!=null?C15[Math.min(8,Math.round(sem.avg9)-1)]:'#ccc';
+      if(sem.avg5!=null){tg5+=sem.avg5*sem.totalUnits;tu5+=sem.totalUnits;}
+      if(sem.avg9!=null){tg9+=sem.avg9*sem.totalUnits;tu9+=sem.totalUnits;}
+      return`<td><span style="font-size:14px;font-weight:700;color:${c5};">${sem.avg5!=null?sem.avg5.toFixed(2)+'≈':'—'}</span><br><span style="font-size:11px;color:${c9};">${sem.avg9!=null?sem.avg9.toFixed(2):'—'}</span></td>`;
+    }).join('');
+    const c5=tu5>0?C22[Math.min(4,Math.round(tg5/tu5)-1)]:'#ccc';
+    const c9=tu9>0?C15[Math.min(8,Math.round(tg9/tu9)-1)]:'#ccc';
+    return`<tr><td>${st.num}</td><td style="text-align:left;font-weight:600;">${st.name}</td>${cells}<td><span style="font-size:15px;font-weight:700;color:${c5};">${tu5>0?(tg5/tu5).toFixed(2):'—'}</span></td><td><span style="font-size:15px;font-weight:700;color:${c9};">${tu9>0?(tg9/tu9).toFixed(2):'—'}</span></td></tr>`;
+  }).join('');
+  openPrint(`<div style="background:#1a2744;color:#fff;padding:12px 18px;border-radius:8px;margin-bottom:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact;"><div style="font-size:16px;font-weight:700;">${yr}학년 종합 — ${ban}반</div></div><table><thead><tr><th style="width:32px;">번호</th><th style="text-align:left;">성명</th>${hCols}<th style="background:#1a3a1a;">5등급 누적</th><th style="background:#1a3a1a;">9등급 변환 누적</th></tr></thead><tbody>${rows}</tbody></table>`,1100,780,'A3 landscape');
+}
+
+// 누적 탭 (학년별 종합 열 포함)
+function renderCumTab(tc){
+  const tbId='tbody-cum';
+  // 반→번호 순으로 학생 목록
+  const nameInfos=[...new Set(FILE_ITEMS.flatMap(f=>f.students.map(s=>s.name)))].map(name=>{
+    let num=0,ban=1;
+    for(const fi of FILE_ITEMS){const st=fi.students.find(s=>s.name===name);if(st){num=st.num||0;ban=st.ban||1;break;}}
+    return{name,num,ban};
+  }).sort((a,b)=>a.ban-b.ban||a.num-b.num);
+
+  // 컬럼 정의: NEIS 탭을 학년별로 그룹 + 학년종합 + jipal/exam
+  const neisTabs=TABS.filter(t=>t.type==='neis');
+  const yrMap={};
+  neisTabs.forEach(t=>{const yr=parseInt(t.semKey.split('-')[0]);if(!yrMap[yr])yrMap[yr]=[];yrMap[yr].push(t);});
+  
+  // colDefs: {kind:'tab'|'yrsum'|'jipal', tab?, yr?, label}
+  const colDefs=[];
+  Object.keys(yrMap).sort((a,b)=>a-b).forEach(yr=>{
+    yrMap[yr].forEach(t=>colDefs.push({kind:'tab',tab:t,label:t.label}));
+    if(yrMap[yr].length>0)colDefs.push({kind:'yrsum',yr:parseInt(yr),label:yr+'학년 종합',tabs:yrMap[yr]});
+  });
+  TABS.filter(t=>t.type==='jipal'||t.type==='exam').forEach(t=>colDefs.push({kind:'tab',tab:t,label:t.label}));
+
+  // 헤더 생성
+  let thHtml='';
+  let colOffset=2;
+  colDefs.forEach((def,i)=>{
+    def.ci=colOffset++;
+    if(def.kind==='yrsum'){
+      thHtml+=`<th class="th-sort" data-tbody="${tbId}" onclick="sortCol('${tbId}',${def.ci},this)" style="background:#1a3a1a;min-width:82px;cursor:pointer;">${def.label}</th>`;
+    } else {
+      const ci=TABS.indexOf(def.tab)%TCOLS.length;
+      thHtml+=`<th class="th-sort th-avg" data-tbody="${tbId}" onclick="sortCol('${tbId}',${def.ci},this)" style="background:${TCOLS[i%TCOLS.length]};min-width:82px;cursor:pointer;">${def.label}</th>`;
+    }
+  });
+  const cumCi1=colOffset; const cumCi2=colOffset+1;
+
+  let html=`<div class="tbl-card"><div class="scroll"><table class="rt">
+  <thead><tr>
+    <th class="th-sort" data-tbody="${tbId}" onclick="sortCol('${tbId}',0,this)" style="min-width:36px;cursor:pointer;">번호</th>
+    <th class="th-sort" data-tbody="${tbId}" onclick="sortCol('${tbId}',1,this)" style="text-align:left;padding-left:12px;min-width:82px;cursor:pointer;">성명</th>
+    ${thHtml}
+    <th class="th-sort th-cum" data-tbody="${tbId}" onclick="sortCol('${tbId}',${cumCi1},this)" style="cursor:pointer;">전체누적<br><span style="font-size:10px;font-weight:400;opacity:.8;">5등급</span></th>
+    <th class="th-sort th-cum" data-tbody="${tbId}" onclick="sortCol('${tbId}',${cumCi2},this)" style="cursor:pointer;">전체누적<br><span style="font-size:10px;font-weight:400;opacity:.8;">9등급</span></th>
+    <th style="min-width:52px;background:#243458;font-size:11px;">이수<br>단위</th>
+    <th class="th-prt">🖨</th>
+  </tr></thead><tbody id="${tbId}">`;
+
+  let prevBan=null;
+  nameInfos.forEach(({name,num,ban})=>{
+    if(ban!==prevBan){
+      const nB=nameInfos.filter(x=>x.ban===ban).length;
+      html+=`<tr class="ban-hd" data-ban="${ban}"><td colspan="${colDefs.length+6}" style="background:#1a2744;color:#fff;font-size:12px;font-weight:600;padding:7px 14px;">${ban}반 <span style="font-weight:400;opacity:.6;font-size:11px;">(${nB}명)</span><button onclick="printCumBan(${ban})" style="margin-left:12px;background:rgba(255,255,255,.15);border:.5px solid rgba(255,255,255,.3);color:#fff;border-radius:5px;padding:2px 9px;font-size:10px;cursor:pointer;font-family:inherit;">🖨 ${ban}반 인쇄</button></td></tr>`;
+      prevBan=ban;
+    }
+
+    let cells=`<td style="text-align:center;color:#94a3b8;font-size:12px;">${num}</td>
+      <td class="counsel-cell" data-counsel="${name.replace(/"/g,'&quot;')}" style="font-weight:600;font-size:14px;padding-left:12px;cursor:pointer;" title="클릭하여 상담 기록"><span style="border-bottom:1px dashed #94a3b8;">${name}</span></td>`;
+
+    let totalTu5=0,totalTg5=0,totalTu9=0,totalTg9=0;
+    colDefs.forEach(def=>{
+      if(def.kind==='yrsum'){
+        // 해당 학년 모든 학기 누적
+        let tu5=0,tg5=0,tu9=0,tg9=0;
+        def.tabs.forEach(t=>{
+          let avg5=null,avg9=null,units=0;
+          for(const fi of t.fileItems){const st=fi.students.find(s=>s.name===name);if(st){const sem=st.sems[t.semKey];if(sem){avg5=sem.avg5;avg9=sem.avg9;units=sem.totalUnits;}break;}}
+          if(avg5!=null){tg5+=avg5*units;tu5+=units;}
+          if(avg9!=null){tg9+=avg9*units;tu9+=units;}
+        });
+        const yr5=tu5>0?Math.round(tg5/tu5*100)/100:null;
+        const yr9=tu9>0?Math.round(tg9/tu9*100)/100:null;
+        const c5=yr5!=null?C22[Math.min(4,Math.round(yr5)-1)]:'#ccc';
+        const c9=yr9!=null?C15[Math.min(8,Math.round(yr9)-1)]:'#ccc';
+        cells+=`<td style="text-align:center;background:#f0fdf0;padding:5px 7px;">
+          <div style="font-size:14px;font-weight:700;color:${c5};">${yr5!=null?yr5.toFixed(2):'—'}</div>
+          <div style="font-size:11px;color:${c9};">${yr9!=null?yr9.toFixed(2):'—'}</div>
+        </td>`;
+        if(yr5!=null){totalTg5+=yr5*tu5;totalTu5+=tu5;}
+        if(yr9!=null){totalTg9+=yr9*tu9;totalTu9+=tu9;}
+      } else {
+        const t=def.tab;
+        let avg5=null,avg9=null,units=0,approx=false;
+        if(t.type==='jipal'){for(const fi of t.fileItems){const st=fi.students.find(s=>s.name===name);if(st){avg5=st.avg5;avg9=st.avg9;units=st.totalUnits;break;}}}
+        else if(t.type==='neis'){for(const fi of t.fileItems){const st=fi.students.find(s=>s.name===name);if(st){const sem=st.sems?.[t.semKey];if(sem){avg5=sem.avg5;avg9=sem.avg9;units=sem.totalUnits||0;approx=true;}break;}}}
+        else if(t.type==='exam'){const fi=t.fileItem;const st=fi?.students.find(s=>s.name===name);if(st){avg5=st.avg5;avg9=st.avg9;units=st.totalUnits;}}
+        if(avg5!=null&&units>0){totalTg5+=avg5*units;totalTu5+=units;}
+        if(avg9!=null&&units>0){totalTg9+=avg9*units;totalTu9+=units;}
+        const c5=avg5!=null?C22[Math.min(4,Math.round(avg5)-1)]:'#ccc';
+        const c9=avg9!=null?C15[Math.min(8,Math.round(avg9)-1)]:'#ccc';
+        cells+=`<td style="text-align:center;padding:5px 7px;">
+          <div style="font-size:14px;font-weight:700;color:${c5};">${avg5!=null?avg5.toFixed(2)+(approx?'≈':''):'—'}</div>
+          <div style="font-size:11px;color:${c9};margin-top:1px;">${avg9!=null?avg9.toFixed(2):'—'}</div>
+        </td>`;
+      }
+    });
+    const cum5=totalTu5>0?Math.round(totalTg5/totalTu5*100)/100:null;
+    const cum9=totalTu9>0?Math.round(totalTg9/totalTu9*100)/100:null;
+    const cc5=cum5!=null?C22[Math.min(4,Math.round(cum5)-1)]:'#ccc';
+    const cc9=cum9!=null?C15[Math.min(8,Math.round(cum9)-1)]:'#ccc';
+    cells+=`<td style="text-align:center;background:#e8f5e9;"><div style="font-size:18px;font-weight:700;color:${cc5};">${cum5!=null?cum5.toFixed(2):'—'}</div></td>`;
+    cells+=`<td style="text-align:center;background:#e8f5e9;"><div style="font-size:18px;font-weight:700;color:${cc9};">${cum9!=null?cum9.toFixed(2):'—'}</div></td>`;
+    cells+=`<td style="text-align:center;background:#fafbff;font-size:12px;font-weight:600;color:#64748b;">${totalTu5}</td>`;
+    cells+=`<td style="text-align:center;"><button data-printcum="${name}" class="print-cum-btn" style="background:none;border:.5px solid #d0d8e8;border-radius:5px;padding:4px 7px;cursor:pointer;font-size:12px;">🖨</button></td>`;
+    html+=`<tr class="dr" data-ban="${ban}" data-name="${name}">${cells}</tr>`;
+  });
+  html+='</tbody></table></div></div>';
+  tc.innerHTML=html;filt();
+}
+
+function printCumBan(ban){
+  const colTabs=TABS.filter(t=>t.type!=='cum');
+  const allNames=[...new Set(FILE_ITEMS.flatMap(f=>f.students.map(s=>s.name)))];
+  const banStudents=allNames.map(name=>{
+    let num=0,b=1;for(const fi of FILE_ITEMS){const st=fi.students.find(s=>s.name===name);if(st){num=st.num||0;b=st.ban||1;break;}}return{name,num,ban:b};
+  }).filter(x=>x.ban===ban).sort((a,b)=>a.num-b.num);
+  const hCols=colTabs.map(t=>`<th>${t.label}</th>`).join('');
+  const rows=banStudents.map(({name,num})=>{
+    let tu5=0,tg5=0,tu9=0,tg9=0;
+    const cells=colTabs.map(t=>{
+      let avg5=null,avg9=null,units=0;
+      if(t.type==='jipal'){for(const fi of t.fileItems){const st=fi.students.find(s=>s.name===name);if(st){avg5=st.avg5;avg9=st.avg9;units=st.totalUnits;break;}}}
+      else if(t.type==='neis'){let found=null;for(const fi of t.fileItems){const st=fi.students.find(s=>s.name===name);if(st){found={sem:st.sems[t.semKey]};break;}}if(found?.sem){avg5=found.sem.avg5;avg9=found.sem.avg9;units=found.sem.totalUnits;}}
+      else{const fi=t.fileItem;const st=fi?.students.find(s=>s.name===name);if(st){avg5=st.avg5;avg9=st.avg9;units=st.totalUnits;}}
+      if(avg5!=null){tg5+=avg5*units;tu5+=units;}if(avg9!=null){tg9+=avg9*units;tu9+=units;}
+      const c5=avg5!=null?C22[Math.min(4,Math.round(avg5)-1)]:'#ccc';
+      const c9=avg9!=null?C15[Math.min(8,Math.round(avg9)-1)]:'#ccc';
+      return`<td><span style="font-size:14px;font-weight:700;color:${c5};">${avg5!=null?avg5.toFixed(2):'—'}</span><br><span style="font-size:11px;color:${c9};">${avg9!=null?avg9.toFixed(2):'—'}</span></td>`;
+    }).join('');
+    const cum5=tu5>0?Math.round(tg5/tu5*100)/100:null;const cum9=tu9>0?Math.round(tg9/tu9*100)/100:null;
+    const cc5=cum5!=null?C22[Math.min(4,Math.round(cum5)-1)]:'#ccc';const cc9=cum9!=null?C15[Math.min(8,Math.round(cum9)-1)]:'#ccc';
+    return`<tr><td style="color:#94a3b8;">${num}</td><td style="text-align:left;font-weight:600;">${name}</td>${cells}<td><span style="font-size:15px;font-weight:700;color:${cc5};">${cum5!=null?cum5.toFixed(2):'—'}</span></td><td><span style="font-size:15px;font-weight:700;color:${cc9};">${cum9!=null?cum9.toFixed(2):'—'}</span></td><td style="color:#64748b;">${tu5}</td></tr>`;
+  }).join('');
+  openPrint(`<div style="background:#1a2744;color:#fff;padding:12px 18px;border-radius:8px;margin-bottom:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact;"><div style="font-size:16px;font-weight:700;">누적 종합 — ${ban}반 성적표</div></div><table><thead><tr><th style="width:32px;">번호</th><th style="text-align:left;min-width:65px;">성명</th>${hCols}<th style="background:#1a3a1a;">누적 5등급</th><th style="background:#1a3a1a;">누적 9등급 변환</th><th>단위</th></tr></thead><tbody>${rows}</tbody></table>`,1100,780,'A3 landscape');
+}
+
+function renderLegend(){
+  const l5=C22.map((c,i)=>`<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:4px;background:${c};color:#fff;font-size:12px;font-weight:700;margin-right:2px;">${i+1}</span>`).join('');
+  const l9=C15.map((c,i)=>`<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:4px;background:${c};color:#fff;font-size:12px;font-weight:700;margin-right:2px;">${i+1}</span>`).join('');
+  document.getElementById('rpt-legend').innerHTML=`
+    <div class="leg-row"><span class="leg-key">2022 5등급</span>${l5}<span style="font-size:11px;color:#94a3b8;margin-left:4px;">≤10%/≤34%/≤66%/≤90%/초과</span></div>
+    <div class="leg-row"><span class="leg-key">2015 9등급</span>${l9}<span style="font-size:11px;color:#94a3b8;margin-left:4px;">≤4%/≤11%/≤23%/≤40%/≤60%/≤77%/≤89%/≤96%/초과</span></div>
+    <div class="leg-row"><span class="leg-key">등급 계산</span><span style="font-size:12px;color:#475569;">
+      <b>NEIS(교과학습발달상황)</b>: 원점수 → 석차백분율 → 5등급/9등급 직접 계산 &nbsp;|&nbsp;
+      <b>지필고사</b>: 원점수 → 최하위 공동석차 → 백분율 → 5등급/9등급 계산
+    </span></div>
+    <div class="leg-note">
+      <b>석차백분율 = 석차 ÷ 업로드 학생 수 × 100</b> (여러 반 파일 업로드 시 합산 기준으로 계산) &nbsp;·&nbsp;
+      ⚡ 표시: 일부 반만 업로드된 경우 예상값 &nbsp;·&nbsp;
+      석차등급 없는 과목(공동교육과정 등): 점수만 표시(공동), 가중평균 제외 &nbsp;·&nbsp;
+      <b>2022 5등급</b>: ≤10% / ≤34% / ≤66% / ≤90% / 초과 &nbsp;·&nbsp;
+      <b>2015 9등급</b>: ≤4% / ≤11% / ≤23% / ≤40% / ≤60% / ≤77% / ≤89% / ≤96% / 초과
+    </div>`;
+}
+
+// ── 필터/탭 ──────────────────────────────────────────────
+function setBan(btn){
+  document.querySelectorAll('.ban-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  CUR_BAN=btn.dataset.ban;
+  if(CUR_BAN==='manual'){
+    document.getElementById('tab-content').style.display='none';
+    document.getElementById('rpt-legend').style.display='none';
+    document.getElementById('manual-panel').style.display='block';
+    renderManualPanel();
+  } else {
+    document.getElementById('tab-content').style.display='';
+    document.getElementById('rpt-legend').style.display='';
+    document.getElementById('manual-panel').style.display='none';
+    filt();
+  }
+}
+function filt(){
+  const q=document.getElementById('si').value.trim();let cnt=0;
+  // 학생 행 필터
+  document.querySelectorAll('#tab-content tr.dr').forEach(tr=>{
+    const ok=(CUR_BAN==='all'||tr.dataset.ban===CUR_BAN)&&(!q||tr.dataset.name.includes(q));
+    tr.style.display=ok?'':'none';if(ok)cnt++;
+  });
+  // 반 헤더 행: 검색어 있으면 모두 숨김, 없으면 반 기준으로 표시
+  document.querySelectorAll('#tab-content tr.ban-hd').forEach(tr=>{
+    if(q){
+      tr.style.display='none'; // 검색 중엔 반 헤더 숨김
+    } else if(CUR_BAN==='all'){
+      tr.style.display='';
+    } else {
+      tr.style.display=(tr.dataset.ban===CUR_BAN)?'':'none';
+    }
+  });
+  document.getElementById('cnt').textContent=cnt+'명';
+}
+function resetAll(){
+  document.getElementById('screen-report').style.display='none';
+  document.getElementById('screen-upload').style.display='flex';
+  document.getElementById('si').value='';CUR_BAN='all';
+}
+function addMoreFiles(){
+  // 리포트 화면에서 숨겨진 파일 입력 클릭
+  const tmp=document.createElement('input');
+  tmp.type='file';tmp.accept='.xlsx,.xls';tmp.multiple=true;
+  tmp.onchange=e=>{
+    handleFiles(e.target.files);
+    setTimeout(()=>{ if(FILE_ITEMS.length) buildReport(); },800);
+  };
+  tmp.click();
+}
+function clearReport(){
+  if(!confirm('모든 데이터를 초기화하시겠습니까?\n(상담 기록은 유지됩니다)')) return;
+  clearStorage();
+  FILE_ITEMS=[];TABS=[];CUR_BAN='all';CUR_TAB=0;fIdSeq=0;
+  document.getElementById('fileInput').value='';
+  document.getElementById('si').value='';
+  hideErr();
+  // 초기 화면으로 가지 않고 빈 상태로 본화면 유지
+  showEmptyState();
+}
+
+
+// ── 드래그 앤 드롭 파일 업로드 ──────────────────────────────
+(function(){
+  let dragCount=0;
+  const overlay=()=>document.getElementById('dragOverlay');
+
+  document.addEventListener('dragenter',e=>{
+    if(!e.dataTransfer?.types?.includes('Files'))return;
+    e.preventDefault();
+    dragCount++;
+    if(overlay())overlay().style.display='flex';
+  });
+  document.addEventListener('dragleave',e=>{
+    dragCount--;
+    if(dragCount<=0){dragCount=0;if(overlay())overlay().style.display='none';}
+  });
+  document.addEventListener('dragover',e=>{
+    if(!e.dataTransfer?.types?.includes('Files'))return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect='copy';
+  });
+  document.addEventListener('drop',e=>{
+    e.preventDefault();
+    dragCount=0;
+    if(overlay())overlay().style.display='none';
+    const files=[...e.dataTransfer.files].filter(f=>f.name.match(/\.xlsx?$/i));
+    if(!files.length){alert('XLS data(.xlsx) 형식의 파일만 업로드할 수 있습니다.');return;}
+    handleFiles(files);
+  });
+})();
+// ── 인쇄 ─────────────────────────────────────────────────
+const PCSS=`@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}body{font-family:"Noto Sans KR",sans-serif;color:#1a2744;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:14px;}
+table{border-collapse:collapse;width:100%;}th,td{border:1px solid #d0d8e8;padding:6px 9px;text-align:center;}th{background:#1a2744;color:#fff;font-size:12px;}td{font-size:12px;}
+.b{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:4px;color:#fff;font-size:12px;font-weight:700;}
+.note{margin-top:14px;border:1px solid #d0d8e8;border-radius:8px;padding:12px;min-height:80px;}
+.nt{font-size:11px;font-weight:600;color:#64748b;margin-bottom:5px;}`;
+
+function printJipalStudent(examName,fileId,idx,counselHtml=''){
+  const fi=FILE_ITEMS.find(f=>f.id===fileId);if(!fi)return;
+  const st=fi.students[idx];if(!st)return;
+  const _memo=counselHtml||'<div class="note"><div class="nt">📝 상담 메모</div></div>';
+  const rows=fi.subjects.map((s,si)=>{
+    const sc=st.scores[si];
+    if(sc===null||sc===undefined)return '<tr><td style="text-align:left;">'+s.name+'('+s.units+')</td><td colspan="4" style="color:#94a3b8;">미응시</td></tr>';
+    const g5=st['g5_'+si],g9=st['g9_'+si],p=st['pt'+si],rk=st['rk'+si];
+    if(g5==null)return '<tr><td style="text-align:left;">'+s.name+'('+s.units+')</td><td colspan="4" style="color:#94a3b8;">—</td></tr>';
+    return '<tr><td style="text-align:left;font-weight:500;">'+s.name+'('+s.units+')</td>'+
+      '<td style="font-size:15px;font-weight:700;">'+sc.toFixed(1)+'</td>'+
+      '<td>'+rk+'위/'+s.nValid+'명 ('+p.toFixed(1)+'%)</td>'+
+      '<td><span class="b" style="background:'+C22[g5-1]+';width:28px;height:28px;font-size:14px;">'+g5+'</span></td>'+
+      '<td><span class="b" style="background:'+C15[g9-1]+';width:28px;height:28px;font-size:14px;">'+g9+'</span></td></tr>';
+  }).join('');
+  const c5=st.avg5!=null?C22[Math.min(4,Math.round(st.avg5)-1)]:'#ccc';
+  const c9=st.avg9!=null?C15[Math.min(8,Math.round(st.avg9)-1)]:'#ccc';
+  openPrint(
+    '<div style="background:#1a2744;color:#fff;padding:14px 20px;border-radius:8px 8px 0 0;">'+
+    '<div style="font-size:16px;font-weight:700;">'+examName+' 성적 상담 카드</div>'+
+    '<div style="font-size:13px;opacity:.7;margin-top:3px;">'+st.ban+'반 '+st.num+'번 &nbsp;|&nbsp; <strong style="font-size:15px;color:#fff;">'+st.name+'</strong></div></div>'+
+    '<table style="border-top:none;border-radius:0 0 8px 8px;">'+
+    '<thead><tr><th style="text-align:left;">과목(단위)</th><th>원점수</th><th>석차/백분율</th><th>5등급</th><th>9등급</th></tr></thead>'+
+    '<tbody>'+rows+
+    '<tr style="background:#f5f8ff;"><td style="text-align:left;font-weight:700;">가중평균</td><td colspan="2" style="color:#64748b;">'+st.totalUnits+'단위</td>'+
+    '<td><span style="font-size:20px;font-weight:700;color:'+c5+';">'+( st.avg5!=null?st.avg5.toFixed(2):'—' )+'</span></td>'+
+    '<td><span style="font-size:20px;font-weight:700;color:'+c9+';">'+( st.avg9!=null?st.avg9.toFixed(2):'—' )+'</span></td></tr>'+
+    '</tbody></table>'+
+    (_memo),
+    680,800);
+}
+
+function printJipalBan(examName,ban){
+  const jipalFi=FILE_ITEMS.filter(f=>f.type==='jipal');
+  const fi=jipalFi.find(f=>f.ban===ban);if(!fi)return;
+  const sts=fi.students.filter(s=>s.ban===ban);
+  const hCols=fi.subjects.map(s=>`<th>${s.name}(${s.units})</th>`).join('');
+  const rows=sts.map(st=>{
+    const cells=fi.subjects.map((s,si)=>{
+      const sc=st.scores[si];if(sc===null||sc===undefined)return`<td style="color:#94a3b8;font-size:10px;">미응시</td>`;
+      const g5=st[`g5_${si}`],g9=st[`g9_${si}`],p=st[`pt${si}`];
+      if(g5==null)return`<td style="color:#94a3b8;">—</td>`;
+      return`<td><div style="font-size:12px;font-weight:600;">${sc.toFixed(1)}</div><div style="font-size:10px;color:#64748b;">${p.toFixed(1)}%</div>
+        <div style="display:flex;gap:2px;justify-content:center;margin-top:1px;">
+          <span class="b" style="background:${C22[g5-1]};width:20px;height:20px;font-size:11px;">${g5}</span>
+          <span class="b" style="background:${C15[g9-1]};width:20px;height:20px;font-size:11px;">${g9}</span>
+        </div></td>`;
+    }).join('');
+    const c5=st.avg5!=null?C22[Math.min(4,Math.round(st.avg5)-1)]:'#ccc';
+    const c9=st.avg9!=null?C15[Math.min(8,Math.round(st.avg9)-1)]:'#ccc';
+    return`<tr><td style="color:#94a3b8;">${st.num}</td><td style="text-align:left;font-weight:600;">${st.name}</td>${cells}
+      <td><span style="font-size:15px;font-weight:700;color:${c5};">${st.avg5!=null?st.avg5.toFixed(2):'—'}</span></td>
+      <td><span style="font-size:15px;font-weight:700;color:${c9};">${st.avg9!=null?st.avg9.toFixed(2):'—'}</span></td></tr>`;
+  }).join('');
+  openPrint(`<div style="background:#1a2744;color:#fff;padding:12px 18px;border-radius:8px;margin-bottom:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">
+    <div style="font-size:16px;font-weight:700;">${examName} — ${ban}반 성적표</div></div>
+  <table><thead><tr><th style="width:32px;">번호</th><th style="text-align:left;min-width:65px;">성명</th>${hCols}
+    <th style="background:#243458;">2022</th><th style="background:#243458;">2015</th></tr></thead>
+  <tbody>${rows}</tbody></table>`,1100,780,'A3 landscape');
+}
+
+function printNeisBan(semKey, ban){
+  const tab = TABS.find(t => t.type==='neis' && t.semKey===semKey);
+  if(!tab){ alert('탭을 찾을 수 없습니다 ('+semKey+')'); return; }
+  const banNum = parseInt(ban);
+  // 해당 반 학생만 (이름 중복 제거, 번호순 정렬)
+  const sts = tab.fileItems
+    .flatMap(fi => fi.students.filter(st => st.sems && st.sems[semKey] && (st.ban||1)===banNum))
+    .filter((v,i,a) => a.findIndex(x=>x.name===v.name)===i)
+    .sort((a,b) => (a.num||0)-(b.num||0));
+  if(!sts.length){ alert(banNum+'반 데이터가 없습니다.'); return; }
+
+  const [yr, sem] = semKey.split('-').map(Number);
+  // 과목 목록 (첫 학생의 해당 학기 데이터 기준, 등급 있는 것만)
+  const refSubs = sts[0].sems[semKey].subs.filter(s => s.g9!=null);
+  const hCols = refSubs.map(s=>`<th>${s.subj}(${s.units})</th>`).join('');
+
+  const rows = sts.map(st=>{
+    const semD = st.sems[semKey]; if(!semD) return '';
+    // 각 학생의 과목 데이터를 refSubs 순서에 맞춰 찾기
+    const cells = refSubs.map(ref=>{
+      const s = semD.subs.find(x => x.subj===ref.subj);
+      if(!s || s.g9==null) return '<td style="color:#94a3b8;font-size:11px;">—</td>';
+      return `<td>
+        ${s.score!=null?`<div style="font-size:12px;font-weight:600;">${s.score}</div>`:''}
+        <div style="display:flex;gap:2px;justify-content:center;margin-top:2px;">
+          <span class="b" style="background:${C22[s.g5-1]};width:22px;height:22px;font-size:12px;">${s.g5}</span>
+          <span class="b" style="background:${C15[s.g9-1]};width:22px;height:22px;font-size:12px;">${s.g9}</span>
+        </div></td>`;
+    }).join('');
+    const c5 = semD.avg5!=null ? C22[Math.min(4,Math.round(semD.avg5)-1)] : '#ccc';
+    const c9 = semD.avg9!=null ? C15[Math.min(8,Math.round(semD.avg9)-1)] : '#ccc';
+    return `<tr>
+      <td style="color:#94a3b8;">${st.num}</td>
+      <td style="text-align:left;font-weight:600;">${st.name}</td>
+      ${cells}
+      <td><span style="font-size:15px;font-weight:700;color:${c5};">${semD.avg5!=null?semD.avg5.toFixed(2)+'≈':'—'}</span></td>
+      <td><span style="font-size:15px;font-weight:700;color:${c9};">${semD.avg9!=null?semD.avg9.toFixed(2):'—'}</span></td>
+    </tr>`;
+  }).join('');
+
+  openPrint(`
+    <div style="background:#1a2744;color:#fff;padding:12px 18px;border-radius:8px;margin-bottom:12px;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;">
+      <div style="font-size:16px;font-weight:700;">${yr}학년 ${sem}학기 — ${banNum}반 성적표</div>
+    </div>
+    <table>
+      <thead><tr>
+        <th style="width:32px;">번호</th>
+        <th style="text-align:left;min-width:65px;">성명</th>
+        ${hCols}
+        <th style="background:#243458;">5등급≈</th>
+        <th style="background:#243458;">9등급</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `, 1100, 780, 'A3 landscape');
+}
+
+// ── 인쇄 옵션 ────────────────────────────────────────────────
+let _printFnPending = null;
+
+function getCounselHtml(name){
+  const entries = loadCounsel(name);
+  if(!entries.length) return '';
+  return '<div style="margin-top:14px;border-top:1px solid #e0e6ef;padding-top:12px;">'+
+    '<div style="font-size:13px;font-weight:700;color:#1a2744;margin-bottom:10px;">📝 상담 기록</div>'+
+    [...entries].reverse().map(e=>
+      '<div style="margin-bottom:10px;padding:10px 12px;background:#f8fafc;border-radius:8px;border:.5px solid #e0e6ef;">'+
+      '<div style="font-size:11px;font-weight:600;color:#1565C0;margin-bottom:4px;">📅 '+e.date+'</div>'+
+      '<div style="font-size:12px;color:#334155;line-height:1.7;white-space:pre-wrap;">'+
+        e.content.replace(/</g,'&lt;').replace(/>/g,'&gt;')+
+      '</div></div>'
+    ).join('')+
+  '</div>';
+}
+
+function showPrintOpt(name, printFn){
+  _printFnPending = printFn;
+  _printOptStudentName = name;
+  document.getElementById('printOptName').textContent = name;
+  const entries = loadCounsel(name);
+  const listEl = document.getElementById('printOptCounselList');
+  const selBtns = document.getElementById('printOptSelBtns');
+
+  if(!entries.length){
+    listEl.innerHTML='<div style="color:#94a3b8;font-size:13px;padding:12px 0;text-align:center;">저장된 상담 기록이 없습니다.</div>';
+    selBtns.style.display='none';
+  } else {
+    selBtns.style.display='flex';
+    listEl.innerHTML = [...entries].reverse().map((e,ri)=>{
+      const realIdx = entries.length-1-ri;
+      const preview = e.content.length>60 ? e.content.slice(0,60)+'...' : e.content;
+      return '<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:10px 12px;border:.5px solid #e0e6ef;border-radius:8px;margin-bottom:8px;background:#f8fafc;">'+
+        '<input type="checkbox" class="counsel-print-ck" data-idx="'+realIdx+'" checked '+
+        'style="width:15px;height:15px;margin-top:2px;cursor:pointer;accent-color:#1a2744;flex-shrink:0;">'+
+        '<div>'+
+          '<div style="font-size:11px;font-weight:600;color:#1565C0;margin-bottom:3px;">📅 '+e.date+'</div>'+
+          '<div style="font-size:12px;color:#475569;line-height:1.6;">'+
+            preview.replace(/</g,'&lt;').replace(/>/g,'&gt;')+
+          '</div>'+
+        '</div>'+
+      '</label>';
+    }).join('');
+  }
+  document.getElementById('printOptOverlay').style.display='flex';
+}
+
+function checkAllCounsel(val){
+  document.querySelectorAll('.counsel-print-ck').forEach(ck=>ck.checked=val);
+}
+
+function closePrintOpt(){
+  document.getElementById('printOptOverlay').style.display='none';
+  _printFnPending=null;
+  _printOptStudentName='';
+}
+
+function executePrint(){
+  try{
+    const name=_printOptStudentName;
+    const entries=loadCounsel(name);
+    const checkedIdxs=[...document.querySelectorAll('.counsel-print-ck:checked')].map(ck=>parseInt(ck.dataset.idx));
+    const selectedEntries=entries.filter((_,i)=>checkedIdxs.includes(i));
+    const counselHtml=selectedEntries.length>0?buildSelectedCounselHtml(selectedEntries):'';
+    const fn=_printFnPending;
+    if(!fn){alert('오류: 인쇄 함수가 없습니다. 다시 시도해주세요.');return;}
+    closePrintOpt();
+    fn(counselHtml);
+  }catch(e){
+    alert('인쇄 오류:\n'+e.message+'\n\n'+e.stack.substring(0,300));
+  }
+}
+
+let _printOptStudentName='';
+
+function buildSelectedCounselHtml(entries){
+  return '<div style="margin-top:14px;border-top:1px solid #e0e6ef;padding-top:12px;">'+
+    '<div style="font-size:13px;font-weight:700;color:#1a2744;margin-bottom:10px;">📝 상담 기록</div>'+
+    entries.map(e=>
+      '<div style="margin-bottom:10px;padding:10px 12px;background:#f8fafc;border-radius:8px;border:.5px solid #e0e6ef;">'+
+      '<div style="font-size:11px;font-weight:600;color:#1565C0;margin-bottom:4px;">📅 '+e.date+'</div>'+
+      '<div style="font-size:12px;color:#334155;line-height:1.7;white-space:pre-wrap;">'+
+        e.content.replace(/</g,'&lt;').replace(/>/g,'&gt;')+
+      '</div></div>'
+    ).join('')+
+  '</div>';
+}
+
+
+function getCounselHtml(name){
+  const entries = loadCounsel(name);
+  if(!entries.length) return '';
+  return '<div style="margin-top:14px;border-top:1px solid #e0e6ef;padding-top:12px;">'+
+    '<div style="font-size:13px;font-weight:700;color:#1a2744;margin-bottom:10px;">📝 상담 기록</div>'+
+    [...entries].reverse().map(e=>
+      '<div style="margin-bottom:10px;padding:10px 12px;background:#f8fafc;border-radius:8px;border:.5px solid #e0e6ef;">'+
+      '<div style="font-size:11px;font-weight:600;color:#1565C0;margin-bottom:4px;">📅 '+e.date+'</div>'+
+      '<div style="font-size:12px;color:#334155;line-height:1.7;white-space:pre-wrap;">'+
+        e.content.replace(/</g,'&lt;').replace(/>/g,'&gt;')+
+      '</div></div>'
+    ).join('')+
+  '</div>';
+}
+
+
+
+// ESC로 닫기
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape') closePrintOpt();
+});
+
+function openPrint(body,w,h,page=''){
+  try{
+    const pageCSS=page?'@page{size:'+page+';margin:9mm;}':'@page{margin:12mm;}';
+    const html='<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8">'+
+      '<style>'+PCSS+pageCSS+'</style>'+
+      '</head><body>'+body+
+      '<scr'+'ipt>window.onload=function(){window.print();};window.onafterprint=function(){window.close();};<'+'/scr'+'ipt>'+
+      '</body></html>';
+    const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.target='_blank'; a.rel='noopener';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+  }catch(e){
+    alert('openPrint 오류:\n'+e.message);
+  }
+}
+
+function doPrintNeis(name,fileId,counselHtml=''){
+  const _memo=counselHtml||'<div class="note"><div class="nt">📝 상담 메모</div></div>';
+
+  const fi=FILE_ITEMS.find(f=>f.id===fileId);
+  if(!fi){alert('파일 정보를 찾을 수 없습니다(id:'+fileId+')');return;}
+  const st=fi.students.find(s=>s.name===name);
+  if(!st){alert('학생 정보를 찾을 수 없습니다: '+name);return;}
+  const semRows=st.semList.map(sem=>{
+    const gsubs=sem.subs.filter(s=>s.g9!=null);
+    const rows=gsubs.map(s=>`<tr>
+      <td style="text-align:left;">${s.subj}(${s.units})</td>
+      <td>${s.score!=null?s.score:'—'}</td>
+      <td style="color:#64748b;">${s.n||'?'}명</td>
+      <td><span class="b" style="background:${C22[s.g5-1]};width:26px;height:26px;font-size:13px;">${s.g5}</span><span style="font-size:9px;color:#94a3b8;"> ≈</span></td>
+      <td><span class="b" style="background:${C15[s.g9-1]};width:26px;height:26px;font-size:13px;">${s.g9}</span></td>
+    </tr>`).join('');
+    const c5=sem.avg5!=null?C22[Math.min(4,Math.round(sem.avg5)-1)]:'#ccc';
+    const c9=sem.avg9!=null?C15[Math.min(8,Math.round(sem.avg9)-1)]:'#ccc';
+    return`<tr style="background:#e8f0fe;"><td colspan="5" style="text-align:left;font-weight:700;padding:6px 9px;">${sem.yr}학년 ${sem.sem}학기 &nbsp; 가중평균: <span style="color:${c5};">${sem.avg5!=null?sem.avg5.toFixed(2)+'≈':'—'}</span>(5등급) &nbsp; <span style="color:${c9};">${sem.avg9!=null?sem.avg9.toFixed(2):'—'}</span>(9등급) · ${sem.totalUnits}단위</td></tr>${rows}`;
+  }).join('');
+  const c5=st.cum5!=null?C22[Math.min(4,Math.round(st.cum5)-1)]:'#ccc';
+  const c9=st.cum9!=null?C15[Math.min(8,Math.round(st.cum9)-1)]:'#ccc';
+  openPrint(`<div style="background:#1a2744;color:#fff;padding:14px 20px;border-radius:8px 8px 0 0;">
+    <div style="font-size:16px;font-weight:700;">교과학습발달상황 성적 상담 카드</div>
+    <div style="font-size:13px;opacity:.7;margin-top:3px;"><strong style="font-size:15px;color:#fff;">${name}</strong> &nbsp;|&nbsp; ${fi.label}</div></div>
+  <table style="border-top:none;border-radius:0 0 8px 8px;">
+  <thead><tr><th style="text-align:left;">과목(단위)</th><th>원점수</th><th>수강자수</th><th>5등급(≈)</th><th>9등급</th></tr></thead>
+  <tbody>${semRows}
+  <tr style="background:#f0fdf0;"><td colspan="3" style="text-align:left;font-weight:700;">누적 종합 · 총 ${st.totalUnits}단위</td>
+  <td><span style="font-size:20px;font-weight:700;color:${c5};">${st.cum5!=null?st.cum5.toFixed(2)+'≈':'—'}</span></td>
+  <td><span style="font-size:20px;font-weight:700;color:${c9};">${st.cum9!=null?st.cum9.toFixed(2):'—'}</span></td></tr>
+  </tbody></table>
+  ${_memo}`,680,900);
+}
+
+function doPrintExam(label,fileId,idx,counselHtml=''){
+  const _memo=counselHtml||'<div class="note"><div class="nt">📝 상담 메모</div></div>';
+
+  const fi=FILE_ITEMS.find(f=>f.id===fileId);const st=fi.students[idx];
+  const rows=fi.subjects.map((s,si)=>{
+    const sc=st.scores[si];
+    if(!sc||sc==='미인정결')return`<tr><td style="text-align:left;">${s.name}(${s.units})</td><td colspan="4" style="color:${sc?'#e53935':'#94a3b8'}">${sc||'—'}</td></tr>`;
+    const g5=st[`g5_${si}`],g9=st[`g9_${si}`],p=st[`pt${si}`],rk=st[`rk${si}`];
+    return`<tr><td style="text-align:left;font-weight:500;">${s.name}(${s.units})</td>
+      <td style="font-size:15px;font-weight:700;">${sc.toFixed(1)}</td>
+      <td>${rk}위/${s.nValid}명 (${p.toFixed(1)}%)</td>
+      <td><span class="b" style="background:${C22[g5-1]};width:28px;height:28px;font-size:14px;">${g5}</span></td>
+      <td><span class="b" style="background:${C15[g9-1]};width:28px;height:28px;font-size:14px;">${g9}</span></td></tr>`;
+  }).join('');
+  const c5=st.avg5!=null?C22[Math.min(4,Math.round(st.avg5)-1)]:'#ccc';
+  const c9=st.avg9!=null?C15[Math.min(8,Math.round(st.avg9)-1)]:'#ccc';
+  openPrint(`<div style="background:#1a2744;color:#fff;padding:14px 20px;border-radius:8px 8px 0 0;">
+    <div style="font-size:16px;font-weight:700;">${label} 성적 상담 카드</div>
+    <div style="font-size:13px;opacity:.7;margin-top:3px;">${st.ban}반 ${st.num}번 &nbsp;|&nbsp; <strong style="font-size:15px;color:#fff;">${st.name}</strong></div></div>
+  <table style="border-top:none;border-radius:0 0 8px 8px;">
+  <thead><tr><th style="text-align:left;">과목(단위)</th><th>원점수</th><th>석차/백분율</th><th>5등급</th><th>9등급</th></tr></thead>
+  <tbody>${rows}
+  <tr style="background:#f5f8ff;"><td style="text-align:left;font-weight:700;">가중평균</td><td colspan="2" style="color:#64748b;">총 ${st.totalUnits}단위</td>
+  <td><span style="font-size:20px;font-weight:700;color:${c5};">${st.avg5!=null?st.avg5.toFixed(2):'—'}</span></td>
+  <td><span style="font-size:20px;font-weight:700;color:${c9};">${st.avg9!=null?st.avg9.toFixed(2):'—'}</span></td></tr>
+  </tbody></table>
+  ${_memo}`,680,800);
+}
+
+function doPrintCum(name,counselHtml=''){
+  const _memo=counselHtml||'<div class="note"><div class="nt">📝 상담 메모</div></div>';
+
+  const colTabs=TABS.filter(t=>t.type!=='cum');
+  let tu5=0,tg5=0,tu9=0,tg9=0;
+  const rows=colTabs.map(t=>{
+    let avg5=null,avg9=null,units=0,approx=false;
+    if(t.type==='jipal'){for(const fi of t.fileItems){const st=fi.students.find(s=>s.name===name);if(st){avg5=st.avg5;avg9=st.avg9;units=st.totalUnits;break;}}}
+    else if(t.type==='neis'){let found=null;for(const fi of t.fileItems){const st=fi.students.find(s=>s.name===name);if(st){found={sem:st.sems[t.semKey]};break;}}if(found?.sem){avg5=found.sem.avg5;avg9=found.sem.avg9;units=found.sem.totalUnits;approx=true;}}
+    else{const fi=t.fileItem;const st=fi.students.find(s=>s.name===name);if(st){avg5=st.avg5;avg9=st.avg9;units=st.totalUnits;}}
+    if(avg5!=null){tg5+=avg5*units;tu5+=units;}
+    if(avg9!=null){tg9+=avg9*units;tu9+=units;}
+    const c5=avg5!=null?C22[Math.min(4,Math.round(avg5)-1)]:'#ccc';
+    const c9=avg9!=null?C15[Math.min(8,Math.round(avg9)-1)]:'#ccc';
+    return`<tr><td style="text-align:left;font-weight:500;">${t.label}</td><td style="color:#64748b;">${units}단위</td>
+      <td><span style="font-size:17px;font-weight:700;color:${c5};">${avg5!=null?avg5.toFixed(2)+(approx?'≈':''):'—'}</span></td>
+      <td><span style="font-size:17px;font-weight:700;color:${c9};">${avg9!=null?avg9.toFixed(2):'—'}</span></td></tr>`;
+  }).join('');
+  const c5=tu5>0?C22[Math.min(4,Math.round(tg5/tu5)-1)]:'#ccc';
+  const c9=tu9>0?C15[Math.min(8,Math.round(tg9/tu9)-1)]:'#ccc';
+  const v5=tu5>0?Math.round(tg5/tu5*100)/100:null;
+  const v9=tu9>0?Math.round(tg9/tu9*100)/100:null;
+  openPrint(`<div style="background:#1a2744;color:#fff;padding:14px 20px;border-radius:8px 8px 0 0;">
+    <div style="font-size:16px;font-weight:700;">누적 내신 성적 상담 카드</div>
+    <div style="font-size:13px;opacity:.7;margin-top:3px;"><strong style="font-size:15px;color:#fff;">${name}</strong></div></div>
+  <table style="border-top:none;border-radius:0 0 8px 8px;margin-bottom:14px;">
+  <thead><tr><th style="text-align:left;">학기/고사</th><th>이수단위</th><th>5등급 평균</th><th>9등급 평균</th></tr></thead>
+  <tbody>${rows}
+  <tr style="background:#f0fdf0;"><td style="text-align:left;font-weight:700;">누적 종합</td><td style="color:#64748b;">${tu5}단위</td>
+  <td><span style="font-size:22px;font-weight:700;color:${c5};">${v5!=null?v5.toFixed(2):'—'}</span></td>
+  <td><span style="font-size:22px;font-weight:700;color:${c9};">${v9!=null?v9.toFixed(2):'—'}</span></td></tr>
+  </tbody></table>
+  ${_memo}`,640,760);
+}
+
+function printBan(label,fileId,ban){
+  const fi=FILE_ITEMS.find(f=>f.id===fileId);const sts=fi.students.filter(s=>s.ban===ban);
+  const hCols=fi.subjects.map(s=>`<th>${s.name}(${s.units})</th>`).join('');
+  const rows=sts.map(st=>{
+    const cells=fi.subjects.map((s,si)=>{
+      const sc=st.scores[si];if(!sc||sc==='미인정결')return`<td style="font-size:10px;color:${sc?'#e53935':'#94a3b8'}">${sc||'—'}</td>`;
+      const g5=st[`g5_${si}`],g9=st[`g9_${si}`],p=st[`pt${si}`];
+      return`<td><div style="font-size:12px;font-weight:600;">${sc.toFixed(1)}</div><div style="font-size:10px;color:#64748b;">${p.toFixed(1)}%</div>
+        <div style="display:flex;gap:2px;justify-content:center;margin-top:1px;">
+          <span class="b" style="background:${C22[g5-1]};width:20px;height:20px;font-size:11px;">${g5}</span>
+          <span class="b" style="background:${C15[g9-1]};width:20px;height:20px;font-size:11px;">${g9}</span>
+        </div></td>`;
+    }).join('');
+    const c5=st.avg5!=null?C22[Math.min(4,Math.round(st.avg5)-1)]:'#ccc';
+    const c9=st.avg9!=null?C15[Math.min(8,Math.round(st.avg9)-1)]:'#ccc';
+    return`<tr><td style="color:#94a3b8;">${st.num}</td><td style="text-align:left;font-weight:600;">${st.name}</td>${cells}
+      <td><span style="font-size:15px;font-weight:700;color:${c5};">${st.avg5!=null?st.avg5.toFixed(2):'—'}</span></td>
+      <td><span style="font-size:15px;font-weight:700;color:${c9};">${st.avg9!=null?st.avg9.toFixed(2):'—'}</span></td></tr>`;
+  }).join('');
+  openPrint(`<div style="background:#1a2744;color:#fff;padding:12px 18px;border-radius:8px;margin-bottom:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact;display:flex;justify-content:space-between;align-items:center;">
+    <div><div style="font-size:16px;font-weight:700;">${label} — ${ban}반 내신등급</div></div>
+    <div style="font-size:12px;opacity:.6;">${sts.length}명</div></div>
+  <table><thead><tr><th style="width:32px;">번호</th><th style="text-align:left;min-width:65px;">성명</th>${hCols}
+    <th style="background:#243458;">5등급</th><th style="background:#243458;">9등급</th></tr></thead>
+  <tbody>${rows}</tbody></table>`,1100,780,'A3 landscape');
+}
+
+
+// ── 다중 컬럼 정렬 ─────────────────────────────────────────
+// sortKeys: [{tbodyId, col, dir, priority}, ...]
+let _sortKeys=[];
+
+function getCellNum(tr,col){
+  const tds=[...tr.querySelectorAll('td')];
+  if(!tds[col])return 0;
+  const td=tds[col];
+  // 1순위: 가중평균 큰 글씨 (18px, 19px)
+  const bigEl=td.querySelector('[style*="font-size:18px"],[style*="font-size:19px"]');
+  if(bigEl){const n=parseFloat(bigEl.textContent);if(!isNaN(n))return n;}
+  // 2순위: 누적탭 중간 글씨 (14px bold)
+  const midEl=td.querySelector('[style*="font-size:14px"][style*="font-weight:700"]');
+  if(midEl){const n=parseFloat(midEl.textContent);if(!isNaN(n))return n;}
+  // 3순위: 점수 셀 첫 번째 div (font-size:12px 또는 13px, font-weight:600)
+  const scoreEl=td.querySelector('div[style*="font-weight:600"],div[style*="font-weight:700"]');
+  if(scoreEl){const n=parseFloat(scoreEl.textContent);if(!isNaN(n))return n;}
+  // 4순위: 텍스트 맨 앞 숫자만
+  const m=td.textContent.trim().match(/^[\d.]+/);
+  if(m)return parseFloat(m[0]);
+  return td.textContent.trim()||0;
+}
+
+function sortCol(tbodyId,col,thEl){
+  const tbody=document.getElementById(tbodyId);if(!tbody)return;
+  // 같은 tbody의 기존 키 찾기
+  const existIdx=_sortKeys.findIndex(k=>k.tbodyId===tbodyId&&k.col===col);
+  if(existIdx>=0){
+    if(_sortKeys[existIdx].dir===1){_sortKeys[existIdx].dir=-1;}
+    else{_sortKeys.splice(existIdx,1);} // 세번째 클릭: 제거
+  } else {
+    // 같은 tbody 키들의 다음 우선순위
+    const priority=_sortKeys.filter(k=>k.tbodyId===tbodyId).length+1;
+    _sortKeys.push({tbodyId,col,dir:1,priority});
+  }
+  // 이 tbody의 키만 뽑기
+  const myKeys=_sortKeys.filter(k=>k.tbodyId===tbodyId);
+  // 우선순위 재정렬
+  myKeys.forEach((k,i)=>k.priority=i+1);
+
+  // th 배지 업데이트
+  document.querySelectorAll('.th-sort[data-tbody="'+tbodyId+'"]').forEach(th=>{
+    th.classList.remove('asc','desc');
+    const badge=th.querySelector('.sort-badge');if(badge)badge.remove();
+  });
+  myKeys.forEach(k=>{
+    // onclick 속성에서 col 번호 정확히 매칭
+    document.querySelectorAll('.th-sort[data-tbody="'+tbodyId+'"]').forEach(th=>{
+      const oc=th.getAttribute('onclick')||'';
+      // sortCol('id',COL,this) 형태에서 두 번째 인자 추출
+      const m=oc.match(/sortCol\([^,]+,\s*(\d+)\s*,/);
+      if(m&&parseInt(m[1])===k.col){
+        th.classList.add(k.dir===1?'asc':'desc');
+        if(myKeys.length>1){
+          const b=document.createElement('span');
+          b.className='sort-badge';
+          b.textContent=k.priority;
+          b.style.cssText='display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.3);font-size:9px;font-weight:700;margin-left:3px;vertical-align:middle;';
+          th.appendChild(b);
+        }
+      }
+    });
+  });
+
+  const drRows=[...tbody.querySelectorAll('tr.dr')];
+  const banHds=[...tbody.querySelectorAll('tr.ban-hd')];
+
+  if(myKeys.length===0){
+    // 정렬 초기화: 반→번호 순
+    drRows.sort((a,b)=>(parseInt(a.dataset.ban)||0)-(parseInt(b.dataset.ban)||0)||(getCellNum(a,0)-getCellNum(b,0)));
+    banHds.forEach(r=>r.style.display='');
+    const bans=[...new Set(drRows.map(r=>r.dataset.ban))].sort((a,b)=>parseInt(a)-parseInt(b));
+    bans.forEach(b=>{
+      const hd=tbody.querySelector('tr.ban-hd[data-ban="'+b+'"]');
+      if(hd)tbody.appendChild(hd);
+      drRows.filter(r=>r.dataset.ban===b).forEach(r=>tbody.appendChild(r));
+    });
+    return;
+  }
+
+  drRows.sort((a,b)=>{
+    for(const k of myKeys){
+      const av=getCellNum(a,k.col),bv=getCellNum(b,k.col);
+      let cmp=0;
+      if(typeof av==='number'&&typeof bv==='number')cmp=av-bv;
+      else cmp=String(av)<String(bv)?-1:String(av)>String(bv)?1:0;
+      if(cmp!==0)return k.dir*cmp;
+    }
+    return 0;
+  });
+
+  const isGroupSort=myKeys.every(k=>k.col<=2);
+  if(isGroupSort){
+    const bans=[...new Set(drRows.map(r=>r.dataset.ban))].sort((a,b)=>parseInt(a)-parseInt(b));
+    banHds.forEach(r=>r.style.display='');
+    bans.forEach(b=>{
+      const hd=tbody.querySelector('tr.ban-hd[data-ban="'+b+'"]');
+      if(hd)tbody.appendChild(hd);
+      drRows.filter(r=>r.dataset.ban===b).forEach(r=>tbody.appendChild(r));
+    });
+  } else {
+    banHds.forEach(r=>r.style.display='none');
+    drRows.forEach(r=>tbody.appendChild(r));
+  }
+}
+
+// ── 상담 기록 시스템 (localStorage, 데이터 초기화와 독립) ──
+const COUNSEL_PREFIX='naesin_counsel_';
+
+function getCounselKey(name){return COUNSEL_PREFIX+name;}
+
+function loadCounsel(name){
+  try{const r=localStorage.getItem(getCounselKey(name));return r?JSON.parse(r):[];}
+  catch(e){return[];}
+}
+
+function saveCounsel(name,entries){
+  try{localStorage.setItem(getCounselKey(name),JSON.stringify(entries));}
+  catch(e){console.warn('상담 저장 실패',e);}
+}
+
+let _counselName='';
+
+function openCounsel(name){
+  if(!name||name==='undefined')return;
+  _counselName=name;
+  const cnEl=document.getElementById('counselName');if(cnEl)cnEl.textContent=name;
+  const today=new Date();
+  const ds=today.getFullYear()+'-'+(today.getMonth()+1).toString().padStart(2,'0')+'-'+today.getDate().toString().padStart(2,'0');
+  const ctEl=document.getElementById('counselToday');if(ctEl)ctEl.textContent=ds;
+  document.getElementById('counselInput').value='';
+  renderCounselList(name);
+  const ov=document.getElementById('counselOverlay');if(ov){ov.style.display='flex';}
+  document.getElementById('counselInput').focus();
+}
+
+function closeCounsel(){
+  document.getElementById('counselOverlay').style.display='none';
+  _counselName='';
+}
+
+function renderCounselList(name){
+  const entries=loadCounsel(name);
+  const el=document.getElementById('counselList');
+  if(!el)return;
+  if(!entries.length){
+    el.innerHTML='<div style="text-align:center;color:#94a3b8;font-size:13px;padding:24px 0;">아직 기록된 상담 내용이 없습니다.</div>';
+    return;
+  }
+  // data-idx 속성으로 인덱스 전달 → 이름 이스케이프 문제 완전 해결
+  el.innerHTML=[...entries].reverse().map((e,ri)=>{
+    const realIdx=entries.length-1-ri;
+    const safeContent=e.content.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return`<div style="background:#fff;border:.5px solid #e0e6ef;border-radius:10px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.04);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-size:12px;font-weight:700;color:#1565C0;">📅 ${e.date}</span>
+        <button class="counsel-del-btn" data-idx="${realIdx}"
+          style="background:#fef2f2;border:.5px solid #fca5a5;color:#dc2626;cursor:pointer;font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;font-family:inherit;"
+          title="이 기록 삭제">🗑 삭제</button>
+      </div>
+      <div style="font-size:13px;color:#334155;line-height:1.8;white-space:pre-wrap;border-top:.5px solid #f0f4f9;padding-top:8px;">${safeContent}</div>
+    </div>`;
+  }).join('');
+}
+
+function saveCounselEntry(){
+  const text=document.getElementById('counselInput').value.trim();
+  if(!text)return;
+  const entries=loadCounsel(_counselName);
+  const today=new Date();
+  const ds=today.getFullYear()+'-'+(today.getMonth()+1).toString().padStart(2,'0')+'-'+today.getDate().toString().padStart(2,'0');
+  entries.push({date:ds,content:text,id:Date.now()});
+  saveCounsel(_counselName,entries);
+  document.getElementById('counselInput').value='';
+  renderCounselList(_counselName);
+}
+
+function deleteCounselEntry(name,idx){
+  const entries=loadCounsel(name);
+  const entry=entries[idx];
+  if(!entry)return;
+  const preview=entry.content.length>40?entry.content.slice(0,40)+'...':entry.content;
+  if(!confirm('['+entry.date+'] '+preview+'\n\n이 상담 기록을 삭제하시겠습니까?'))return;
+  entries.splice(idx,1);
+  saveCounsel(name,entries);
+  renderCounselList(name);
+}
+
+// ESC 키로 모달 닫기
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCounsel();});
+// Ctrl+Enter로 저장
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)&&_counselName){saveCounselEntry();}
+});
+// 이벤트 위임: counsel-cell 클릭 → 상담 팝업 (document에 등록 - 동적 DOM도 동작)
+document.addEventListener('click',function(e){
+  // 상담 팝업 열기
+  const cell=e.target.closest('.counsel-cell');
+  if(cell){const nm=cell.getAttribute('data-counsel');if(nm&&nm!=='undefined'){openCounsel(nm);return;}}
+  // 상담 기록 삭제 버튼
+  const delBtn=e.target.closest('.counsel-del-btn');
+  if(delBtn&&_counselName){
+    const idx=parseInt(delBtn.dataset.idx);
+    deleteCounselEntry(_counselName,idx);
+    return;
+  }
+  // 전체 누적 인쇄
+  const pcBtn=e.target.closest('.print-cum-btn');
+  if(pcBtn){const nm=pcBtn.getAttribute('data-printcum');if(nm)showPrintOpt(nm,ic=>doPrintCum(nm,ic));}
+  // NEIS 반별 인쇄
+  const nbBtn=e.target.closest('.neis-print-ban-btn');
+  if(nbBtn){printNeisBan(nbBtn.dataset.semkey,parseInt(nbBtn.dataset.ban));}
+});
+
+
+// 소수 5등급 → 9등급 범위 변환 (선형 보간)
+function g5ToG9Range(g5){
+  if(!g5||g5<1||g5>5)return null;
+  const BEST ={1:1,2:3,3:5,4:6,5:8};
+  const WORST={1:2,2:4,3:5,4:7,5:9};
+  const lo=Math.floor(g5), hi=Math.min(5,Math.ceil(g5)), frac=g5-lo;
+  if(frac===0)return{best:BEST[lo],worst:WORST[lo]};
+  return{
+    best :+(BEST[lo] +frac*(BEST[hi] -BEST[lo])).toFixed(2),
+    worst:+(WORST[lo]+frac*(WORST[hi]-WORST[lo])).toFixed(2)
+  };
+}
+// ══ 수동 입력 ════════════════════════════════════════════════
+const G5_G9={1:{best:1,worst:2,label:'1~2등급'},
+             2:{best:3,worst:4,label:'3~4등급'},
+             3:{best:5,worst:5,label:'5등급'},
+             4:{best:6,worst:7,label:'6~7등급'},
+             5:{best:8,worst:9,label:'8~9등급'}};
+const MANUAL_KEY='naesin_manual_students';
+let MANUAL_STUDENTS=[];
+let MANUAL_SEL=0;
+
+function loadManualData(){
+  try{const r=localStorage.getItem(MANUAL_KEY);if(r)MANUAL_STUDENTS=JSON.parse(r);}catch(e){}
+  if(!MANUAL_STUDENTS.length)MANUAL_STUDENTS=[{id:Date.now(),name:'',subjects:[]}];
+  if(MANUAL_SEL>=MANUAL_STUDENTS.length)MANUAL_SEL=0;
+}
+function saveManualData(){
+  try{localStorage.setItem(MANUAL_KEY,JSON.stringify(MANUAL_STUDENTS));}catch(e){}
+}
+
+// ── 결과 계산 ─────────────────────────────────────────────────
+function calcManualFromDOM(){
+  const rows=document.querySelectorAll('#manual-subj-body tr');
+  let sum5=0,sumBest=0,sumWorst=0,count=0;
+  rows.forEach(tr=>{
+    const inp=tr.querySelector('input.g5inp');
+    const g5=parseFloat(inp?.value)||null;
+    if(g5&&g5>=1&&g5<=5){
+      const g9=g5ToG9Range(g5);
+      if(g9){sum5+=g5;sumBest+=g9.best;sumWorst+=g9.worst;count++;}
+    }
+  });
+  if(!count)return null;
+  return{avg5:+(sum5/count).toFixed(2),
+         avgBest:+(sumBest/count).toFixed(2),
+         avgWorst:+(sumWorst/count).toFixed(2),count};
+}
+
+
+
+
+function printAllCounsel(){
+  // 모든 학생 이름 수집 (NEIS/지필 + 수동 입력)
+  const allNames=new Set();
+  FILE_ITEMS.forEach(fi=>{
+    (fi.students||[]).forEach(st=>{if(st.name)allNames.add(st.name);});
+  });
+  (MANUAL_STUDENTS||[]).forEach(st=>{if(st.name)allNames.add(st.name);});
+
+  // 상담 기록 있는 학생만 필터
+  const counselData=[];
+  allNames.forEach(name=>{
+    const entries=loadCounsel(name);
+    if(entries.length) counselData.push({name,entries});
+  });
+
+  if(!counselData.length){
+    alert('저장된 상담 기록이 없습니다.');
+    return;
+  }
+
+  // 학생별 상담 기록 HTML 생성
+  const body=counselData.map((d,i)=>
+    '<div style="'+(i>0?'margin-top:24px;padding-top:20px;border-top:2px solid #e0e6ef;':'')+'">' +
+    '<div style="background:#1a2744;color:#fff;padding:10px 16px;border-radius:8px;margin-bottom:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'+
+    '<span style="font-size:15px;font-weight:700;">📝 '+d.name+'</span>'+
+    '<span style="font-size:12px;opacity:.7;margin-left:10px;">상담 기록 '+d.entries.length+'건</span>'+
+    '</div>'+
+    [...d.entries].reverse().map(e=>
+      '<div style="margin-bottom:10px;padding:10px 14px;background:#f8fafc;border-radius:8px;border:.5px solid #e0e6ef;">'+
+      '<div style="font-size:11px;font-weight:600;color:#1565C0;margin-bottom:5px;">📅 '+e.date+'</div>'+
+      '<div style="font-size:12px;color:#334155;line-height:1.8;white-space:pre-wrap;">'+
+        e.content.replace(/</g,'&lt;').replace(/>/g,'&gt;')+
+      '</div></div>'
+    ).join('')+
+    '</div>'
+  ).join('');
+
+  openPrint(
+    '<div style="background:#1a2744;color:#fff;padding:16px 20px;border-radius:8px 8px 0 0;margin-bottom:20px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'+
+    '<div style="font-size:17px;font-weight:700;">📋 전체 학생 상담 기록</div>'+
+    '<div style="font-size:12px;opacity:.7;margin-top:4px;">상담 기록 보유 학생 '+counselData.length+'명 · 출력일 '+new Date().toLocaleDateString('ko-KR')+'</div>'+
+    '</div>'+body,
+    680, 900
+  );
+}
+function printCounselOnly(){
+  const name=_counselName;
+  if(!name)return;
+  const entries=loadCounsel(name);
+  if(!entries.length){alert('저장된 상담 기록이 없습니다.');return;}
+
+  // 상담 선택 모달 재활용 (showPrintOpt와 같은 방식)
+  _printFnPending=function(counselHtml){
+    if(!counselHtml){alert('출력할 상담 기록을 선택해주세요.');return;}
+    openPrint(
+      '<div style="background:#1a2744;color:#fff;padding:14px 20px;border-radius:8px 8px 0 0;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'+
+      '<div style="font-size:16px;font-weight:700;">📝 상담 기록</div>'+
+      '<div style="font-size:14px;opacity:.8;margin-top:4px;"><strong style="font-size:16px;color:#fff;">'+name+'</strong></div></div>'+
+      counselHtml,
+      560, 700
+    );
+  };
+  _printOptStudentName=name;
+  // 인쇄 옵션 모달 열기
+  document.getElementById('printOptName').textContent=name+' — 상담 기록 인쇄';
+  const listEl=document.getElementById('printOptCounselList');
+  const selBtns=document.getElementById('printOptSelBtns');
+  selBtns.style.display='flex';
+  listEl.innerHTML=[...entries].reverse().map((e,ri)=>{
+    const realIdx=entries.length-1-ri;
+    const preview=e.content.length>60?e.content.slice(0,60)+'...':e.content;
+    return '<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:10px 12px;border:.5px solid #e0e6ef;border-radius:8px;margin-bottom:8px;background:#f8fafc;">'+
+      '<input type="checkbox" class="counsel-print-ck" data-idx="'+realIdx+'" checked '+
+      'style="width:15px;height:15px;margin-top:2px;cursor:pointer;accent-color:#1a2744;flex-shrink:0;">'+
+      '<div><div style="font-size:11px;font-weight:600;color:#1565C0;margin-bottom:3px;">📅 '+e.date+'</div>'+
+      '<div style="font-size:12px;color:#475569;line-height:1.6;">'+preview.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div></div></label>';
+  }).join('');
+  closeCounsel();
+  setTimeout(()=>{
+    document.getElementById('printOptOverlay').style.display='flex';
+  },50);
+}
+function openManualCounsel(){
+  const name=(document.getElementById('manual-name-inp')?.value||'').trim();
+  if(!name){alert('학생 이름을 먼저 입력해주세요.');return;}
+  openCounsel(name);
+}
+function triggerManualPrint(){
+  const name=(document.getElementById('manual-name-inp')?.value||MANUAL_STUDENTS[MANUAL_SEL]?.name||'').trim();
+  if(!name){alert('학생 이름을 먼저 입력해주세요.');return;}
+  showPrintOpt(name,ch=>doPrintManual(name,ch));
+}
+function doPrintManual(name,counselHtml=''){
+  const st=MANUAL_STUDENTS[MANUAL_SEL];if(!st)return;
+  // 현재 DOM에서 과목 데이터 읽기
+  const rows=document.querySelectorAll('#manual-subj-body tr');
+  let tableRows='',sum5=0,sumB=0,sumW=0,cnt=0;
+  rows.forEach(tr=>{
+    const nm=tr.querySelector('input[placeholder]')?.value||'';
+    const g5=parseFloat(tr.querySelector('input.g5inp')?.value)||null;
+    const g9=g5&&g5>=1&&g5<=5?g5ToG9Range(g5):null;
+    if(!nm&&!g5)return;
+    if(g5&&g9){sum5+=g5;sumB+=g9.best;sumW+=g9.worst;cnt++;}
+    tableRows+=`<tr>
+      <td style="text-align:left;font-weight:500;">${nm||'—'}</td>
+      <td style="text-align:center;">${g5?g5.toFixed(2)+'등급':'—'}</td>
+      <td style="text-align:center;">${g9?(g9.best===g9.worst?g9.best.toFixed(2)+'등급':g9.best.toFixed(2)+'~'+g9.worst.toFixed(2)+'등급'):'—'}</td>
+    </tr>`;
+  });
+  const avg5=cnt?+(sum5/cnt).toFixed(2):null;
+  const avgB=cnt?+(sumB/cnt).toFixed(2):null;
+  const avgW=cnt?+(sumW/cnt).toFixed(2):null;
+  const c5=avg5?C22[Math.min(4,Math.round(avg5)-1)]:'#ccc';
+  const cB=avgB?C15[Math.min(8,Math.round(avgB)-1)]:'#ccc';
+  const cW=avgW?C15[Math.min(8,Math.round(avgW)-1)]:'#ccc';
+  const _memo=counselHtml||'<div class="note"><div class="nt">📝 상담 메모</div></div>';
+  openPrint(
+    '<div style="background:#1a2744;color:#fff;padding:14px 20px;border-radius:8px 8px 0 0;-webkit-print-color-adjust:exact;print-color-adjust:exact;">'+
+    '<div style="font-size:16px;font-weight:700;">내신성적 분석 카드 (수동 입력)</div>'+
+    '<div style="font-size:13px;opacity:.7;margin-top:3px;"><strong style="font-size:15px;color:#fff;">'+name+'</strong></div></div>'+
+    '<table><thead><tr><th style="text-align:left;min-width:140px;">과목명</th><th>5등급 입력</th><th>9등급 예상 범위</th></tr></thead>'+
+    '<tbody>'+tableRows+
+    (cnt?'<tr style="background:#f5f8ff;"><td style="text-align:left;font-weight:700;">전체 평균 ('+cnt+'과목)</td>'+
+      '<td style="text-align:center;"><span style="font-size:18px;font-weight:700;color:'+c5+';">'+avg5.toFixed(2)+'</span></td>'+
+      '<td style="text-align:center;"><span style="font-size:18px;font-weight:700;color:'+cB+';">'+
+      (avgB===avgW?avgB.toFixed(2):avgB.toFixed(2)+' ~ '+avgW.toFixed(2))+'</span></td></tr>':'')+
+    '</tbody></table>'+_memo,
+    640,820);
+}
+function updateManualResult(){
+  const el=document.getElementById('manual-result-area');
+  if(!el)return;
+  const r=calcManualFromDOM();
+  if(!r){el.innerHTML='<div style="color:#94a3b8;font-size:13px;">과목명과 5등급을 입력하면 결과가 표시됩니다.</div>';return;}
+  const c5=C22[Math.min(4,Math.round(r.avg5)-1)];
+  const cB=C15[Math.min(8,Math.round(r.avgBest)-1)];
+  const cW=C15[Math.min(8,Math.round(r.avgWorst)-1)];
+  const same=r.avgBest===r.avgWorst;
+  el.innerHTML=
+    '<div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;">'+
+    '<div style="text-align:center;background:#ede9fe;border-radius:10px;padding:14px 22px;">'+
+    '<div style="font-size:11px;color:#7c3aed;font-weight:600;margin-bottom:4px;">5등급 평균 ('+r.count+'과목)</div>'+
+    '<div style="font-size:30px;font-weight:700;color:'+c5+';">'+r.avg5.toFixed(2)+'</div></div>'+
+    '<div style="font-size:24px;color:#d0d8e8;">→</div>'+
+    '<div style="text-align:center;background:#ede9fe;border-radius:10px;padding:14px 22px;">'+
+    '<div style="font-size:11px;color:#7c3aed;font-weight:600;margin-bottom:4px;">9등급 변환 예상 범위</div>'+
+    (same
+      ?'<div style="font-size:30px;font-weight:700;color:'+cB+';">'+r.avgBest.toFixed(2)+'</div><div style="font-size:11px;color:#94a3b8;margin-top:2px;">구간 일치</div>'
+      :'<div style="font-size:26px;font-weight:700;"><span style="color:'+cB+';">'+r.avgBest.toFixed(2)+'</span><span style="color:#94a3b8;font-size:16px;margin:0 8px;">~</span><span style="color:'+cW+';">'+r.avgWorst.toFixed(2)+'</span></div><div style="font-size:11px;color:#94a3b8;margin-top:2px;">최선 '+r.avgBest.toFixed(2)+' · 최악 '+r.avgWorst.toFixed(2)+'</div>'
+    )+'</div></div>';
+}
+
+// ── 과목 행 추가 (createElement 사용 → 한글 IME 보호) ─────────
+function appendSubjRow(tbody,name,g5){
+  const tr=document.createElement('tr');
+
+  // 과목명 input
+  const td1=document.createElement('td');td1.style.padding='7px 8px';
+  const inp=document.createElement('input');
+  inp.placeholder='과목명 입력';inp.value=name||'';
+  inp.style.cssText='width:140px;border:.5px solid #d0d8e8;border-radius:6px;padding:6px 8px;font-size:13px;font-family:inherit;outline:none;';
+  inp.oninput=function(){
+    // 저장만, DOM 변경 없음 → 한글 IME 보호
+    syncManualToData();saveManualData();
+  };
+  td1.appendChild(inp);tr.appendChild(td1);
+
+  // 5등급 숫자 입력 (소수 허용)
+  const td2=document.createElement('td');td2.style.cssText='text-align:center;padding:7px 4px;';
+  const sel=document.createElement('input');
+  sel.className='g5inp';sel.type='number';sel.min='1';sel.max='5';sel.step='0.01';
+  sel.placeholder='1~5';sel.value=g5||'';
+  sel.style.cssText='width:70px;border:.5px solid #d0d8e8;border-radius:6px;padding:6px 8px;font-size:13px;font-family:inherit;outline:none;text-align:center;';
+  sel.oninput=function(){
+    const g5v=parseFloat(this.value)||null;
+    const g9td=tr.querySelector('.g9cell');
+    if(g9td){
+      const g9=g5v&&g5v>=1&&g5v<=5?g5ToG9Range(g5v):null;
+      g9td.innerHTML=g9?'<span style="font-weight:700;color:#7c3aed;">'+(g9.best===g9.worst?g9.best.toFixed(2)+'등급':g9.best.toFixed(2)+'~'+g9.worst.toFixed(2)+'등급')+'</span>':'<span style="color:#d0d8e8;">—</span>';
+    }
+    syncManualToData();saveManualData();updateManualResult();
+  };
+  td2.appendChild(sel);tr.appendChild(td2);
+
+  // 9등급 범위
+  const td3=document.createElement('td');td3.className='g9cell';td3.style.cssText='text-align:center;padding:7px 8px;font-size:13px;';
+  const g9=g5?g5ToG9Range(g5):null;
+  td3.innerHTML=g9?'<span style="font-weight:700;color:#7c3aed;">'+(g9.best===g9.worst?g9.best.toFixed(2)+'등급':g9.best.toFixed(2)+'~'+g9.worst.toFixed(2)+'등급')+'</span>':'<span style="color:#d0d8e8;">—</span>';
+  tr.appendChild(td3);
+
+  // 삭제 버튼
+  const td4=document.createElement('td');td4.style.cssText='text-align:center;padding:7px 4px;';
+  const btn=document.createElement('button');
+  btn.textContent='✕';btn.title='삭제';
+  btn.style.cssText='background:none;border:.5px solid #fca5a5;color:#dc2626;border-radius:5px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:inherit;';
+  btn.onclick=function(){tr.remove();syncManualToData();saveManualData();updateManualResult();};
+  td4.appendChild(btn);tr.appendChild(td4);
+
+  tbody.appendChild(tr);
+}
+
+function syncManualToData(){
+  // DOM → MANUAL_STUDENTS 동기화
+  const st=MANUAL_STUDENTS[MANUAL_SEL];
+  if(!st)return;
+  const rows=document.querySelectorAll('#manual-subj-body tr');
+  st.subjects=[];
+  rows.forEach(tr=>{
+    const name=tr.querySelector('input')?.value||'';
+    const g5=parseFloat(tr.querySelector('input.g5inp')?.value)||null;
+    st.subjects.push({name,g5});
+  });
+}
+
+// ── 학생 탭 업데이트 ──────────────────────────────────────────
+function updateManualStTabs(){
+  const area=document.getElementById('manual-st-tabs');if(!area)return;
+  area.innerHTML='';
+  MANUAL_STUDENTS.forEach((s,i)=>{
+    const btn=document.createElement('button');
+    btn.textContent=s.name||'(이름 없음)';
+    btn.style.cssText='padding:6px 14px;font-size:12px;font-weight:600;border:.5px solid '+(i===MANUAL_SEL?'#7c3aed':'#d0d8e8')+';border-radius:7px;cursor:pointer;background:'+(i===MANUAL_SEL?'#7c3aed':'#fff')+';color:'+(i===MANUAL_SEL?'#fff':'#475569')+';font-family:inherit;';
+    btn.onclick=()=>selectManualSt(i);
+    area.appendChild(btn);
+  });
+}
+
+// ── 패널 렌더 (초기 1회만 구조 생성) ─────────────────────────
+function renderManualPanel(){
+  loadManualData();
+  const panel=document.getElementById('manual-panel');if(!panel)return;
+  const st=MANUAL_STUDENTS[MANUAL_SEL]||MANUAL_STUDENTS[0];
+
+  // 구조 생성 (입력칸은 createElement로 별도 추가)
+  panel.innerHTML=
+    '<div style="background:#f5f3ff;border:.5px solid #c4b5fd;border-radius:12px;padding:18px 22px;">'+
+    '<div id="manual-st-tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;"></div>'+
+    '<div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">'+
+    '<button id="btn-add-st" style="padding:6px 12px;font-size:12px;border:.5px solid #c4b5fd;border-radius:7px;cursor:pointer;background:#fff;color:#7c3aed;font-family:inherit;">➕ 학생 추가</button>'+
+    '<button id="btn-del-st" style="padding:6px 12px;font-size:12px;border:.5px solid #fca5a5;border-radius:7px;cursor:pointer;background:#fff;color:#dc2626;font-family:inherit;">🗑 삭제</button>'+
+    '<input id="manual-name-inp" placeholder="학생 이름 입력" style="border:.5px solid #c4b5fd;border-radius:7px;padding:7px 12px;font-size:14px;font-family:inherit;outline:none;width:180px;"/>'+
+    '<button onclick="openManualCounsel()" style="padding:6px 12px;font-size:12px;border:.5px solid #94a3b8;border-radius:7px;cursor:pointer;background:#fff;color:#475569;font-family:inherit;">📝 상담</button>'+
+    '<button onclick="triggerManualPrint()" style="padding:6px 12px;font-size:12px;border:.5px solid #94a3b8;border-radius:7px;cursor:pointer;background:#fff;color:#475569;font-family:inherit;">🖨 인쇄</button>'+
+    '</div>'+
+    '<div class="tbl-card" style="margin-bottom:12px;">'+
+    '<div class="scroll"><table class="rt" style="min-width:380px;"><thead><tr>'+
+    '<th style="text-align:left;padding-left:12px;min-width:150px;">과목명</th>'+
+    '<th style="min-width:80px;">5등급 입력</th>'+
+    '<th style="min-width:120px;">9등급 예상 범위</th>'+
+    '<th style="width:48px;"></th>'+
+    '</tr></thead><tbody id="manual-subj-body"></tbody></table></div>'+
+    '<div style="padding:10px 14px;border-top:.5px solid #eef0f5;">'+
+    '<button id="btn-add-subj" style="font-size:12px;border:.5px solid #c4b5fd;border-radius:7px;padding:6px 14px;cursor:pointer;background:#fff;color:#7c3aed;font-family:inherit;">➕ 과목 추가</button>'+
+    '</div></div>'+
+    '<div style="background:#fff;border-radius:10px;border:.5px solid #e0e6ef;padding:16px 20px;">'+
+    '<div style="font-size:13px;font-weight:600;color:#1a2744;margin-bottom:12px;">📊 등급 환산 결과</div>'+
+    '<div id="manual-result-area"></div>'+
+    '<div style="margin-top:12px;font-size:11px;color:#94a3b8;border-top:.5px solid #f0f4f9;padding-top:8px;">'+
+    '5→9등급 예상: 1등급(1~2) · 2등급(3~4) · 3등급(5) · 4등급(6~7) · 5등급(8~9) &nbsp;|&nbsp; 참고용 예상 범위</div>'+
+    '</div></div>';
+
+  // 이벤트 바인딩
+  document.getElementById('manual-name-inp').value=st.name||'';
+  document.getElementById('manual-name-inp').oninput=function(){
+    MANUAL_STUDENTS[MANUAL_SEL].name=this.value;saveManualData();
+    updateManualStTabs();
+  };
+  document.getElementById('btn-add-st').onclick=addManualSt;
+  document.getElementById('btn-del-st').onclick=deleteManualSt;
+  document.getElementById('btn-add-subj').onclick=function(){
+    appendSubjRow(document.getElementById('manual-subj-body'),'',null);
+    syncManualToData();saveManualData();
+  };
+
+  // 학생 탭 렌더
+  updateManualStTabs();
+
+  // 과목 행 렌더 (createElement)
+  const tbody=document.getElementById('manual-subj-body');
+  (st.subjects||[]).forEach(s=>appendSubjRow(tbody,s.name,s.g5));
+  if(!st.subjects?.length)appendSubjRow(tbody,'',null);
+
+  updateManualResult();
+}
+function renderManualTab(tc){renderManualPanel();}
+
+function selectManualSt(idx){
+  syncManualToData();saveManualData();
+  MANUAL_SEL=idx;renderManualPanel();
+}
+function addManualSt(){
+  syncManualToData();saveManualData();
+  MANUAL_STUDENTS.push({id:Date.now(),name:'',subjects:[]});
+  MANUAL_SEL=MANUAL_STUDENTS.length-1;
+  renderManualPanel();
+  setTimeout(()=>document.getElementById('manual-name-inp')?.focus(),50);
+}
+function deleteManualSt(){
+  syncManualToData();saveManualData();
+  if(MANUAL_STUDENTS.length<=1){MANUAL_STUDENTS=[{id:Date.now(),name:'',subjects:[]}];MANUAL_SEL=0;}
+  else{MANUAL_STUDENTS.splice(MANUAL_SEL,1);MANUAL_SEL=Math.max(0,MANUAL_SEL-1);}
+  saveManualData();renderManualPanel();
+}
+// 하위 호환성 유지
+function updateManualSubj(){}
+function updateManualName(){}
+function addManualSubjRow2(){appendSubjRow(document.getElementById('manual-subj-body'),'',null);syncManualToData();saveManualData();}
+function addManualSubj(){addManualSubjRow2();}
+function deleteManualSubj(){}
+function calcManual(){return null;}
+
+
+
+function showFileMgr(){
+  const list=document.getElementById('fileMgrList');
+  if(!FILE_ITEMS.length){
+    list.innerHTML=
+      '<div style="text-align:center;padding:24px 16px;border:2px dashed #d0d8e8;border-radius:10px;background:#f8fafc;color:#64748b;">'+
+      '<div style="font-size:36px;margin-bottom:10px;">📂</div>'+
+      '<div style="font-size:14px;font-weight:600;color:#1a2744;margin-bottom:6px;">업로드된 파일이 없습니다</div>'+
+      '<div style="font-size:12px;line-height:1.8;">'+
+        '아래 <strong>➕ 파일 추가</strong> 버튼을 클릭하거나<br>'+
+        '파일을 이 창 위로 <strong>드래그해서 놓으세요</strong>'+
+      '</div>'+
+      '<div style="font-size:11px;color:#94a3b8;margin-top:8px;">XLS data(.xlsx) 형식만 지원</div>'+
+      '</div>';
+  } else {
+    list.innerHTML=FILE_ITEMS.map((fi,i)=>
+      '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:.5px solid #e0e6ef;border-radius:8px;margin-bottom:8px;background:#f8fafc;cursor:pointer;">'+
+      '<input type="checkbox" class="file-mgr-ck" data-idx="'+i+'" style="width:16px;height:16px;cursor:pointer;accent-color:#1a2744;flex-shrink:0;">'+
+      '<div style="flex:1;">'+
+        '<div style="font-size:13px;font-weight:600;color:#1a2744;">'+fi.label+'</div>'+
+        '<div style="font-size:11px;color:#94a3b8;margin-top:2px;">'+
+          (fi.type==='neis'?'교과학습발달상황':fi.type==='jipal'?'지필 학급별':'지필 원점수')+
+          (fi.students?' · '+fi.students.length+'명':'')+
+        '</div>'+
+      '</div>'+
+      '</label>'
+    ).join('');
+  }
+  document.getElementById('fileMgrOverlay').style.display='flex';
+}
+function closeFileMgr(){document.getElementById('fileMgrOverlay').style.display='none';}
+function confirmFiles(){
+  closeFileMgr();
+  if(!FILE_ITEMS.length){showEmptyState();return;}
+  // 본화면 전환
+  document.getElementById('screen-upload').style.display='none';
+  document.getElementById('screen-report').style.display='block';
+  document.getElementById('manual-panel').style.display='none';
+  document.getElementById('tab-content').style.display='';
+  document.getElementById('rpt-legend').style.display='';
+  try{
+    buildReport();
+    // 첫 번째 탭 활성화
+    const firstBtn=document.querySelector('.tab-btn');
+    if(firstBtn) switchTab(0,firstBtn);
+  }catch(e){showErr('계산 오류: '+e.message);}
+}
+function removeFile(idx){
+  if(!confirm(FILE_ITEMS[idx]?.label+' 파일을 삭제할까요?'))return;
+  FILE_ITEMS.splice(idx,1);
+  saveToStorage();
+  showFileMgr();
+}
+function checkAllFiles(val){
+  document.querySelectorAll('.file-mgr-ck').forEach(ck=>ck.checked=val);
+}
+function deleteCheckedFiles(){
+  const checked=[...document.querySelectorAll('.file-mgr-ck:checked')].map(ck=>parseInt(ck.dataset.idx));
+  if(!checked.length){alert('삭제할 파일을 선택해주세요.');return;}
+  if(!confirm(checked.length+'개 파일을 삭제할까요?'))return;
+  // 인덱스 역순으로 삭제 (인덱스 밀림 방지)
+  [...checked].sort((a,b)=>b-a).forEach(i=>FILE_ITEMS.splice(i,1));
+  saveToStorage();
+  showFileMgr();
+}
+function showEmptyState(){
+  TABS=[];
+  document.getElementById('rpt-hd').innerHTML=
+    '<div><h1 style="font-size:28px;">내신성적 분석기<span style="font-size:16px;font-weight:500;opacity:.85;margin-left:8px;">(5등급→9등급)</span></h1>'+
+    '<div class="sub">파일을 추가하거나 수동 입력으로 시작하세요.</div></div>'+
+    '<div style="font-size:11px;opacity:.5;text-align:right;line-height:1.6;">제작 : 봉황고등학교 교사 김봉진</div>';
+  document.getElementById('tabBar').innerHTML='';
+  document.getElementById('banBtns').innerHTML=
+    '<button class="ban-btn manual-only" onclick="setBanManual()" style="border-color:#7c3aed;color:#7c3aed;">✏️ 수동 입력</button>';
+  document.getElementById('cnt').textContent='';
+  document.getElementById('tab-content').style.display='none';
+  document.getElementById('rpt-legend').style.display='none';
+  document.getElementById('manual-panel').style.display='block';
+  renderManualPanel();
+}
+function setBanManual(){
+  document.getElementById('tab-content').style.display='none';
+  document.getElementById('rpt-legend').style.display='none';
+  document.getElementById('manual-panel').style.display='block';
+  renderManualPanel();
+}
+function showHelp(){document.getElementById('helpOverlay').style.display='flex';}
+function closeHelp(){document.getElementById('helpOverlay').style.display='none';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeHelp();});
+// ── localStorage 자동 저장 ────────────────────────────────
+const STORAGE_KEY = 'naesin_calc_data';
+const STORAGE_SEQ = 'naesin_calc_seq';
+
+function saveToStorage() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(FILE_ITEMS));
+    localStorage.setItem(STORAGE_SEQ, String(fIdSeq));
+    updateSaveIndicator(true);
+  } catch(e) {
+    console.warn('저장 실패 (용량 초과 가능):', e);
+    updateSaveIndicator(false);
+  }
+}
+
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (!data || !data.length) return false;
+    FILE_ITEMS = data;
+    fIdSeq = parseInt(localStorage.getItem(STORAGE_SEQ) || '0');
+    return true;
+  } catch(e) {
+    console.warn('불러오기 실패:', e);
+    return false;
+  }
+}
+
+function clearStorage() {
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(STORAGE_SEQ);
+}
+
+function updateSaveIndicator(ok) {
+  const el = document.getElementById('saveIndicator');
+  if (!el) return;
+  el.textContent = ok ? '💾 자동 저장됨' : '⚠️ 저장 실패';
+  el.style.color = ok ? '#16a34a' : '#dc2626';
+}
+
+// 페이지 로드 시 복원
+window.addEventListener('load', () => {
+  // 항상 본화면으로 바로 진입
+  document.getElementById('screen-upload').style.display='none';
+  document.getElementById('screen-report').style.display='block';
+  loadFromStorage();
+  try {
+    if(FILE_ITEMS.length) buildReport();
+    else showEmptyState();
+  } catch(e) { showEmptyState(); }
+});
+
+</script>
+
+<!-- ══ 드래그 업로드 오버레이 ══ -->
+<div id="dragOverlay" style="position:fixed;inset:0;background:rgba(26,39,68,.85);z-index:99999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;pointer-events:none;">
+  <div style="font-size:64px;">📂</div>
+  <div style="color:#fff;font-size:22px;font-weight:700;">파일을 여기에 놓으세요</div>
+  <div style="color:rgba(255,255,255,.7);font-size:14px;">XLS data 형식(.xlsx) 파일</div>
+</div>
+
+<!-- ══ 파일 관리 모달 ══ -->
+<div id="fileMgrOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9996;display:none;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+    <div style="background:#1a2744;color:#fff;padding:16px 20px;border-radius:14px 14px 0 0;display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-size:15px;font-weight:700;">📂 파일 관리</div>
+      <button onclick="closeFileMgr()" style="background:rgba(255,255,255,.15);border:none;color:#fff;font-size:13px;cursor:pointer;padding:6px 14px;border-radius:7px;font-family:inherit;">✕ 닫기</button>
+    </div>
+    <div style="padding:16px 20px;">
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <button onclick="checkAllFiles(true)" style="font-size:11px;border:.5px solid #d0d8e8;border-radius:6px;padding:4px 10px;cursor:pointer;background:#fff;color:#475569;font-family:inherit;">전체 선택</button>
+        <button onclick="checkAllFiles(false)" style="font-size:11px;border:.5px solid #d0d8e8;border-radius:6px;padding:4px 10px;cursor:pointer;background:#fff;color:#475569;font-family:inherit;">전체 해제</button>
+        <button onclick="deleteCheckedFiles()" style="font-size:11px;border:.5px solid #fca5a5;border-radius:6px;padding:4px 10px;cursor:pointer;background:#fff;color:#dc2626;font-family:inherit;">🗑 선택 삭제</button>
+      </div>
+      <div id="fileMgrList" style="margin-bottom:14px;max-height:280px;overflow-y:auto;"></div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="document.getElementById('fileInput').click()" style="padding:10px 16px;background:#fff;color:#1a2744;border:.5px solid #d0d8e8;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;">➕ 파일 추가</button>
+        <button onclick="confirmFiles()" style="flex:1;padding:10px;background:#1a2744;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">✅ 확인</button>
+        <button onclick="closeFileMgr()" style="padding:10px 16px;border:.5px solid #d0d8e8;border-radius:8px;background:#fff;color:#475569;font-size:13px;cursor:pointer;font-family:inherit;">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 인쇄 옵션 모달 ══ -->
+<div id="printOptOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;display:none;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:480px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25);">
+    <div style="background:#1a2744;color:#fff;padding:16px 20px;border-radius:14px 14px 0 0;flex-shrink:0;">
+      <div style="font-size:15px;font-weight:700;">🖨 인쇄 옵션</div>
+      <div style="font-size:13px;opacity:.7;margin-top:3px;" id="printOptName"></div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:16px 20px;">
+      <div style="font-size:13px;font-weight:600;color:#1a2744;margin-bottom:10px;">📝 포함할 상담 기록 선택</div>
+      <div id="printOptCounselList">
+        <div style="color:#94a3b8;font-size:13px;padding:12px 0;">저장된 상담 기록이 없습니다.</div>
+      </div>
+    </div>
+    <div style="padding:14px 20px;border-top:.5px solid #eef0f5;flex-shrink:0;">
+      <div style="display:flex;gap:6px;margin-bottom:12px;" id="printOptSelBtns" style="display:none;">
+        <button onclick="checkAllCounsel(true)" style="font-size:11px;border:.5px solid #d0d8e8;border-radius:6px;padding:4px 10px;cursor:pointer;background:#fff;color:#475569;font-family:inherit;">전체 선택</button>
+        <button onclick="checkAllCounsel(false)" style="font-size:11px;border:.5px solid #d0d8e8;border-radius:6px;padding:4px 10px;cursor:pointer;background:#fff;color:#475569;font-family:inherit;">전체 해제</button>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="closePrintOpt()" style="flex:1;padding:10px;border:.5px solid #d0d8e8;border-radius:8px;background:#fff;color:#475569;font-size:13px;cursor:pointer;font-family:inherit;">취소</button>
+        <button onclick="executePrint()" style="flex:2;padding:10px;border:none;border-radius:8px;background:#1a2744;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">인쇄</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 사용 설명서 모달 ══ -->
+<div id="helpOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9997;display:none;align-items:flex-start;justify-content:center;padding:30px 20px;overflow-y:auto;">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:680px;box-shadow:0 20px 60px rgba(0,0,0,.3);margin:auto;">
+    <div style="background:#1a2744;color:#fff;padding:20px 24px;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:18px;font-weight:700;">📖 사용 설명서</div>
+        <div style="font-size:12px;opacity:.7;margin-top:3px;">내신성적 분석기 (5등급→9등급)</div>
+      </div>
+      <button onclick="closeHelp()" style="background:rgba(255,255,255,.15);border:none;color:#fff;font-size:14px;cursor:pointer;padding:8px 16px;border-radius:8px;font-family:inherit;">✕ 닫기</button>
+    </div>
+    <div style="padding:24px;line-height:1.8;font-size:13px;color:#334155;max-height:70vh;overflow-y:auto;">
+
+      <!-- 1. 파일 추가 -->
+      <div style="margin-bottom:22px;">
+        <div style="font-size:15px;font-weight:700;color:#1a2744;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #e0e6ef;">➕ 파일 추가하는 방법</div>
+        <ol style="margin:0;padding-left:20px;">
+          <li style="margin-bottom:5px;">상단 <strong>➕ 파일 추가</strong> 버튼을 클릭하면 파일 선택창이 열립니다.</li>
+          <li style="margin-bottom:5px;">NEIS에서 반드시 <strong style="color:#1565C0;font-size:14px;">XLS data</strong> 형식으로 다운받은 파일을 선택합니다.
+            <ul style="margin-top:4px;padding-left:18px;">
+              <li><strong>교과학습발달상황:</strong> 학교생활기록부 → 학생부 항목별 조회 → 교과학습발달상황 → 💾 저장 → <strong style="color:#1565C0;">XLS data</strong></li>
+              <li><strong>지필고사 원점수:</strong> 학급담임/부서장 → 지필평가 조회 → 학급별일람표조회-전체교과목 → 💾 저장 → <strong style="color:#1565C0;">XLS data</strong></li>
+            </ul>
+          </li>
+          <li style="margin-bottom:5px;">파일 선택 후 <strong>📂 파일 관리</strong> 모달에서 목록을 확인합니다.</li>
+          <li style="margin-bottom:5px;"><strong>✅ 확인</strong> 버튼을 클릭하면 바로 성적 분석 화면으로 전환됩니다.</li>
+        </ol>
+        <div style="background:#f0fdf4;border:.5px solid #86efac;border-radius:8px;padding:9px 13px;margin-top:8px;font-size:12px;color:#166534;">
+          💡 파일을 화면 위로 <strong>드래그해서 놓으면</strong> 파일 선택창 없이 바로 추가됩니다. 여러 파일을 한번에 드래그할 수 있습니다.
+        </div>
+        <div style="background:#fef9c3;border:.5px solid #fcd34d;border-radius:8px;padding:9px 13px;margin-top:8px;font-size:12px;color:#92400e;">
+          ⚠️ 같은 학기 여러 반 파일을 모두 추가한 뒤 확인하면 <strong>전체 합산 기준</strong>으로 정확한 석차백분율이 계산됩니다.
+        </div>
+      </div>
+
+      <!-- 2. 파일 교체 -->
+      <div style="margin-bottom:22px;">
+        <div style="font-size:15px;font-weight:700;color:#1a2744;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #e0e6ef;">🔄 기존 파일 삭제 및 교체 방법</div>
+        <ol style="margin:0;padding-left:20px;">
+          <li style="margin-bottom:5px;">상단 <strong>📂 파일 관리</strong> 버튼을 클릭합니다.</li>
+          <li style="margin-bottom:5px;">삭제할 파일을 체크박스로 선택합니다.
+            <ul style="margin-top:4px;padding-left:18px;">
+              <li><strong>전체 선택</strong> — 모든 파일 한번에 선택</li>
+              <li><strong>전체 해제</strong> — 선택 전체 해제</li>
+              <li>파일 행을 클릭하면 개별 선택/해제</li>
+            </ul>
+          </li>
+          <li style="margin-bottom:5px;"><strong style="color:#dc2626;">🗑 선택 삭제</strong> 버튼으로 체크된 파일을 삭제합니다.</li>
+          <li style="margin-bottom:5px;"><strong>➕ 파일 추가</strong>로 새 파일을 선택한 뒤 <strong>✅ 확인</strong>을 클릭합니다.</li>
+        </ol>
+        <div style="background:#fef9c3;border:.5px solid #fcd34d;border-radius:8px;padding:9px 13px;margin-top:8px;font-size:12px;color:#92400e;">
+          ⚠️ 상담 기록은 학생 이름 기준으로 별도 저장되므로, 파일을 교체해도 유지됩니다.
+        </div>
+      </div>
+
+      <!-- 3. 정렬 -->
+      <div style="margin-bottom:22px;">
+        <div style="font-size:15px;font-weight:700;color:#1a2744;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #e0e6ef;">↕ 과목·등급별 정렬 방법</div>
+        <p style="margin:0 0 8px;">각 탭의 <strong>컬럼 헤더</strong>(과목명, 등급, 백분율 등)를 클릭하면 정렬됩니다.</p>
+        <ul style="margin:0;padding-left:20px;">
+          <li><strong>1번 클릭 ①</strong> — 오름차순 (낮은 값 → 높은 값)</li>
+          <li><strong>2번 클릭 ①↓</strong> — 내림차순 (높은 값 → 낮은 값)</li>
+          <li><strong>3번 클릭</strong> — 정렬 해제</li>
+          <li style="margin-top:4px;"><strong>다중 정렬:</strong> 여러 컬럼을 순서대로 클릭하면 ①②③ 우선순위로 정렬됩니다.</li>
+        </ul>
+        <div style="background:#eff6ff;border:.5px solid #bfdbfe;border-radius:8px;padding:9px 13px;margin-top:8px;font-size:12px;color:#1e40af;">
+          💡 탭을 전환하면 정렬이 초기화됩니다.
+        </div>
+      </div>
+
+      <!-- 4. 상담카드 -->
+      <div style="margin-bottom:22px;">
+        <div style="font-size:15px;font-weight:700;color:#1a2744;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #e0e6ef;">📝 상담 카드 작성 방법</div>
+        <ol style="margin:0;padding-left:20px;">
+          <li style="margin-bottom:5px;">성적표에서 <strong>학생 이름을 클릭</strong>하면 상담 기록 창이 열립니다.</li>
+          <li style="margin-bottom:5px;">내용을 입력하고 <strong>💾 저장</strong> 또는 <kbd style="background:#f1f5f9;border:.5px solid #d0d8e8;border-radius:4px;padding:1px 5px;">Ctrl</kbd>+<kbd style="background:#f1f5f9;border:.5px solid #d0d8e8;border-radius:4px;padding:1px 5px;">Enter</kbd>로 저장합니다.</li>
+          <li style="margin-bottom:5px;">날짜별로 여러 건을 누적 저장할 수 있습니다.</li>
+          <li style="margin-bottom:5px;">각 기록의 <strong style="color:#dc2626;">🗑 삭제</strong> 버튼으로 개별 삭제 가능합니다.</li>
+        </ol>
+        <div style="background:#f0fdf4;border:.5px solid #86efac;border-radius:8px;padding:9px 13px;margin-top:8px;font-size:12px;color:#166534;">
+          ✅ 상담 기록은 파일 초기화 후에도 별도 유지됩니다.
+        </div>
+      </div>
+
+      <!-- 5. 인쇄 -->
+      <div style="margin-bottom:22px;">
+        <div style="font-size:15px;font-weight:700;color:#1a2744;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #e0e6ef;">🖨 인쇄 기능 사용 방법</div>
+        <p style="margin:0 0 6px;font-weight:600;">① 개인별 인쇄 (성적 + 상담 기록 선택)</p>
+        <ol style="margin:0 0 10px;padding-left:20px;">
+          <li style="margin-bottom:4px;">학생 행 오른쪽 끝 <strong>🖨</strong> 버튼 클릭</li>
+          <li style="margin-bottom:4px;">포함할 상담 기록을 개별 체크 후 <strong>인쇄</strong> 클릭</li>
+        </ol>
+        <p style="margin:0 0 6px;font-weight:600;">② 반별 일괄 인쇄</p>
+        <ul style="margin:0 0 10px;padding-left:20px;">
+          <li>반 헤더(진한 배경)의 <strong>🖨 N반 인쇄</strong> 버튼 클릭 → 해당 반 전체 출력</li>
+        </ul>
+        <p style="margin:0 0 6px;font-weight:600;">③ 상담 기록만 출력 (학생별)</p>
+        <ul style="margin:0 0 10px;padding-left:20px;">
+          <li>학생 이름 클릭 → 상담 기록 창 오른쪽 상단 <strong>🖨 인쇄</strong> 클릭</li>
+          <li>기록을 선택해 성적 없이 <strong>상담 내용만</strong> 출력됩니다.</li>
+        </ul>
+        <p style="margin:0 0 6px;font-weight:600;">④ 전체 학생 상담 기록 일괄 출력</p>
+        <ul style="margin:0;padding-left:20px;">
+          <li>상단 <strong>📋 전체 상담 기록 인쇄</strong> 버튼 → 기록 있는 학생 전체 한 번에 출력</li>
+        </ul>
+        <div style="background:#eff6ff;border:.5px solid #bfdbfe;border-radius:8px;padding:9px 13px;margin-top:8px;font-size:12px;color:#1e40af;">
+          💡 인쇄 창이 열리지 않으면 브라우저 주소창의 팝업 허용 버튼을 클릭해 주세요.
+        </div>
+      </div>
+
+      <!-- 6. 수동 입력 -->
+      <div style="margin-bottom:8px;">
+        <div style="font-size:15px;font-weight:700;color:#1a2744;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #e0e6ef;">✏️ 수동 입력 사용 방법</div>
+        <p style="margin:0 0 8px;">NEIS 파일 없이 성적을 직접 입력해 9등급 예상 범위를 확인할 수 있습니다.</p>
+        <ol style="margin:0;padding-left:20px;">
+          <li style="margin-bottom:5px;">반 선택 버튼 중 <strong>✏️ 수동 입력</strong>을 클릭합니다. (파일 없이 시작하면 자동으로 수동 입력 모드)</li>
+          <li style="margin-bottom:5px;">학생 이름을 입력하고 과목명과 5등급을 입력합니다.</li>
+          <li style="margin-bottom:5px;"><strong>5등급에 소수 입력 가능</strong> (예: 2.50, 3.20) — 소수점 2자리까지 지원</li>
+          <li style="margin-bottom:5px;"><strong>➕ 과목 추가</strong>로 과목을 추가할 수 있습니다.</li>
+          <li style="margin-bottom:5px;">5등급 평균과 <strong>9등급 변환 예상 범위</strong>가 자동 계산됩니다.</li>
+          <li style="margin-bottom:5px;"><strong>➕ 학생 추가</strong>로 여러 학생을 관리할 수 있습니다.</li>
+          <li style="margin-bottom:5px;">학생 이름 입력 후 <strong>📝 상담</strong> 버튼으로 상담 기록 작성 가능합니다.</li>
+          <li style="margin-bottom:5px;"><strong>🖨 인쇄</strong> 버튼으로 성적 분석 카드를 출력할 수 있습니다.</li>
+        </ol>
+        <div style="background:#f5f3ff;border:.5px solid #c4b5fd;border-radius:8px;padding:9px 13px;margin-top:8px;font-size:12px;color:#5b21b6;">
+          ✏️ 수동 입력 데이터는 자동 저장되며 다음에 열어도 유지됩니다. 9등급은 참고용 예상 범위입니다.
+        </div>
+      </div>
+
+    </div>
+    </div>
+    <div style="padding:16px 24px;border-top:.5px solid #e0e6ef;text-align:right;">
+      <button onclick="closeHelp()" style="background:#1a2744;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 상담 기록 모달 ══ -->
+<div id="counselOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:580px;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+    <div style="background:#1a2744;color:#fff;padding:16px 20px;border-radius:14px 14px 0 0;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:16px;font-weight:700;">📝 상담 기록</div>
+        <div style="font-size:13px;opacity:.7;margin-top:2px;" id="counselName"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span style="font-size:11px;opacity:.6;" id="counselToday"></span>
+        <button onclick="printCounselOnly()" style="background:rgba(255,255,255,.15);border:none;color:#fff;font-size:13px;cursor:pointer;padding:6px 14px;border-radius:7px;font-family:inherit;">🖨 인쇄</button>
+        <button onclick="closeCounsel()" style="background:rgba(255,255,255,.15);border:none;color:#fff;font-size:13px;cursor:pointer;padding:6px 14px;border-radius:7px;font-family:inherit;">✕ 닫기</button>
+      </div>
+    </div>
+    <div style="padding:16px 18px;background:#f8fafc;border-bottom:.5px solid #e0e6ef;">
+      <textarea id="counselInput" placeholder="상담 내용을 입력하세요... (Ctrl+Enter 저장)" style="width:100%;border:.5px solid #d0d8e8;border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;color:#1a2744;outline:none;resize:vertical;min-height:80px;box-sizing:border-box;"></textarea>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">
+        <button onclick="closeCounsel()" style="background:#fff;color:#475569;border:.5px solid #d0d8e8;border-radius:7px;padding:8px 18px;font-size:13px;cursor:pointer;font-family:inherit;">닫기</button>
+        <button onclick="saveCounselEntry()" style="background:#1a2744;color:#fff;border:none;border-radius:7px;padding:8px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">💾 저장</button>
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:14px 18px;" id="counselList"></div>
+  </div>
+</div>
+</body>
+</html>
